@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Avtomobilni Tahrirlash - Yoqilg'i Boshqaruvi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 text-center">
+                        <i class="fas fa-edit me-2"></i>Avtomobilni Tahrirlash
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Xatolik!</strong> Quyidagi maydonlarni to'g'ri to'ldiring.
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_tashkilot" class="form-label fw-bold">Tashkilot</label>
+                            <select name="tashkilot" 
+                                    id="id_tashkilot" 
+                                    class="form-control form-control-lg {% if form.tashkilot.errors %}is-invalid{% endif %}" 
+                                    required>
+                                <option value="">Tanlang</option>
+                                {% for tashkilot in tashkilotlar %}
+                                <option value="{{ tashkilot.id }}" {% if form.tashkilot.value == tashkilot.id %}selected{% endif %}>
+                                    {{ tashkilot.title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.tashkilot.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.tashkilot.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label fw-bold">Avtomobil nomi</label>
+                            <input type="text" 
+                                   name="title" 
+                                   id="id_title" 
+                                   class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.title.value|default:'' }}" 
+                                   required>
+                            {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.title.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_avto_number" class="form-label fw-bold">Avtomobil raqami</label>
+                            <input type="text" 
+                                   name="avto_number" 
+                                   id="id_avto_number" 
+                                   class="form-control form-control-lg {% if form.avto_number.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.avto_number.value|default:'' }}" 
+                                   required>
+                            {% if form.avto_number.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.avto_number.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'admin_panel' %}" class="btn btn-secondary me-md-2 px-4">
+                                <i class="fas fa-times me-1"></i> Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-save me-1"></i> Saqlash
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

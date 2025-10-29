@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Yangi Avtomobil Qo‘shish</title>
+</head>
+<body>
+    <h2>Yangi Avtomobil Qo‘shish</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Tashkilot:</label>
+        <select name="tashkilot" required>
+            <option value="">Tanlang</option>
+            {% for t in tashkilotlar %}
+                <option value="{{ t.id }}">{{ t.title }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Avtomobil nomi:</label>
+        <input type="text" name="title" required>
+
+        <label>Avtomobil raqami:</label>
+        <input type="text" name="avto_number" required>
+
+        <button type="submit">Saqlash</button>
+    </form>
+    <a href="{% url 'admin_panel' %}">Orqaga</a>
+</body>
+</html>

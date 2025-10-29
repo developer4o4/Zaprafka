@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Yangi Yoqilg‘i Turi Qo‘shish</title>
+</head>
+<body>
+    <h2>Yangi Yoqilg‘i Turi Qo‘shish</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Yoqilg‘i nomi:</label>
+        <input type="text" name="title" required>
+        <input type="number" name="price" required>
+        <button type="submit">Saqlash</button>
+    </form>
+    <a href="{% url 'admin_panel' %}">Orqaga</a>
+</body>
+</html>

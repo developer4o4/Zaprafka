@@ -1,0 +1,1138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoqilg'i Qo'shish - Yoqilg'i Boshqaruvi</title>
+    <style>
+        /* CSS kodlari oldingi kabi */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2a5298;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #2a5298;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e3c72;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.2);
+        }
+
+        .price-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #2a5298;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .price-total {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2a5298;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .camera-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        .camera-required {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .camera-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .camera-preview video,
+        .camera-preview canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .captured-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 5px;
+            margin: 15px auto;
+            display: block;
+            border: 2px solid #28a745;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .notification {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .notification.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .camera-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .camera-status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .camera-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .camera-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Modal oynasi uchun stillar */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #2a5298;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .close-modal:hover {
+            color: #dc3545;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .confirmation-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-details p {
+            margin-bottom: 10px;
+        }
+
+        .confirmation-details strong {
+            color: #2a5298;
+        }
+
+        .telegram-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .telegram-status.sending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .telegram-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .telegram-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .dashboard {
+                padding: 20px;
+            }
+
+            .form-buttons,
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="fuel-add-page">
+        <header>
+            <div class="container header-content">
+                <h1>Yoqilg'i Qo'shish</h1>
+                <div class="user-info">
+                    <span id="current-user">{{ request.user.username }}</span>
+                    <a href="{% url 'home' %}"><button class="btn-secondary">Bosh Sahifa</button></a>
+                    <a href="{% url 'logout' %}"><button class="btn-secondary">Chiqish</button></a>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <a href="{% url 'home' %}" class="back-link">← Ortga qaytish</a>
+
+            <div class="dashboard">
+                <h2>Yoqilg'i Ma'lumotlarini Kiriting</h2>
+
+                <div class="notification" id="notification"></div>
+
+                <div class="form-container">
+                    <form id="add-fuel-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="tashkilot" class="required">Tashkilot:</label>
+                            <select id="tashkilot" name="tashkilot" required>
+                                <option value="">Tashkilotni tanlang</option>
+                                {% for tashkilot in tashkilotlar %}
+                                <option value="{{ tashkilot.id }}" data-group-id="{{ tashkilot.group_id }}">{{tashkilot.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="avtomobile" class="required">Avtomobil:</label>
+                            <select id="avtomobile" name="avtomobile" required>
+                                <option value="">Avtomobilni tanlang</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yoqilgi" class="required">Yoqilg'i turi:</label>
+                            <select id="yoqilgi" name="yoqilgi" required>
+                                <option value="">Yoqilg'i turini tanlang</option>
+                                {% for yoqilgi in yoqilgi_turlari %}
+                                <option value="{{ yoqilgi.id }}" data-price="{{ yoqilgi.price }}">{{ yoqilgi.title }} -
+                                    {{ yoqilgi.price }}.00so'm</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="miqdor" class="required">Miqdor (litr):</label>
+                            <input type="number" id="miqdor" name="miqdor" step="0.01" min="0.1" required
+                                placeholder="Masalan: 45.5">
+                        </div>
+
+                        <!-- Narx ma'lumotlari -->
+                        <div class="price-info" id="price-info" style="display: none;">
+                            <h3>Narx hisobi:</h3>
+                            <div class="price-item">
+                                <span>Yoqilg'i narxi (1 litr):</span>
+                                <span id="fuel-price">0 so'm</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Miqdor:</span>
+                                <span id="fuel-quantity">0 litr</span>
+                            </div>
+                            <div class="price-total">
+                                <span>Umumiy narx:</span>
+                                <span id="total-price">0 so'm</span>
+                            </div>
+                        </div>
+
+                        <div class="camera-section">
+                            <h3>Yoqilg'i quyish jarayoni rasmi <span style="color: #dc3545;">*</span></h3>
+                            <p>Yoqilg'i quyilayotgan paytni rasmga oling</p>
+                            <div class="camera-required">Rasmga olish majburiy</div>
+
+                            <div class="camera-status pending" id="camera-status">
+                                📷 Kamera tayyorlanmoqda...
+                            </div>
+
+                            <div class="camera-preview" id="camera-preview">
+                                <span>Kamerani yoqing</span>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button type="button" id="start-camera-btn" class="btn-primary">Kamerani yoqish</button>
+                                <button type="button" id="capture-btn" class="btn-success" disabled>Rasmga
+                                    olish</button>
+                                <button type="button" id="retake-btn" class="btn-danger" style="display: none;">Qayta
+                                    olish</button>
+                            </div>
+
+                            <img id="captured-image" class="captured-image" style="display: none;"
+                                alt="Yoqilg'i quyish jarayoni rasmi">
+                            <input type="hidden" id="captured-image-data" name="captured_image" required>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" id="submit-btn" class="btn-success" disabled>Saqlash</button>
+                            <button type="button" id="cancel-btn" class="btn-secondary">Bekor qilish</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasdiqlash modali -->
+    <div class="modal-overlay" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tasdiqlash</h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-details" id="confirmation-details">
+                    <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                </div>
+
+                <div class="camera-section">
+                    <h3>Yoqilg'i quyilganidan keyingi rasm <span style="color: #dc3545;">*</span></h3>
+                    <p>Yoqilg'i quyilganidan keyingi holatni rasmga oling</p>
+
+                    <div class="camera-status pending" id="confirmation-camera-status">
+                        📷 Kamera tayyorlanmoqda...
+                    </div>
+
+                    <div class="camera-preview" id="confirmation-camera-preview">
+                        <span>Kamerani yoqing</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" id="confirmation-start-camera-btn" class="btn-primary">Kamerani
+                            yoqish</button>
+                        <button type="button" id="confirmation-capture-btn" class="btn-success" disabled>Rasmga
+                            olish</button>
+                        <button type="button" id="confirmation-retake-btn" class="btn-danger"
+                            style="display: none;">Qayta olish</button>
+                    </div>
+
+                    <img id="confirmation-captured-image" class="captured-image" style="display: none;"
+                        alt="Yoqilg'i quyilganidan keyingi rasm">
+                    <input type="hidden" id="confirmation-captured-image-data" name="confirmation_captured_image"
+                        required>
+                </div>
+
+                <div class="telegram-status" id="telegram-status"></div>
+
+                <div class="form-buttons">
+                    <button type="button" id="confirm-submit-btn" class="btn-success" disabled>Telegramga yuborish va
+                        saqlash</button>
+                    <button type="button" id="confirmation-cancel-btn" class="btn-secondary">Bekor qilish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('add-fuel-form');
+            const notification = document.getElementById('notification');
+            const tashkilotSelect = document.getElementById('tashkilot');
+            const avtomobileSelect = document.getElementById('avtomobile');
+            const yoqilgiSelect = document.getElementById('yoqilgi');
+            const miqdorInput = document.getElementById('miqdor');
+            const priceInfo = document.getElementById('price-info');
+            const fuelPriceElement = document.getElementById('fuel-price');
+            const fuelQuantityElement = document.getElementById('fuel-quantity');
+            const totalPriceElement = document.getElementById('total-price');
+            const startCameraBtn = document.getElementById('start-camera-btn');
+            const captureBtn = document.getElementById('capture-btn');
+            const retakeBtn = document.getElementById('retake-btn');
+            const cameraPreview = document.getElementById('camera-preview');
+            const capturedImage = document.getElementById('captured-image');
+            const capturedImageData = document.getElementById('captured-image-data');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const cameraStatus = document.getElementById('camera-status');
+
+            // Modal elementlari
+            const confirmationModal = document.getElementById('confirmation-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const confirmationDetails = document.getElementById('confirmation-details');
+            const confirmationStartCameraBtn = document.getElementById('confirmation-start-camera-btn');
+            const confirmationCaptureBtn = document.getElementById('confirmation-capture-btn');
+            const confirmationRetakeBtn = document.getElementById('confirmation-retake-btn');
+            const confirmationCameraPreview = document.getElementById('confirmation-camera-preview');
+            const confirmationCapturedImage = document.getElementById('confirmation-captured-image');
+            const confirmationCapturedImageData = document.getElementById('confirmation-captured-image-data');
+            const confirmationCameraStatus = document.getElementById('confirmation-camera-status');
+            const confirmSubmitBtn = document.getElementById('confirm-submit-btn');
+            const confirmationCancelBtn = document.getElementById('confirmation-cancel-btn');
+            const telegramStatus = document.getElementById('telegram-status');
+
+            let stream = null;
+            let video = null;
+            let canvas = null;
+            let isPhotoTaken = false;
+
+            let confirmationStream = null;
+            let confirmationVideo = null;
+            let confirmationCanvas = null;
+            let isConfirmationPhotoTaken = false;
+
+            let currentFuelPrice = 0;
+            let currentTotalPrice = 0;
+
+            // Form elementlarini kuzatish
+            const formElements = [tashkilotSelect, avtomobileSelect, yoqilgiSelect, miqdorInput];
+
+            // Form elementlari o'zgarganda tekshirish
+            formElements.forEach(element => {
+                if (element) {
+                    element.addEventListener('change', validateForm);
+                }
+            });
+
+            // Narxni formatlash
+function formatPrice(price) {
+    // Sonni butun qismiga aylantirish va formatlash
+    const integerPrice = Math.round(price);
+    
+    // Bo'shliq bilan ajratish
+    return new Intl.NumberFormat('uz-UZ').format(integerPrice) + ' so\'m';
+}
+
+// Yoqilg'i turi o'zgarganda narxni ko'rsatish
+yoqilgiSelect.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    currentFuelPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+
+    if (currentFuelPrice > 0) {
+        fuelPriceElement.textContent = formatPrice(currentFuelPrice);
+        calculateTotalPrice();
+        priceInfo.style.display = 'block';
+    } else {
+        priceInfo.style.display = 'none';
+    }
+
+    validateForm();
+});
+
+// Miqdor o'zgarganda umumiy narxni hisoblash
+miqdorInput.addEventListener('input', function() {
+    calculateTotalPrice();
+    validateForm();
+});
+
+// Umumiy narxni hisoblash
+function calculateTotalPrice() {
+    const quantity = parseFloat(miqdorInput.value) || 0;
+    fuelQuantityElement.textContent = quantity.toFixed(2) + ' litr';
+
+    currentTotalPrice = quantity * currentFuelPrice;
+    totalPriceElement.textContent = formatPrice(currentTotalPrice);
+}
+
+            // Tashkilot o'zgarganda avtomobillarni yuklash
+            tashkilotSelect.addEventListener('change', function () {
+                const tashkilotId = this.value;
+                avtomobileSelect.innerHTML = '<option value="">Avtomobilni tanlang</option>';
+
+                if (tashkilotId) {
+                    fetch(`/api/avtomobillar/?tashkilot_id=${tashkilotId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(avto => {
+                                const option = document.createElement('option');
+                                option.value = avto.id;
+                                option.textContent = `${avto.title} (${avto.avto_number})`;
+                                avtomobileSelect.appendChild(option);
+                            });
+                            validateForm();
+                        })
+                        .catch(error => {
+                            console.error('Xatolik avtomobillarni yuklashda:', error);
+                            showNotification('Avtomobillarni yuklashda xatolik yuz berdi', 'error');
+                        });
+                }
+                validateForm();
+            });
+
+            // Kamerani yoqish
+            startCameraBtn.addEventListener('click', function () {
+                startCamera(cameraPreview, cameraStatus, startCameraBtn, captureBtn);
+            });
+
+            // Rasmga olish
+            captureBtn.addEventListener('click', function () {
+                capturePhoto(capturedImage, capturedImageData, cameraPreview, captureBtn, retakeBtn);
+            });
+
+            // Qayta rasmga olish
+            retakeBtn.addEventListener('click', function () {
+                retakePhoto(capturedImage, capturedImageData, cameraPreview, captureBtn, retakeBtn, cameraStatus, startCameraBtn);
+            });
+
+            // Tasdiqlash kamerasi uchun
+            confirmationStartCameraBtn.addEventListener('click', function () {
+                startConfirmationCamera();
+            });
+
+            confirmationCaptureBtn.addEventListener('click', function () {
+                captureConfirmationPhoto();
+            });
+
+            confirmationRetakeBtn.addEventListener('click', function () {
+                retakeConfirmationPhoto();
+            });
+
+            // Formani tekshirish
+            function validateForm() {
+                const tashkilot = tashkilotSelect.value;
+                const avtomobile = avtomobileSelect.value;
+                const yoqilgi = yoqilgiSelect.value;
+                const miqdor = miqdorInput.value;
+
+                const isFormValid = tashkilot && avtomobile && yoqilgi && miqdor && isPhotoTaken;
+
+                submitBtn.disabled = !isFormValid;
+
+                if (!isFormValid) {
+                    submitBtn.title = 'Iltimos, barcha maydonlarni to\'ldiring va rasmga oling';
+                } else {
+                    submitBtn.title = 'Ma\'lumotlarni saqlash';
+                }
+
+                return isFormValid;
+            }
+
+            // Tasdiqlash formasi tekshirish
+            function validateConfirmationForm() {
+                confirmSubmitBtn.disabled = !isConfirmationPhotoTaken;
+
+                if (!isConfirmationPhotoTaken) {
+                    confirmSubmitBtn.title = 'Iltimos, tasdiqlash uchun rasmga oling';
+                } else {
+                    confirmSubmitBtn.title = 'Ma\'lumotlarni Telegramga yuborish va saqlash';
+                }
+
+                return isConfirmationPhotoTaken;
+            }
+
+            // Formani yuborish (tasdiqlash oynasini ochish)
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                if (!validateForm()) {
+                    showNotification('Iltimos, barcha maydonlarni to\'ldiring va rasmga oling', 'warning');
+                    return;
+                }
+
+                // Tasdiqlash oynasini to'ldirish
+                const tashkilotText = tashkilotSelect.options[tashkilotSelect.selectedIndex].text;
+                const avtomobileText = avtomobileSelect.options[avtomobileSelect.selectedIndex].text;
+                const yoqilgiText = yoqilgiSelect.options[yoqilgiSelect.selectedIndex].text;
+                const miqdorValue = miqdorInput.value;
+
+                confirmationDetails.innerHTML = `
+                    <p><strong>Tashkilot:</strong> ${tashkilotText}</p>
+                    <p><strong>Avtomobil:</strong> ${avtomobileText}</p>
+                    <p><strong>Yoqilg'i turi:</strong> ${yoqilgiText}</p>
+                    <p><strong>Miqdor:</strong> ${miqdorValue} litr</p>
+                    <p><strong>Umumiy narx:</strong> ${formatPrice(currentTotalPrice)} so'm</p>
+                    <p><strong>Vaqt:</strong> ${new Date().toLocaleString('uz-UZ')}</p>
+                `;
+
+                // Tasdiqlash oynasini ochish
+                confirmationModal.style.display = 'flex';
+
+                // Tasdiqlash kamerasi sozlamalarini qayta tiklash
+                isConfirmationPhotoTaken = false;
+                validateConfirmationForm();
+            });
+
+            // Tasdiqlash tugmasi
+            confirmSubmitBtn.addEventListener('click', function () {
+                if (!validateConfirmationForm()) {
+                    showNotification('Iltimos, tasdiqlash uchun rasmga oling', 'warning');
+                    return;
+                }
+
+                // Telegramga yuborish va saqlash
+                sendToTelegramAndSave();
+            });
+
+            // Telegramga yuborish va saqlash funksiyasi
+            function sendToTelegramAndSave() {
+                telegramStatus.textContent = '📤 Telegramga xabar yuborilmoqda...';
+                telegramStatus.className = 'telegram-status sending';
+                telegramStatus.style.display = 'block';
+
+                confirmSubmitBtn.disabled = true;
+
+                // Form ma'lumotlarini yig'ish
+                const formData = new FormData();
+                formData.append('tashkilot', tashkilotSelect.value);
+                formData.append('avtomobile', avtomobileSelect.value);
+                formData.append('yoqilgi', yoqilgiSelect.value);
+                formData.append('miqdor', parseFloat(miqdorInput.value).toFixed(2));
+
+                // Rasm ma'lumotlarini tekshirish
+                if (capturedImageData.value && capturedImageData.value !== '') {
+                    formData.append('captured_image', capturedImageData.value);
+                }
+
+                if (confirmationCapturedImageData.value && confirmationCapturedImageData.value !== '') {
+                    formData.append('confirmation_photo', confirmationCapturedImageData.value);
+                }
+
+                // Narxni to'g'ri formatda yuborish
+                formData.append('all_price', currentTotalPrice.toFixed(2));
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+                // Tashkilotning Telegram guruh ID sini olish
+                const selectedTashkilot = tashkilotSelect.options[tashkilotSelect.selectedIndex];
+                const groupId = selectedTashkilot.getAttribute('data-group-id');
+
+                // Telegram xabarini tayyorlash
+                const tashkilotText = tashkilotSelect.options[tashkilotSelect.selectedIndex].text;
+                const avtomobileText = avtomobileSelect.options[avtomobileSelect.selectedIndex].text;
+                const yoqilgiText = yoqilgiSelect.options[yoqilgiSelect.selectedIndex].text;
+                const miqdorValue = miqdorInput.value;
+
+                const telegramMessage = `
+🛢️ YANGI YOQILG'I QO'SHILDI
+
+🏢 Tashkilot: ${tashkilotText}
+🚗 Avtomobil: ${avtomobileText}
+⛽ Yoqilg'i turi: ${yoqilgiText}
+📊 Miqdor: ${miqdorValue} litr
+💰 Umumiy narx: ${formatPrice(currentTotalPrice)} so'm
+⏰ Vaqt: ${new Date().toLocaleString('uz-UZ')}
+👤 Qo'shgan foydalanuvchi: {{ request.user.username }}
+    `;
+
+                // Avval ma'lumotlarni saqlash
+                fetch("{% url 'add_fuel' %}", {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            telegramStatus.textContent = '✅ Ma\'lumotlar saqlandi. Telegramga yuborilmoqda...';
+
+                            // Telegramga yuborish
+                            return fetch("{% url 'send_telegram' %}", {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    group_id: groupId,
+                                    message: telegramMessage,
+                                    process_photo: capturedImageData.value,
+                                    confirmation_photo: confirmationCapturedImageData.value
+                                }),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                                }
+                            });
+                        } else {
+                            throw new Error(data.error || 'Ma\'lumotlarni saqlashda xatolik');
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            telegramStatus.textContent = '✅ Ma\'lumotlar saqlandi va Telegramga yuborildi';
+                            telegramStatus.className = 'telegram-status success';
+
+                            setTimeout(() => {
+                                confirmationModal.style.display = 'none';
+                                window.location.href = "{% url 'home' %}";
+                            }, 2000);
+                        } else {
+                            throw new Error('Telegramga yuborishda xatolik: ' + (data.error || 'Noma\'lum xato'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Xatolik:', error);
+                        telegramStatus.textContent = '❌ Xatolik yuz berdi: ' + error.message;
+                        telegramStatus.className = 'telegram-status error';
+                        confirmSubmitBtn.disabled = false;
+                    });
+            }
+
+            // Modalni yopish
+            closeModalBtn.addEventListener('click', function () {
+                confirmationModal.style.display = 'none';
+            });
+
+            confirmationCancelBtn.addEventListener('click', function () {
+                if (confirm('Haqiqatan ham bekor qilmoqchimisiz? Kiritilgan ma\'lumotlar saqlanmaydi.')) {
+                    confirmationModal.style.display = 'none';
+                }
+            });
+
+            // Tasdiqlash kamerasi funksiyalari
+            function startConfirmationCamera() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    confirmationCameraStatus.textContent = '📷 Kamera ochilmoqda...';
+                    confirmationCameraStatus.className = 'camera-status pending';
+
+                    navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    })
+                        .then(function (mediaStream) {
+                            confirmationStream = mediaStream;
+
+                            // Video elementini yaratish
+                            confirmationVideo = document.createElement('video');
+                            confirmationVideo.srcObject = mediaStream;
+                            confirmationVideo.autoplay = true;
+                            confirmationVideo.playsInline = true;
+
+                            // Canvas elementini yaratish
+                            confirmationCanvas = document.createElement('canvas');
+
+                            // Preview elementini tozalash va videoni qo'shish
+                            confirmationCameraPreview.innerHTML = '';
+                            confirmationCameraPreview.appendChild(confirmationVideo);
+
+                            // Tugmalarni sozlash
+                            confirmationStartCameraBtn.disabled = true;
+                            confirmationCaptureBtn.disabled = false;
+
+                            confirmationCameraStatus.textContent = '✅ Kamera tayyor - Endi rasmga olishingiz mumkin';
+                            confirmationCameraStatus.className = 'camera-status success';
+
+                            // Video yuklanganida canvas o'lchamlarini sozlash
+                            confirmationVideo.addEventListener('loadedmetadata', function () {
+                                confirmationCanvas.width = confirmationVideo.videoWidth;
+                                confirmationCanvas.height = confirmationVideo.videoHeight;
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error('Kamerani ochishda xatolik:', error);
+                            confirmationCameraStatus.textContent = '❌ Kamera ochilmadi - Iltimos, kameraga ruxsat bering';
+                            confirmationCameraStatus.className = 'camera-status error';
+                            showNotification('Kamerani ochishda xatolik yuz berdi. Iltimos, kameraga ruxsat bering.', 'error');
+                        });
+                } else {
+                    confirmationCameraStatus.textContent = '❌ Brauzeringiz kamerani qo\'llab-quvvatlamaydi';
+                    confirmationCameraStatus.className = 'camera-status error';
+                    showNotification('Kamera qurilmangiz qo\'llab-quvvatlanmaydi', 'error');
+                }
+            }
+
+            function captureConfirmationPhoto() {
+                if (confirmationVideo && confirmationCanvas) {
+                    const ctx = confirmationCanvas.getContext('2d');
+                    ctx.drawImage(confirmationVideo, 0, 0, confirmationCanvas.width, confirmationCanvas.height);
+
+                    // Canvas'dan rasmni olish
+                    const imageDataURL = confirmationCanvas.toDataURL('image/jpeg', 0.8);
+                    confirmationCapturedImage.src = imageDataURL;
+                    confirmationCapturedImageData.value = imageDataURL;
+
+                    // Elementlarni ko'rsatish/yashirish
+                    confirmationCameraPreview.style.display = 'none';
+                    confirmationCapturedImage.style.display = 'block';
+                    confirmationCaptureBtn.style.display = 'none';
+                    confirmationRetakeBtn.style.display = 'block';
+
+                    // Kamerani to'xtatish
+                    if (confirmationStream) {
+                        confirmationStream.getTracks().forEach(track => track.stop());
+                    }
+
+                    isConfirmationPhotoTaken = true;
+                    validateConfirmationForm();
+                }
+            }
+
+            function retakeConfirmationPhoto() {
+                // Elementlarni qayta sozlash
+                confirmationCameraPreview.style.display = 'block';
+                confirmationCapturedImage.style.display = 'none';
+                confirmationCaptureBtn.style.display = 'block';
+                confirmationRetakeBtn.style.display = 'none';
+                confirmationCapturedImageData.value = '';
+
+                confirmationCameraStatus.textContent = '📷 Kamera tayyorlanmoqda...';
+                confirmationCameraStatus.className = 'camera-status pending';
+
+                isConfirmationPhotoTaken = false;
+                validateConfirmationForm();
+
+                // Kamerani qayta yoqish
+                startConfirmationCamera();
+            }
+
+            // Asosiy kamera funksiyalari
+            function startCamera(previewElement, statusElement, startBtn, captureBtn) {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    statusElement.textContent = '📷 Kamera ochilmoqda...';
+                    statusElement.className = 'camera-status pending';
+
+                    navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    })
+                        .then(function (mediaStream) {
+                            stream = mediaStream;
+
+                            // Video elementini yaratish
+                            video = document.createElement('video');
+                            video.srcObject = mediaStream;
+                            video.autoplay = true;
+                            video.playsInline = true;
+
+                            // Canvas elementini yaratish
+                            canvas = document.createElement('canvas');
+
+                            // Preview elementini tozalash va videoni qo'shish
+                            previewElement.innerHTML = '';
+                            previewElement.appendChild(video);
+
+                            // Tugmalarni sozlash
+                            startBtn.disabled = true;
+                            captureBtn.disabled = false;
+
+                            statusElement.textContent = '✅ Kamera tayyor - Endi rasmga olishingiz mumkin';
+                            statusElement.className = 'camera-status success';
+
+                            // Video yuklanganida canvas o'lchamlarini sozlash
+                            video.addEventListener('loadedmetadata', function () {
+                                canvas.width = video.videoWidth;
+                                canvas.height = video.videoHeight;
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error('Kamerani ochishda xatolik:', error);
+                            statusElement.textContent = '❌ Kamera ochilmadi - Iltimos, kameraga ruxsat bering';
+                            statusElement.className = 'camera-status error';
+                            showNotification('Kamerani ochishda xatolik yuz berdi. Iltimos, kameraga ruxsat bering.', 'error');
+                        });
+                } else {
+                    statusElement.textContent = '❌ Brauzeringiz kamerani qo\'llab-quvvatlamaydi';
+                    statusElement.className = 'camera-status error';
+                    showNotification('Kamera qurilmangiz qo\'llab-quvvatlanmaydi', 'error');
+                }
+            }
+
+            function capturePhoto(imageElement, imageDataElement, previewElement, captureBtn, retakeBtn) {
+                if (video && canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Canvas'dan rasmni olish
+                    const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    imageElement.src = imageDataURL;
+                    imageDataElement.value = imageDataURL;
+
+                    // Elementlarni ko'rsatish/yashirish
+                    previewElement.style.display = 'none';
+                    imageElement.style.display = 'block';
+                    captureBtn.style.display = 'none';
+                    retakeBtn.style.display = 'block';
+
+                    // Kamerani to'xtatish
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+
+                    isPhotoTaken = true;
+                    validateForm();
+                }
+            }
+
+            function retakePhoto(imageElement, imageDataElement, previewElement, captureBtn, retakeBtn, statusElement, startBtn) {
+                // Elementlarni qayta sozlash
+                previewElement.style.display = 'block';
+                imageElement.style.display = 'none';
+                captureBtn.style.display = 'block';
+                retakeBtn.style.display = 'none';
+                imageDataElement.value = '';
+
+                statusElement.textContent = '📷 Kamera tayyorlanmoqda...';
+                statusElement.className = 'camera-status pending';
+
+                isPhotoTaken = false;
+                validateForm();
+
+                // Kamerani qayta yoqish
+                startBtn.click();
+            }
+
+            // Bekor qilish
+            cancelBtn.addEventListener('click', function () {
+                if (confirm('Haqiqatan ham bekor qilmoqchimisiz? Kiritilgan ma\'lumotlar saqlanmaydi.')) {
+                    window.location.href = "{% url 'home' %}";
+                }
+            });
+
+            // Xabarnoma ko'rsatish
+            function showNotification(message, type) {
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.style.display = 'block';
+
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+
+            // Dastlabki tekshirish
+            validateForm();
+        });
+    </script>
+</body>
+
+</html>

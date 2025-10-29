@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yoqilg'i Turini Tahrirlash - Yoqilg'i Boshqaruvi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 text-center">
+                        <i class="fas fa-edit me-2"></i>Yoqilg'i Turini Tahrirlash
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Xatolik!</strong> Quyidagi maydonlarni to'g'ri to'ldiring.
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label fw-bold">Yoqilg'i nomi</label>
+                            <input type="text" 
+                                   name="title" 
+                                   id="id_title" 
+                                   class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.title.value|default:'' }}" 
+                                   required>
+                            {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.title.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_price" class="form-label fw-bold">Narxi (so'm)</label>
+                            <input type="number" 
+                                   name="price" 
+                                   id="id_price" 
+                                   step="0.01" 
+                                   class="form-control form-control-lg {% if form.price.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.price.value|default:'' }}" 
+                                   required>
+                            {% if form.price.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.price.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'admin_panel' %}" class="btn btn-secondary me-md-2 px-4">
+                                <i class="fas fa-times me-1"></i> Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-save me-1"></i> Saqlash
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

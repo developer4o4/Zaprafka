@@ -1,0 +1,645 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Yoqilg'i Boshqaruvi</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #2563eb;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, #366092, #2a5298);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            margin: 0;
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+        }
+
+        .btn-success-custom {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+        }
+
+        .btn-danger-custom {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .btn-sm-custom {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .form-container-custom {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-group-custom {
+            margin-bottom: 20px;
+        }
+
+        .form-group-custom label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-buttons-custom {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #2563eb;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-gas-pump me-2"></i>
+                Yoqilg'i Boshqaruvi
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-user me-1"></i> {{ request.user.username }}
+                </span>
+                <a class="nav-link" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt me-1"></i> Chiqish
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-2">Admin Panel</h1>
+                    <p class="text-muted mb-0">Tizimni boshqarish va sozlamalar</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'home' %}" class="btn btn-secondary-custom btn-custom">
+                        <i class="fas fa-home"></i> Bosh Sahifa
+                    </a>
+                    <a href="{% url 'statistics' %}" class="btn btn-primary-custom btn-custom">
+                        <i class="fas fa-chart-bar"></i> Statistika
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+                <div class="d-flex align-items-center">
+                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} me-2"></i>
+                    <div>{{ message }}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Quick Stats -->
+         
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ tashkilotlar.count }}</div>
+                <div class="stat-label">Tashkilotlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ avto_list.count }}</div>
+                <div class="stat-label">Avtomobillar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ yoqilgilar.count }}</div>
+                <div class="stat-label">Yoqilg'i Turlari</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-bolt me-2"></i>Tezkor Amallar</h3>
+            </div>
+            <div class="p-4">
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'add_user' %}" class="btn btn-primary-custom btn-custom">
+                        <i class="fas fa-user-plus"></i> Yangi Ishchi
+                    </a>
+                    <button type="button" class="btn btn-success-custom btn-custom" id="show-tashkilot-form">
+                        <i class="fas fa-building"></i> Yangi Tashkilot
+                    </button>
+                    <button type="button" class="btn btn-success-custom btn-custom" id="show-avto-form">
+                        <i class="fas fa-car"></i> Yangi Avtomobil
+                    </button>
+                    <button type="button" class="btn btn-success-custom btn-custom" id="show-yoqilgi-form">
+                        <i class="fas fa-gas-pump"></i> Yangi Yoqilg'i
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Forms -->
+        <div id="tashkilot-form" class="form-container-custom" style="display: none;">
+            <h4 class="mb-4"><i class="fas fa-building me-2"></i>Yangi Tashkilot Qo'shish</h4>
+            <form method="post" action="{% url 'add_tashkilot' %}">
+                {% csrf_token %}
+                <div class="form-group-custom">
+                    <label for="tashkilot-nomi">Tashkilot nomi</label>
+                    <input type="text" name="title" id="tashkilot-nomi" class="form-control-custom" required>
+                </div>
+                <div class="form-group-custom">
+                    <label for="group-id">Telegram Gruh ID</label>
+                    <input type="number" name="group_id" id="group-id" class="form-control-custom" value="4885110792" required>
+                </div>
+                <div class="form-buttons-custom">
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="avto-form" class="form-container-custom" style="display: none;">
+            <h4 class="mb-4"><i class="fas fa-car me-2"></i>Yangi Avtomobil Qo'shish</h4>
+            <form method="post" action="{% url 'add_avto' %}">
+                {% csrf_token %}
+                <div class="form-group-custom">
+                    <label for="avto-tashkilot">Tashkilot</label>
+                    <select id="avto-tashkilot" name="tashkilot_id" class="form-control-custom" required>
+                        <option value="">Tanlang</option>
+                        {% for t in tashkilotlar %}
+                        <option value="{{ t.id }}">{{ t.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group-custom">
+                    <label for="avto-title">Avtomobil nomi</label>
+                    <input type="text" name="title" id="avto-title" class="form-control-custom" required>
+                </div>
+                <div class="form-group-custom">
+                    <label for="avto-number">Avtomobil raqami</label>
+                    <input type="text" name="avto_number" id="avto-number" class="form-control-custom" required>
+                </div>
+                <div class="form-buttons-custom">
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="yoqilgi-form" class="form-container-custom" style="display: none;">
+            <h4 class="mb-4"><i class="fas fa-gas-pump me-2"></i>Yangi Yoqilg'i Turi Qo'shish</h4>
+            <form method="post" action="{% url 'add_yoqilgi' %}">
+                {% csrf_token %}
+                <div class="form-group-custom">
+                    <label for="yoqilgi-title">Yoqilg'i nomi</label>
+                    <input type="text" name="title" id="yoqilgi-title" class="form-control-custom" required>
+                </div>
+                <div class="form-group-custom">
+                    <label for="yoqilgi-price">Yoqilg'i narxi (so'm)</label>
+                    <input type="number" name="price" id="yoqilgi-price" class="form-control-custom" step="0.01" required>
+                </div>
+                <div class="form-buttons-custom">
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tashkilotlar -->
+         <div class="admin-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-building me-2"></i>Ishchilar</h3>
+            </div>
+            <div class="p-4">
+                {% if users %}
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>username</th>
+                                <th>Telefon raqam</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in users %}
+                            <tr>
+                                <td>
+                                    <strong>{{ forloop.counter }}</strong>
+                                </td>
+                                <td>
+                                    <strong>{{ t.username }}</strong>
+                                </td>
+                                <td>
+                                    <code>{{ t.phone }}</code>
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Hozircha tashkilotlar mavjud emas</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-building me-2"></i>Tashkilotlar</h3>
+            </div>
+            <div class="p-4">
+                {% if tashkilotlar %}
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Telegram Gruh ID</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tashkilotlar %}
+                            <tr>
+                                <td>
+                                    <strong>{{ t.title }}</strong>
+                                </td>
+                                <td>
+                                    <code>{{ t.group_id }}</code>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'tashkilot_edit' t.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
+                                            <i class="fas fa-edit"></i> Tahrirlash
+                                        </a>
+                                        <a href="{% url 'tashkilot_delete' t.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
+                                           onclick="return confirm('Haqiqatan ham \"{{ t.title }}\" ni o\\'chirmoqchimisiz?')">
+                                            <i class="fas fa-trash"></i> O'chirish
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Hozircha tashkilotlar mavjud emas</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Avtomobillar -->
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-car me-2"></i>Avtomobillar</h3>
+            </div>
+            <div class="p-4">
+                {% if avto_list %}
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Tashkilot</th>
+                                <th>Nomi</th>
+                                <th>Raqami</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in avto_list %}
+                            <tr>
+                                <td>{{ a.tashkilot.title }}</td>
+                                <td>
+                                    <strong>{{ a.title }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ a.avto_number }}</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'avto_edit' a.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
+                                            <i class="fas fa-edit"></i> Tahrirlash
+                                        </a>
+                                        <a href="{% url 'avto_delete' a.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
+                                           onclick="return confirm('Haqiqatan ham \"{{ a.title }}\" ni o\\'chirmoqchimisiz?')">
+                                            <i class="fas fa-trash"></i> O'chirish
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Hozircha avtomobillar mavjud emas</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Yoqilg'i Turlari -->
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-gas-pump me-2"></i>Yoqilg'i Turlari</h3>
+            </div>
+            <div class="p-4">
+                {% if yoqilgilar %}
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Narxi</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for y in yoqilgilar %}
+                            <tr>
+                                <td>
+                                    <strong>{{ y.title }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">{{ y.price }} so'm</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'yoqilgi_turi_edit' y.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
+                                            <i class="fas fa-edit"></i> Tahrirlash
+                                        </a>
+                                        <a href="{% url 'yoqilgi_turi_delete' y.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
+                                           onclick="return confirm('Haqiqatan ham \"{{ y.title }}\" ni o\\'chirmoqchimisiz?')">
+                                            <i class="fas fa-trash"></i> O'chirish
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-gas-pump fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Hozircha yoqilg'i turlari mavjud emas</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Formalarni boshqarish
+        document.addEventListener('DOMContentLoaded', function() {
+            const showTashkilotBtn = document.getElementById('show-tashkilot-form');
+            const showAvtoBtn = document.getElementById('show-avto-form');
+            const showYoqilgiBtn = document.getElementById('show-yoqilgi-form');
+            const closeButtons = document.querySelectorAll('.close-form');
+
+            const tashForm = document.getElementById('tashkilot-form');
+            const avtoForm = document.getElementById('avto-form');
+            const yoqForm = document.getElementById('yoqilgi-form');
+
+            // Formalarni ko'rsatish
+            showTashkilotBtn.addEventListener('click', () => {
+                tashForm.style.display = 'block';
+                tashForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            showAvtoBtn.addEventListener('click', () => {
+                avtoForm.style.display = 'block';
+                avtoForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            showYoqilgiBtn.addEventListener('click', () => {
+                yoqForm.style.display = 'block';
+                yoqForm.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Formalarni yopish
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tashForm.style.display = 'none';
+                    avtoForm.style.display = 'none';
+                    yoqForm.style.display = 'none';
+                });
+            });
+
+            // Formalar to'g'ri yopilishi uchun
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('form-container-custom')) {
+                    e.target.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

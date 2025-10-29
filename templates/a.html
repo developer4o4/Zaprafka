@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoqilg'i Boshqaruvi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Umumiy stillar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login sahifasi stillari */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #2a5298;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1e3c72;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        /* Header stillari */
+        header {
+            background-color: #2a5298;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Dashboard stillari */
+        .dashboard {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* Form container stillari */
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* Jadval stillari */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Demo hisoblar */
+        .demo-accounts {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        /* Camera preview */
+        .camera-preview {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            border: 2px dashed #ddd;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+        }
+        
+        /* Xabar ko'rsatish */
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Sahifa navigatsiyasi */
+        .page {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        /* Admin paneli stillari */
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .admin-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        /* Statistika stillari */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-title {
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #2a5298;
+        }
+        
+        .stats-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stats-filters select {
+            width: auto;
+            min-width: 200px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons, .admin-actions {
+                flex-direction: column;
+            }
+            
+            .stats-filters {
+                flex-direction: column;
+            }
+            
+            .stats-filters select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login sahifasi -->
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <div class="login-form">
+                <h2>Tizimga Kirish</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Foydalanuvchi nomi:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Parol:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Kirish</button>
+                </form>
+                <div class="demo-accounts">
+                    <p><strong>Demo hisoblar:</strong></p>
+                    <p>Admin: <strong>admin</strong> / Parol: <strong>admin123</strong></p>
+                    <p>User: <strong>user</strong> / Parol: <strong>user123</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User sahifasi -->
+    <div id="home-page" class="page">
+        <header>
+            <div class="container header-content">
+                <h1>Yoqilg'i Boshqaruvi Tizimi</h1>
+                <div class="user-info">
+                    <span id="current-user">Foydalanuvchi</span>
+                    <button id="logout-btn" class="btn-secondary">Chiqish</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="dashboard">
+                <h2>Bosh Sahifa</h2>
+                <div class="action-buttons">
+                    <button id="add-fuel-btn" class="btn-primary">Yoqilg'i Qo'shish</button>
+                    <button id="today-fuel-btn" class="btn-primary">Bugungi Quyilgan Yoqilg'ilar</button>
+                </div>
+                
+                <!-- Yoqilg'i qo'shish formasi -->
+                <div id="fuel-form" class="form-container" style="display: none;">
+                    <h3>Yoqilg'i Qo'shish</h3>
+                    <form id="add-fuel-form">
+                        <div class="form-group">
+                            <label for="tashkilot">Tashkilot:</label>
+                            <select id="tashkilot" name="tashkilot" required>
+                                <option value="">Tanlang</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="avtomobile">Avtomobile:</label>
+                            <select id="avtomobile" name="avtomobile" required>
+                                <option value="">Tanlang</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="yoqilgi">Yoqilg'i turi:</label>
+                            <select id="yoqilgi" name="yoqilgi" required>
+                                <option value="">Tanlang</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="miqdor">Miqdor (litr):</label>
+                            <input type="number" id="miqdor" name="miqdor" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rasmga olish:</label>
+                            <div class="camera-preview" id="camera-preview">
+                                Kamera tayyorlanmoqda...
+                            </div>
+                            <button type="button" id="capture-btn" class="btn-secondary">Rasmga olish</button>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn-success">Saqlash</button>
+                            <button type="button" id="cancel-fuel-btn" class="btn-secondary">Bekor qilish</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Bugungi yoqilg'ilar ro'yxati -->
+                <div id="today-fuel-list" class="form-container" style="display: none;">
+                    <h3>Bugungi Quyilgan Yoqilg'ilar</h3>
+                    <table id="fuel-table">
+                        <thead>
+                            <tr>
+                                <th>Tashkilot</th>
+                                <th>Avtomobile</th>
+                                <th>Yoqilg'i turi</th>
+                                <th>Miqdor (litr)</th>
+                                <th>Vaqt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                    <div class="form-buttons">
+                        <button id="back-to-home-btn" class="btn-secondary">Orqaga</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin sahifasi -->
+    <div id="admin-page" class="page">
+        <header>
+            <div class="container header-content">
+                <h1>Admin Panel - Yoqilg'i Boshqaruvi</h1>
+                <div class="user-info">
+                    <span id="admin-user">Admin</span>
+                    <button id="admin-logout-btn" class="btn-secondary">Chiqish</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="dashboard">
+                <h2>Boshqaruv Panel</h2>
+                
+                <div class="admin-actions">
+                    <button id="add-tashkilot-btn" class="btn-primary">Yangi Tashkilot Qo'shish</button>
+                    <button id="add-avtomobile-btn" class="btn-primary">Yangi Avtomobile Qo'shish</button>
+                    <button id="add-yoqilgi-btn" class="btn-primary">Yangi Yoqilg'i Turi Qo'shish</button>
+                    <button id="stats-btn" class="btn-primary">Statistika</button>
+                </div>
+                
+                <!-- Tashkilotlar qo'shish formasi -->
+                <div id="add-tashkilot-form" class="form-container" style="display: none;">
+                    <h3>Yangi Tashkilot Qo'shish</h3>
+                    <form id="tashkilot-form">
+                        <div class="form-group">
+                            <label for="tashkilot-nomi">Tashkilot nomi:</label>
+                            <input type="text" id="tashkilot-nomi" name="tashkilot-nomi" required>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn-success">Saqlash</button>
+                            <button type="button" id="cancel-tashkilot-btn" class="btn-secondary">Bekor qilish</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Avtomobile qo'shish formasi -->
+                <div id="add-avtomobile-form" class="form-container" style="display: none;">
+                    <h3>Yangi Avtomobile Qo'shish</h3>
+                    <form id="avtomobile-form">
+                        <div class="form-group">
+                            <label for="avtomobile-tashkilot">Tashkilot:</label>
+                            <select id="avtomobile-tashkilot" name="avtomobile-tashkilot" required>
+                                <option value="">Tanlang</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="avtomobile-nomi">Avtomobile nomi:</label>
+                            <input type="text" id="avtomobile-nomi" name="avtomobile-nomi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="avtomobile-raqami">Avtomobile raqami:</label>
+                            <input type="text" id="avtomobile-raqami" name="avtomobile-raqami" required>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn-success">Saqlash</button>
+                            <button type="button" id="cancel-avtomobile-btn" class="btn-secondary">Bekor qilish</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Yoqilg'i turi qo'shish formasi -->
+                <div id="add-yoqilgi-form" class="form-container" style="display: none;">
+                    <h3>Yangi Yoqilg'i Turi Qo'shish</h3>
+                    <form id="yoqilgi-form">
+                        <div class="form-group">
+                            <label for="yoqilgi-nomi">Yoqilg'i nomi:</label>
+                            <input type="text" id="yoqilgi-nomi" name="yoqilgi-nomi" required>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn-success">Saqlash</button>
+                            <button type="button" id="cancel-yoqilgi-btn" class="btn-secondary">Bekor qilish</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Statistika sahifasi -->
+                <div id="stats-page" class="form-container" style="display: none;">
+                    <h3>Statistika</h3>
+                    
+                    <div class="stats-filters">
+                        <div class="form-group">
+                            <label for="stats-period">Davr:</label>
+                            <select id="stats-period">
+                                <option value="7">Oxirgi 7 kun</option>
+                                <option value="30">Oxirgi 30 kun</option>
+                                <option value="90">Oxirgi 90 kun</option>
+                                <option value="365">Oxirgi 1 yil</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="stats-tashkilot">Tashkilot:</label>
+                            <select id="stats-tashkilot">
+                                <option value="all">Barchasi</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="chart-container">
+                            <h4 class="chart-title">Tashkilotlar Bo'yicha Yoqilg'i Sarfi</h4>
+                            <canvas id="tashkilotChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4 class="chart-title">Avtomobillar Bo'yicha Yoqilg'i Sarfi</h4>
+                            <canvas id="avtomobileChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4 class="chart-title">Yoqilg'i Turlari Bo'yicha Sarf</h4>
+                            <canvas id="yoqilgiChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4 class="chart-title">Oylik Yoqilg'i Sarfi</h4>
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button id="back-to-admin-btn" class="btn-secondary">Orqaga</button>
+                    </div>
+                </div>
+                
+                <!-- Tashkilotlar ro'yxati -->
+                <div class="admin-section">
+                    <h3 class="section-title">Tashkilotlar</h3>
+                    <table id="tashkilot-table">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Avtomobillar ro'yxati -->
+                <div class="admin-section">
+                    <h3 class="section-title">Avtomobillar</h3>
+                    <table id="avtomobile-table">
+                        <thead>
+                            <tr>
+                                <th>Tashkilot</th>
+                                <th>Nomi</th>
+                                <th>Raqami</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Yoqilg'i turlari ro'yxati -->
+                <div class="admin-section">
+                    <h3 class="section-title">Yoqilg'i Turlari</h3>
+                    <table id="yoqilgi-table">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Barcha yoqilg'i ma'lumotlari -->
+                <div class="admin-section">
+                    <h3 class="section-title">Barcha Yoqilg'i Ma'lumotlari</h3>
+                    <table id="all-fuel-table">
+                        <thead>
+                            <tr>
+                                <th>Tashkilot</th>
+                                <th>Avtomobile</th>
+                                <th>Yoqilg'i turi</th>
+                                <th>Miqdor (litr)</th>
+                                <th>Vaqt</th>
+                                <th>Foydalanuvchi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ma'lumotlarni saqlash
+        let users = [
+            { username: 'admin', password: 'admin123', role: 'admin' },
+            { username: 'user', password: 'user123', role: 'user' }
+        ];
+        
+        let tashkilotlar = [
+            { id: 1, nomi: 'Tashkilot A' },
+            { id: 2, nomi: 'Tashkilot B' }
+        ];
+        
+        let avtomobillar = [
+            { id: 1, tashkilotId: 1, nomi: 'Nexia 3', raqami: '01 A 123 AA' },
+            { id: 2, tashkilotId: 1, nomi: 'Cobalt', raqami: '01 B 456 BB' },
+            { id: 3, tashkilotId: 2, nomi: 'Malibu', raqami: '01 C 789 CC' }
+        ];
+        
+        let yoqilgiTurlari = [
+            { id: 1, nomi: 'AI-80' },
+            { id: 2, nomi: 'AI-91' },
+            { id: 3, nomi: 'AI-95' }
+        ];
+        
+        let fuelRecords = [];
+        
+        let currentUser = null;
+        
+        // Chart obyektlari
+        let tashkilotChart = null;
+        let avtomobileChart = null;
+        let yoqilgiChart = null;
+        let monthlyChart = null;
+        
+        // Sahifa yuklanganda
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login formasi
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // User sahifasi elementlari
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('add-fuel-btn').addEventListener('click', showFuelForm);
+            document.getElementById('today-fuel-btn').addEventListener('click', showTodayFuel);
+            document.getElementById('cancel-fuel-btn').addEventListener('click', hideFuelForm);
+            document.getElementById('back-to-home-btn').addEventListener('click', backToHome);
+            document.getElementById('add-fuel-form').addEventListener('submit', handleAddFuel);
+            
+            // Admin sahifasi elementlari
+            document.getElementById('admin-logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('add-tashkilot-btn').addEventListener('click', showAddTashkilotForm);
+            document.getElementById('add-avtomobile-btn').addEventListener('click', showAddAvtomobileForm);
+            document.getElementById('add-yoqilgi-btn').addEventListener('click', showAddYoqilgiForm);
+            document.getElementById('stats-btn').addEventListener('click', showStatsPage);
+            document.getElementById('back-to-admin-btn').addEventListener('click', hideStatsPage);
+            
+            document.getElementById('cancel-tashkilot-btn').addEventListener('click', hideAddTashkilotForm);
+            document.getElementById('cancel-avtomobile-btn').addEventListener('click', hideAddAvtomobileForm);
+            document.getElementById('cancel-yoqilgi-btn').addEventListener('click', hideAddYoqilgiForm);
+            
+            document.getElementById('tashkilot-form').addEventListener('submit', handleAddTashkilot);
+            document.getElementById('avtomobile-form').addEventListener('submit', handleAddAvtomobile);
+            document.getElementById('yoqilgi-form').addEventListener('submit', handleAddYoqilgi);
+            
+            // Statistika filtrlari
+            document.getElementById('stats-period').addEventListener('change', updateCharts);
+            document.getElementById('stats-tashkilot').addEventListener('change', updateCharts);
+            
+            // Dastlabki ma'lumotlarni yuklash
+            loadInitialData();
+        });
+        
+        // Login qilish
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                
+                if (user.role === 'admin') {
+                    showPage('admin-page');
+                    document.getElementById('admin-user').textContent = user.username;
+                    loadAdminData();
+                } else {
+                    showPage('home-page');
+                    document.getElementById('current-user').textContent = user.username;
+                    loadUserData();
+                }
+            } else {
+                alert('Noto‘g‘ri foydalanuvchi nomi yoki parol!');
+            }
+        }
+        
+        // Chiqish
+        function handleLogout() {
+            currentUser = null;
+            showPage('login-page');
+            document.getElementById('loginForm').reset();
+        }
+        
+        // Sahifalarni ko'rsatish
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        // Yoqilg'i qo'shish formasini ko'rsatish
+        function showFuelForm() {
+            document.getElementById('fuel-form').style.display = 'block';
+            document.getElementById('today-fuel-list').style.display = 'none';
+            
+            // Tashkilotlarni yuklash
+            const tashkilotSelect = document.getElementById('tashkilot');
+            tashkilotSelect.innerHTML = '<option value="">Tanlang</option>';
+            tashkilotlar.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.nomi;
+                tashkilotSelect.appendChild(option);
+            });
+            
+            // Yoqilg'i turlarini yuklash
+            const yoqilgiSelect = document.getElementById('yoqilgi');
+            yoqilgiSelect.innerHTML = '<option value="">Tanlang</option>';
+            yoqilgiTurlari.forEach(y => {
+                const option = document.createElement('option');
+                option.value = y.id;
+                option.textContent = y.nomi;
+                yoqilgiSelect.appendChild(option);
+            });
+            
+            // Tashkilot tanlanganda avtomobillarni yuklash
+            tashkilotSelect.addEventListener('change', function() {
+                const avtomobileSelect = document.getElementById('avtomobile');
+                avtomobileSelect.innerHTML = '<option value="">Tanlang</option>';
+                
+                if (this.value) {
+                    const filteredAvtomobillar = avtomobillar.filter(a => a.tashkilotId == this.value);
+                    filteredAvtomobillar.forEach(a => {
+                        const option = document.createElement('option');
+                        option.value = a.id;
+                        option.textContent = `${a.nomi} (${a.raqami})`;
+                        avtomobileSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        // Yoqilg'i qo'shish formasini yashirish
+        function hideFuelForm() {
+            document.getElementById('fuel-form').style.display = 'none';
+        }
+        
+        // Bugungi yoqilg'ilarni ko'rsatish
+        function showTodayFuel() {
+            document.getElementById('fuel-form').style.display = 'none';
+            document.getElementById('today-fuel-list').style.display = 'block';
+            
+            const today = new Date().toDateString();
+            const todayRecords = fuelRecords.filter(record => {
+                const recordDate = new Date(record.date).toDateString();
+                return recordDate === today && record.user === currentUser.username;
+            });
+            
+            const tbody = document.getElementById('fuel-table').querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (todayRecords.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" style="text-align: center;">Bugun hech qanday yoqilg'i qo'shilmagan</td>`;
+                tbody.appendChild(row);
+            } else {
+                todayRecords.forEach(record => {
+                    const tashkilot = tashkilotlar.find(t => t.id == record.tashkilotId);
+                    const avtomobile = avtomobillar.find(a => a.id == record.avtomobileId);
+                    const yoqilgi = yoqilgiTurlari.find(y => y.id == record.yoqilgiId);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tashkilot ? tashkilot.nomi : 'Noma\'lum'}</td>
+                        <td>${avtomobile ? avtomobile.nomi : 'Noma\'lum'}</td>
+                        <td>${yoqilgi ? yoqilgi.nomi : 'Noma\'lum'}</td>
+                        <td>${record.miqdor}</td>
+                        <td>${new Date(record.date).toLocaleString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        // Bosh sahifaga qaytish
+        function backToHome() {
+            document.getElementById('fuel-form').style.display = 'none';
+            document.getElementById('today-fuel-list').style.display = 'none';
+        }
+        
+        // Yoqilg'i qo'shish
+        function handleAddFuel(e) {
+            e.preventDefault();
+            
+            const tashkilotId = document.getElementById('tashkilot').value;
+            const avtomobileId = document.getElementById('avtomobile').value;
+            const yoqilgiId = document.getElementById('yoqilgi').value;
+            const miqdor = document.getElementById('miqdor').value;
+            
+            if (!tashkilotId || !avtomobileId || !yoqilgiId || !miqdor) {
+                alert('Iltimos, barcha maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            const newRecord = {
+                id: fuelRecords.length + 1,
+                tashkilotId: parseInt(tashkilotId),
+                avtomobileId: parseInt(avtomobileId),
+                yoqilgiId: parseInt(yoqilgiId),
+                miqdor: parseFloat(miqdor),
+                date: new Date().toISOString(),
+                user: currentUser.username
+            };
+            
+            fuelRecords.push(newRecord);
+            
+            alert('Yoqilg\'i muvaffaqiyatli qo\'shildi!');
+            document.getElementById('add-fuel-form').reset();
+            hideFuelForm();
+            
+            // Agar admin bo'lsa, ma'lumotlarni yangilash
+            if (currentUser.role === 'admin') {
+                loadAdminData();
+            }
+        }
+        
+        // Tashkilot qo'shish formasini ko'rsatish
+        function showAddTashkilotForm() {
+            document.getElementById('add-tashkilot-form').style.display = 'block';
+        }
+        
+        // Tashkilot qo'shish formasini yashirish
+        function hideAddTashkilotForm() {
+            document.getElementById('add-tashkilot-form').style.display = 'none';
+            document.getElementById('tashkilot-form').reset();
+        }
+        
+        // Avtomobile qo'shish formasini ko'rsatish
+        function showAddAvtomobileForm() {
+            document.getElementById('add-avtomobile-form').style.display = 'block';
+            
+            // Tashkilotlarni yuklash
+            const tashkilotSelect = document.getElementById('avtomobile-tashkilot');
+            tashkilotSelect.innerHTML = '<option value="">Tanlang</option>';
+            tashkilotlar.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.nomi;
+                tashkilotSelect.appendChild(option);
+            });
+        }
+        
+        // Avtomobile qo'shish formasini yashirish
+        function hideAddAvtomobileForm() {
+            document.getElementById('add-avtomobile-form').style.display = 'none';
+            document.getElementById('avtomobile-form').reset();
+        }
+        
+        // Yoqilg'i turi qo'shish formasini ko'rsatish
+        function showAddYoqilgiForm() {
+            document.getElementById('add-yoqilgi-form').style.display = 'block';
+        }
+        
+        // Yoqilg'i turi qo'shish formasini yashirish
+        function hideAddYoqilgiForm() {
+            document.getElementById('add-yoqilgi-form').style.display = 'none';
+            document.getElementById('yoqilgi-form').reset();
+        }
+        
+        // Statistika sahifasini ko'rsatish
+        function showStatsPage() {
+            document.getElementById('stats-page').style.display = 'block';
+            
+            // Tashkilotlarni filtrlash uchun yuklash
+            const tashkilotSelect = document.getElementById('stats-tashkilot');
+            tashkilotSelect.innerHTML = '<option value="all">Barchasi</option>';
+            tashkilotlar.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.nomi;
+                tashkilotSelect.appendChild(option);
+            });
+            
+            // Chartlarni yaratish
+            createCharts();
+        }
+        
+        // Statistika sahifasini yashirish
+        function hideStatsPage() {
+            document.getElementById('stats-page').style.display = 'none';
+        }
+        
+        // Tashkilot qo'shish
+        function handleAddTashkilot(e) {
+            e.preventDefault();
+            
+            const nomi = document.getElementById('tashkilot-nomi').value;
+            
+            if (!nomi) {
+                alert('Iltimos, tashkilot nomini kiriting!');
+                return;
+            }
+            
+            const newTashkilot = {
+                id: tashkilotlar.length + 1,
+                nomi: nomi
+            };
+            
+            tashkilotlar.push(newTashkilot);
+            
+            alert('Tashkilot muvaffaqiyatli qo\'shildi!');
+            hideAddTashkilotForm();
+            loadAdminData();
+        }
+        
+        // Avtomobile qo'shish
+        function handleAddAvtomobile(e) {
+            e.preventDefault();
+            
+            const tashkilotId = document.getElementById('avtomobile-tashkilot').value;
+            const nomi = document.getElementById('avtomobile-nomi').value;
+            const raqami = document.getElementById('avtomobile-raqami').value;
+            
+            if (!tashkilotId || !nomi || !raqami) {
+                alert('Iltimos, barcha maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            const newAvtomobile = {
+                id: avtomobillar.length + 1,
+                tashkilotId: parseInt(tashkilotId),
+                nomi: nomi,
+                raqami: raqami
+            };
+            
+            avtomobillar.push(newAvtomobile);
+            
+            alert('Avtomobile muvaffaqiyatli qo\'shildi!');
+            hideAddAvtomobileForm();
+            loadAdminData();
+        }
+        
+        // Yoqilg'i turi qo'shish
+        function handleAddYoqilgi(e) {
+            e.preventDefault();
+            
+            const nomi = document.getElementById('yoqilgi-nomi').value;
+            
+            if (!nomi) {
+                alert('Iltimos, yoqilg\'i nomini kiriting!');
+                return;
+            }
+            
+            const newYoqilgi = {
+                id: yoqilgiTurlari.length + 1,
+                nomi: nomi
+            };
+            
+            yoqilgiTurlari.push(newYoqilgi);
+            
+            alert('Yoqilg\'i turi muvaffaqiyatli qo\'shildi!');
+            hideAddYoqilgiForm();
+            loadAdminData();
+        }
+        
+        // Tashkilotni o'chirish
+        function deleteTashkilot(id) {
+            if (confirm('Haqiqatan ham bu tashkilotni o\'chirmoqchimisiz?')) {
+                // Tashkilotga tegishli avtomobillarni o'chirish
+                avtomobillar = avtomobillar.filter(a => a.tashkilotId !== id);
+                // Tashkilotni o'chirish
+                tashkilotlar = tashkilotlar.filter(t => t.id !== id);
+                
+                loadAdminData();
+                alert('Tashkilot muvaffaqiyatli o\'chirildi!');
+            }
+        }
+        
+        // Avtomobileni o'chirish
+        function deleteAvtomobile(id) {
+            if (confirm('Haqiqatan ham bu avtomobileni o\'chirmoqchimisiz?')) {
+                avtomobillar = avtomobillar.filter(a => a.id !== id);
+                loadAdminData();
+                alert('Avtomobile muvaffaqiyatli o\'chirildi!');
+            }
+        }
+        
+        // Yoqilg'i turini o'chirish
+        function deleteYoqilgi(id) {
+            if (confirm('Haqiqatan ham bu yoqilg\'i turini o\'chirmoqchimisiz?')) {
+                yoqilgiTurlari = yoqilgiTurlari.filter(y => y.id !== id);
+                loadAdminData();
+                alert('Yoqilg\'i turi muvaffaqiyatli o\'chirildi!');
+            }
+        }
+        
+        // Admin ma'lumotlarini yuklash
+        function loadAdminData() {
+            // Tashkilotlar jadvali
+            const tashkilotTbody = document.getElementById('tashkilot-table').querySelector('tbody');
+            tashkilotTbody.innerHTML = '';
+            
+            tashkilotlar.forEach(t => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${t.nomi}</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteTashkilot(${t.id})">O'chirish</button>
+                    </td>
+                `;
+                tashkilotTbody.appendChild(row);
+            });
+            
+            // Avtomobillar jadvali
+            const avtomobileTbody = document.getElementById('avtomobile-table').querySelector('tbody');
+            avtomobileTbody.innerHTML = '';
+            
+            avtomobillar.forEach(a => {
+                const tashkilot = tashkilotlar.find(t => t.id === a.tashkilotId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${tashkilot ? tashkilot.nomi : 'Noma\'lum'}</td>
+                    <td>${a.nomi}</td>
+                    <td>${a.raqami}</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteAvtomobile(${a.id})">O'chirish</button>
+                    </td>
+                `;
+                avtomobileTbody.appendChild(row);
+            });
+            
+            // Yoqilg'i turlari jadvali
+            const yoqilgiTbody = document.getElementById('yoqilgi-table').querySelector('tbody');
+            yoqilgiTbody.innerHTML = '';
+            
+            yoqilgiTurlari.forEach(y => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${y.nomi}</td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteYoqilgi(${y.id})">O'chirish</button>
+                    </td>
+                `;
+                yoqilgiTbody.appendChild(row);
+            });
+            
+            // Barcha yoqilg'i ma'lumotlari jadvali
+            const allFuelTbody = document.getElementById('all-fuel-table').querySelector('tbody');
+            allFuelTbody.innerHTML = '';
+            
+            if (fuelRecords.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="6" style="text-align: center;">Hech qanday yoqilg'i ma'lumoti mavjud emas</td>`;
+                allFuelTbody.appendChild(row);
+            } else {
+                fuelRecords.forEach(record => {
+                    const tashkilot = tashkilotlar.find(t => t.id == record.tashkilotId);
+                    const avtomobile = avtomobillar.find(a => a.id == record.avtomobileId);
+                    const yoqilgi = yoqilgiTurlari.find(y => y.id == record.yoqilgiId);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tashkilot ? tashkilot.nomi : 'Noma\'lum'}</td>
+                        <td>${avtomobile ? avtomobile.nomi : 'Noma\'lum'}</td>
+                        <td>${yoqilgi ? yoqilgi.nomi : 'Noma\'lum'}</td>
+                        <td>${record.miqdor}</td>
+                        <td>${new Date(record.date).toLocaleString()}</td>
+                        <td>${record.user}</td>
+                    `;
+                    allFuelTbody.appendChild(row);
+                });
+            }
+        }
+        
+        // User ma'lumotlarini yuklash
+        function loadUserData() {
+            // Bu yerda user uchun kerakli ma'lumotlarni yuklash mumkin
+        }
+        
+        // Chartlarni yaratish
+        function createCharts() {
+            // Avvalgi chartlarni yo'q qilish
+            if (tashkilotChart) tashkilotChart.destroy();
+            if (avtomobileChart) avtomobileChart.destroy();
+            if (yoqilgiChart) yoqilgiChart.destroy();
+            if (monthlyChart) monthlyChart.destroy();
+            
+            // Ma'lumotlarni olish
+            const period = parseInt(document.getElementById('stats-period').value);
+            const tashkilotId = document.getElementById('stats-tashkilot').value;
+            
+            // Filtrlangan ma'lumotlar
+            let filteredRecords = fuelRecords.filter(record => {
+                const recordDate = new Date(record.date);
+                const daysAgo = (new Date() - recordDate) / (1000 * 60 * 60 * 24);
+                return daysAgo <= period;
+            });
+            
+            if (tashkilotId !== 'all') {
+                filteredRecords = filteredRecords.filter(record => record.tashkilotId == tashkilotId);
+            }
+            
+            // Tashkilotlar bo'yicha statistika
+            const tashkilotData = {};
+            filteredRecords.forEach(record => {
+                const tashkilot = tashkilotlar.find(t => t.id == record.tashkilotId);
+                if (tashkilot) {
+                    if (!tashkilotData[tashkilot.nomi]) {
+                        tashkilotData[tashkilot.nomi] = 0;
+                    }
+                    tashkilotData[tashkilot.nomi] += record.miqdor;
+                }
+            });
+            
+            const tashkilotLabels = Object.keys(tashkilotData);
+            const tashkilotValues = Object.values(tashkilotData);
+            
+            // Tashkilotlar charti
+            const tashkilotCtx = document.getElementById('tashkilotChart').getContext('2d');
+            tashkilotChart = new Chart(tashkilotCtx, {
+                type: 'bar',
+                data: {
+                    labels: tashkilotLabels,
+                    datasets: [{
+                        label: 'Yoqilg\'i miqdori (litr)',
+                        data: tashkilotValues,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tashkilotlar Bo\'yicha Yoqilg\'i Sarfi'
+                        }
+                    }
+                }
+            });
+            
+            // Avtomobillar bo'yicha statistika
+            const avtomobileData = {};
+            filteredRecords.forEach(record => {
+                const avtomobile = avtomobillar.find(a => a.id == record.avtomobileId);
+                if (avtomobile) {
+                    const key = `${avtomobile.nomi} (${avtomobile.raqami})`;
+                    if (!avtomobileData[key]) {
+                        avtomobileData[key] = 0;
+                    }
+                    avtomobileData[key] += record.miqdor;
+                }
+            });
+            
+            const avtomobileLabels = Object.keys(avtomobileData);
+            const avtomobileValues = Object.values(avtomobileData);
+            
+            // Avtomobillar charti
+            const avtomobileCtx = document.getElementById('avtomobileChart').getContext('2d');
+            avtomobileChart = new Chart(avtomobileCtx, {
+                type: 'pie',
+                data: {
+                    labels: avtomobileLabels,
+                    datasets: [{
+                        label: 'Yoqilg\'i miqdori (litr)',
+                        data: avtomobileValues,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 205, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Avtomobillar Bo\'yicha Yoqilg\'i Sarfi'
+                        }
+                    }
+                }
+            });
+            
+            // Yoqilg'i turlari bo'yicha statistika
+            const yoqilgiData = {};
+            filteredRecords.forEach(record => {
+                const yoqilgi = yoqilgiTurlari.find(y => y.id == record.yoqilgiId);
+                if (yoqilgi) {
+                    if (!yoqilgiData[yoqilgi.nomi]) {
+                        yoqilgiData[yoqilgi.nomi] = 0;
+                    }
+                    yoqilgiData[yoqilgi.nomi] += record.miqdor;
+                }
+            });
+            
+            const yoqilgiLabels = Object.keys(yoqilgiData);
+            const yoqilgiValues = Object.values(yoqilgiData);
+            
+            // Yoqilg'i turlari charti
+            const yoqilgiCtx = document.getElementById('yoqilgiChart').getContext('2d');
+            yoqilgiChart = new Chart(yoqilgiCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: yoqilgiLabels,
+                    datasets: [{
+                        label: 'Yoqilg\'i miqdori (litr)',
+                        data: yoqilgiValues,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 205, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Yoqilg\'i Turlari Bo\'yicha Sarf'
+                        }
+                    }
+                }
+            });
+            
+            // Oylik statistika
+            const monthlyData = {};
+            filteredRecords.forEach(record => {
+                const date = new Date(record.date);
+                const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                if (!monthlyData[monthKey]) {
+                    monthlyData[monthKey] = 0;
+                }
+                monthlyData[monthKey] += record.miqdor;
+            });
+            
+            // Oylarni tartiblash
+            const monthlyLabels = Object.keys(monthlyData).sort();
+            const monthlyValues = monthlyLabels.map(label => monthlyData[label]);
+            
+            // Oylik chart
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            monthlyChart = new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [{
+                        label: 'Yoqilg\'i miqdori (litr)',
+                        data: monthlyValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Oylik Yoqilg\'i Sarfi'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Chartlarni yangilash
+        function updateCharts() {
+            createCharts();
+        }
+        
+        // Dastlabki ma'lumotlarni yuklash
+        function loadInitialData() {
+            // Dastlabki ma'lumotlar allaqachon massivlarda mavjud
+            // Test ma'lumotlari qo'shish
+            if (fuelRecords.length === 0) {
+                const today = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date();
+                    date.setDate(today.getDate() - i);
+                    
+                    fuelRecords.push({
+                        id: i + 1,
+                        tashkilotId: Math.floor(Math.random() * 2) + 1,
+                        avtomobileId: Math.floor(Math.random() * 3) + 1,
+                        yoqilgiId: Math.floor(Math.random() * 3) + 1,
+                        miqdor: Math.floor(Math.random() * 50) + 10,
+                        date: date.toISOString(),
+                        user: Math.random() > 0.5 ? 'admin' : 'user'
+                    });
+                }
+            }
+        }
+        
+        // Global funksiyalarni o'rnatish
+        window.deleteTashkilot = deleteTashkilot;
+        window.deleteAvtomobile = deleteAvtomobile;
+        window.deleteYoqilgi = deleteYoqilgi;
+    </script>
+</body>
+</html>

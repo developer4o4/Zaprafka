@@ -1,0 +1,509 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bugungi Yoqilg'ilar - Yoqilg'i Boshqaruvi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #2a5298;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #2a5298;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1e3c72;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .print-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background-color: #138496;
+        }
+        
+        .excel-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .excel-btn:hover {
+            background-color: #218838;
+        }
+        
+        .dashboard {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 4px solid #2a5298;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2a5298;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: #2a5298;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-group label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .dashboard {
+                padding: 20px;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-group select {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="today-fuel-page">
+        <header>
+            <div class="container header-content">
+                <h1>Bugungi Yoqilg'ilar</h1>
+                <div class="user-info">
+                    <span id="current-user">{{ request.user.username }}</span>
+                    <a href="{% url 'home' %}"><button class="btn-secondary">Bosh Sahifa</button></a>
+                    <a href="{% url 'logout' %}"><button class="btn-secondary">Chiqish</button></a>
+                </div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <a href="{% url 'home' %}" class="back-link">← Ortga qaytish</a>
+            
+            <div class="dashboard">
+                <h2>Bugun Quyilgan Yoqilg'ilar Ro'yxati</h2>
+                
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="stat-label">Jami Yoqilg'i</div>
+                        <div class="stat-value" id="total-fuel">0 L</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Quyishlar Soni</div>
+                        <div class="stat-value" id="total-records">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tashkilotlar</div>
+                        <div class="stat-value" id="total-tashkilot">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avtomobillar</div>
+                        <div class="stat-value" id="total-avto">0</div>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filter-tashkilot">Tashkilot:</label>
+                        <select id="filter-tashkilot">
+                            <option value="all">Barchasi</option>
+                            {% for tashkilot in tashkilotlar %}
+                                <option value="{{ tashkilot.id }}">{{ tashkilot.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filter-avto">Avtomobil:</label>
+                        <select id="filter-avto">
+                            <option value="all">Barchasi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filter-yoqilgi">Yoqilg'i turi:</label>
+                        <select id="filter-yoqilgi">
+                            <option value="all">Barchasi</option>
+                            {% for yoqilgi in yoqilgi_turlari %}
+                                <option value="{{ yoqilgi.id }}">{{ yoqilgi.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="refresh-btn" class="btn-primary">🔄 Yangilash</button>
+                    <button id="print-btn" class="print-btn">🖨️ Chop etish</button>
+                    <button id="excel-btn" class="excel-btn">📊 Excel ga Yuklab Olish</button>
+                </div>
+                
+                <div class="form-container">
+                    <table id="fuel-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tashkilot</th>
+                                <th>Avtomobil</th>
+                                <th>Raqami</th>
+                                <th>Yoqilg'i turi</th>
+                                <th>Miqdor (L)</th>
+                                <th>Vaqt</th>
+                                <th>Foydalanuvchi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fuel-table-body">
+                            <!-- Ma'lumotlar JavaScript orqali to'ldiriladi -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <i>📊</i>
+                        <h3>Ma'lumot mavjud emas</h3>
+                        <p>Bugun hech qanday yoqilg'i quyilmagan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Excel eksport funksiyasi
+        function exportTodayToExcel() {
+            // Joriy filtrlarni olish
+            const tashkilot = document.getElementById('filter-tashkilot').value;
+            const avto = document.getElementById('filter-avto').value;
+            const yoqilgi = document.getElementById('filter-yoqilgi').value;
+            
+            // Excel export URL
+            let url = `/export-today-excel/?tashkilot_id=${tashkilot}`;
+            
+            // Qo'shimcha filtrlarni qo'shish
+            if (avto !== 'all') {
+                url += `&avto_id=${avto}`;
+            }
+            if (yoqilgi !== 'all') {
+                url += `&yoqilgi_id=${yoqilgi}`;
+            }
+            
+            console.log('Export URL:', url);
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const fuelTableBody = document.getElementById('fuel-table-body');
+            const emptyState = document.getElementById('empty-state');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const printBtn = document.getElementById('print-btn');
+            const excelBtn = document.getElementById('excel-btn');
+            const filterTashkilot = document.getElementById('filter-tashkilot');
+            const filterAvto = document.getElementById('filter-avto');
+            const filterYoqilgi = document.getElementById('filter-yoqilgi');
+            
+            // Excel tugmasi uchun event listener
+            excelBtn.addEventListener('click', exportTodayToExcel);
+            
+            // Tashkilot o'zgarganda avtomobillarni yuklash
+            filterTashkilot.addEventListener('change', function() {
+                const tashkilotId = this.value;
+                filterAvto.innerHTML = '<option value="all">Barchasi</option>';
+                
+                if (tashkilotId && tashkilotId !== 'all') {
+                    fetch(`/api/avtomobillar/?tashkilot_id=${tashkilotId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(avto => {
+                                const option = document.createElement('option');
+                                option.value = avto.id;
+                                option.textContent = `${avto.title} (${avto.avto_number})`;
+                                filterAvto.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Xatolik avtomobillarni yuklashda:', error);
+                        });
+                }
+            });
+            
+            // Ma'lumotlarni yuklash
+            function loadTodayFuel() {
+                const tashkilotId = filterTashkilot.value;
+                const avtoId = filterAvto.value;
+                const yoqilgiId = filterYoqilgi.value;
+                
+                let url = '/api/today-fuel/';
+                const params = [];
+                
+                if (tashkilotId !== 'all') params.push(`tashkilot_id=${tashkilotId}`);
+                if (avtoId !== 'all') params.push(`avto_id=${avtoId}`);
+                if (yoqilgiId !== 'all') params.push(`yoqilgi_id=${yoqilgiId}`);
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateStats(data.summary);
+                        renderFuelTable(data.records);
+                    })
+                    .catch(error => {
+                        console.error('Xatolik ma\'lumotlarni yuklashda:', error);
+                    });
+            }
+            
+            // Statistikani yangilash
+            function updateStats(summary) {
+                document.getElementById('total-fuel').textContent = `${summary.total_fuel} L`;
+                document.getElementById('total-records').textContent = summary.total_records;
+                document.getElementById('total-tashkilot').textContent = summary.total_tashkilot;
+                document.getElementById('total-avto').textContent = summary.total_avto;
+            }
+            
+            // Jadvalni to'ldirish
+            function renderFuelTable(records) {
+                fuelTableBody.innerHTML = '';
+                
+                if (records.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                
+                records.forEach((record, index) => {
+                    const row = document.createElement('tr');
+                    
+                    const date = new Date(record.created_ad);
+                    const timeString = date.toLocaleTimeString('uz-UZ', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${record.tashkilot_title}</td>
+                        <td>${record.avto_title}</td>
+                        <td>${record.avto_number}</td>
+                        <td>${record.yoqilgi_turi}</td>
+                        <td>${record.hajm} L</td>
+                        <td>${timeString}</td>
+                        <td>${record.user_name}</td>
+                    `;
+                    
+                    fuelTableBody.appendChild(row);
+                });
+            }
+            
+            // Yangilash tugmasi
+            refreshBtn.addEventListener('click', loadTodayFuel);
+            
+            // Chop etish tugmasi
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Filtrlarni qo'shish
+            filterTashkilot.addEventListener('change', loadTodayFuel);
+            filterAvto.addEventListener('change', loadTodayFuel);
+            filterYoqilgi.addEventListener('change', loadTodayFuel);
+            
+            // Dastlabki yuklash
+            loadTodayFuel();
+        });
+    </script>
+</body>
+</html>

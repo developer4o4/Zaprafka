@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Foydalanuvchini O'chirish - Yoqilg'i Boshqaruvi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-danger text-white py-3">
+                    <h4 class="mb-0 text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Foydalanuvchini O'chirish
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning border-0">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-circle me-2"></i>Diqqat!
+                        </h5>
+                        Quyidagi foydalanuvchini o'chirmoqchimisiz?
+                    </div>
+                    
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <h5 class="text-danger">{{ user_to_delete.username }}</h5>
+                        <p class="mb-1"><strong>Ism:</strong> {{ user_to_delete.first_name|default:"Ko'rsatilmagan" }}</p>
+                        <p class="mb-1"><strong>Familiya:</strong> {{ user_to_delete.last_name|default:"Ko'rsatilmagan" }}</p>
+                        <p class="mb-1"><strong>Email:</strong> {{ user_to_delete.email|default:"Ko'rsatilmagan" }}</p>
+                        <p class="mb-1"><strong>Telefon:</strong> {{ user_to_delete.phone|default:"Ko'rsatilmagan" }}</p>
+                        <p class="mb-1"><strong>Staff:</strong> {{ user_to_delete.is_staff|yesno:"Ha,Yo'q" }}</p>
+                        <p class="mb-1"><strong>Superuser:</strong> {{ user_to_delete.is_superuser|yesno:"Ha,Yo'q" }}</p>
+                        <p class="mb-1"><strong>Oxirgi login:</strong> {{ user_to_delete.last_login|default:"Hali login qilmagan" }}</p>
+                        <p class="mb-0"><strong>Qo'shilgan sana:</strong> {{ user_to_delete.date_joined|date:"d.m.Y H:i" }}</p>
+                    </div>
+
+                    {% if user_to_delete.compilated_set.exists %}
+                    <div class="alert alert-danger border-0">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>Ogohlik!
+                        </h6>
+                        Ushbu foydalanuvchiga bog'langan {{ user_to_delete.compilated_set.count }} ta yoqilg'i yozuvi mavjud. 
+                        Foydalanuvchini o'chirsangiz, bog'langan yozuvlar ham o'chiriladi.
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'admin_panel' %}" class="btn btn-secondary me-md-2 px-4">
+                                <i class="fas fa-times me-1"></i> Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fas fa-trash me-1"></i> O'chirish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

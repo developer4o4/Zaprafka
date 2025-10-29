@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yoqilg'i Turini O'chirish - Yoqilg'i Boshqaruvi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Yoqilg'i Turini O'chirish</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-circle me-2"></i>Diqqat!</h5>
+                        Quyidagi yoqilg'i turini o'chirmoqchimisiz?
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>{{ yoqilgi_turi.title }}</h5>
+                        <p class="mb-1"><strong>Narxi:</strong> {{ yoqilgi_turi.price }} so'm</p>
+                    </div>
+
+                    {% if yoqilgi_turi.compilated_set.exists %}
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-info-circle me-2"></i>Ogohlik!</h6>
+                        Ushbu yoqilg'i turiga bog'langan {{ yoqilgi_turi.compilated_set.count }} ta yozuv mavjud. 
+                        Yoqilg'i turini o'chirsangiz, bog'langan yozuvlar ham o'chiriladi.
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'admin_panel' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i> Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i> O'chirish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
