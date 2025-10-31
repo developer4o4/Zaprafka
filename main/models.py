@@ -12,7 +12,7 @@ class Tashkilot(models.Model):
     group_id = models.IntegerField(default=4885110792)
 
 class Avto(models.Model):
-    tashkilot = models.ForeignKey(Tashkilot,on_delete=models.DO_NOTHING,default=1,)
+    tashkilot = models.ForeignKey(Tashkilot,on_delete=models.CASCADE,default=1,)
     title = models.CharField(max_length=100)
     avto_number = models.CharField(max_length=20)
 
