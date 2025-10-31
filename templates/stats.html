@@ -91,6 +91,11 @@
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
 
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+        }
+
         /* Dashboard stillari */
         .dashboard {
             background: white;
@@ -342,6 +347,12 @@
             padding-bottom: 10px;
         }
 
+        .excel-export {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -372,6 +383,10 @@
             .modal-content {
                 margin: 10% auto;
                 max-width: 95%;
+            }
+
+            .excel-export {
+                justify-content: center;
             }
         }
 
@@ -409,26 +424,6 @@
         <header>
             <div class="container header-content">
                 <h1>📊 Statistika - Yoqilg'i Boshqaruvi</h1>
-                <!-- statistics.html faylida Excel tugmasini qo'shing -->
-                <div class="mb-3">
-                    <button class="btn btn-success" onclick="exportStatisticsToExcel()">
-                        <i class="fas fa-file-excel"></i> Statistika Excel ga Yuklab Olish
-                    </button>
-                </div>
-
-                <script>
-                    function exportStatisticsToExcel() {
-                        // Statistics sahifasi filtrlari
-                        const period = document.getElementById('period') ? document.getElementById('period').value : '30';
-                        const tashkilot = document.getElementById('tashkilot') ? document.getElementById('tashkilot').value : 'all';
-
-                        // Excel export URL
-                        let url = `/export-statistics-excel/?period=${period}&tashkilot=${tashkilot}`;
-
-                        console.log('Export URL:', url);
-                        window.open(url, '_blank');
-                    }
-                </script>
                 <div class="user-info">
                     <span id="admin-user">👤 {{ request.user.username }}</span>
                     <a href="{% url 'admin_panel' %}"><button class="btn-secondary">🏠 Bosh Sahifa</button></a>
@@ -440,6 +435,13 @@
         <div class="container">
             <div class="dashboard">
                 <h2>Yoqilg'i Sarfi Statistikasi</h2>
+
+                <!-- Excel export tugmasi -->
+                <div class="excel-export">
+                    <button class="btn-success" onclick="exportStatisticsToExcel()">
+                        📊 Statistika Excel ga Yuklab Olish
+                    </button>
+                </div>
 
                 <div class="stats-filters">
                     <div class="form-group">
@@ -514,7 +516,7 @@
                 <!-- So'nggi yoqilg'i quyishlar -->
                 <div class="recent-records">
                     <h3>🕒 So'nggi Yoqilg'i Quyishlar</h3>
-                    <!-- <div class="form-container">
+                    <div class="form-container">
                         <table id="recent-records-table">
                             <thead>
                                 <tr>
@@ -536,7 +538,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div> -->
+                    </div>
                 </div>
 
                 <!-- Batafsil statistika -->
@@ -613,9 +615,21 @@
             updateAllCharts();
         });
 
+        // Excel export funksiyasi
+        function exportStatisticsToExcel() {
+            const period = document.getElementById('stats-period').value;
+            const tashkilot = document.getElementById('stats-tashkilot').value;
+            const yoqilgi = document.getElementById('stats-yoqilgi').value;
+
+            let url = `/export-statistics-excel/?period=${period}&tashkilot=${tashkilot}&yoqilgi=${yoqilgi}`;
+            
+            console.log('Export URL:', url);
+            window.open(url, '_blank');
+        }
+
         // Bosh sahifaga qaytish
         function goToAdminPanel() {
-            window.location.href = "{% url 'home' %}";
+            window.location.href = "{% url 'admin_panel' %}";
         }
 
         // Chiqish

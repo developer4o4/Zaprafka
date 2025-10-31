@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login,logout
 from .models import *
 # Create your views here.
+@login_required
 def home(request):
     """Bosh sahifa uchun bugungi statistikani qaytarish"""
     today = timezone.now().date()
-    
+    tashkilotlar = Tashkilot.objects.all()
     # Bugungi ma'lumotlar
     today_data = Compilated.objects.filter(created_ad__date=today,who_user=request.user)
     
@@ -33,6 +34,8 @@ def home(request):
     response_data = {
         'total_fuel': round(total_fuel, 1),
         'total_count': total_count,
+        "tashkilotlar":tashkilotlar,
+
         'active_cars': active_cars,
         'avg_fuel': round(avg_fuel, 1),
         'recent_activities': activities_list
@@ -67,7 +70,7 @@ def login_view(request):
 # 	"avto_list": avto_list,
 # 	"yoqilgilar": yoqilgilar,
 # 	})
-
+@login_required
 def logout_view(request):
 	logout(request)
 	return redirect("login")
@@ -82,7 +85,7 @@ def add_user(request):
 
 	if request.method == 'POST':
 		username = request.POST.get('username')
-		email = request.POST.get('email')
+		phone = request.POST.get('tel')
 		password = request.POST.get('password')
 
 		if not username or not password:
@@ -93,7 +96,7 @@ def add_user(request):
 			context["error"] = "Bu foydalanuvchi nomi allaqachon mavjud."
 			return render(request, "add_user.html", context)
 
-		user = User.objects.create_user(username=username, email=email, password=password)
+		user = User.objects.create_user(username=username, phone=phone, password=password)
 		user.is_staff = False
 		user.is_superuser = False
 		user.save()
@@ -102,7 +105,7 @@ def add_user(request):
 		return render(request, "add_user.html", context)
 
 	return render(request, "add_user.html")
-
+@login_required
 def user_delete(request, pk):
     """User ni o'chirish"""
     user_to_delete = get_object_or_404(User, pk=pk)
@@ -128,13 +131,13 @@ def user_delete(request, pk):
     return render(request, 'user_delete.html', context)
 @login_required
 def add_tashkilot(request):
-	if request.method == "POST":
-		title = request.POST.get("title")
-		if title:
-			Tashkilot.objects.create(title=title)
-			return redirect("admin_panel")
-	return render(request, "add_tashkilot.html")
-
+    if request.method == "POST":
+        title = request.POST.get("title")
+        group_id = request.POST.get("group_id")
+        if title:
+            Tashkilot.objects.create(title=title, group_id=group_id)
+            return redirect("admin_panel")
+    return render(request, "add_tashkilot.html")
 
 @login_required
 def add_avto(request):
@@ -176,7 +179,6 @@ def add_yoqilgi(request):
 			Yoqilgi_turi.objects.create(title=title,price=price)
 			return redirect("admin_panel")
 	return render(request, "add_yoqilgi.html")
-
 from django.db.models import Sum, Count, Avg, Max, Min
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 from django.http import JsonResponse
@@ -184,303 +186,373 @@ from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
 import json
-
+from .models import Compilated, Tashkilot, Yoqilgi_turi, Avto
+@login_required
 def statistics_view(request):
     """Statistika sahifasini ko'rsatish"""
-    tashkilotlar = Tashkilot.objects.all()
-    yoqilgi_turlari = Yoqilgi_turi.objects.all()
-    
-    context = {
-        'tashkilotlar': tashkilotlar,
-        'yoqilgi_turlari': yoqilgi_turlari,
-    }
-    return render(request, 'stats.html', context)
-
+    try:
+        tashkilotlar = Tashkilot.objects.all()
+        yoqilgi_turlari = Yoqilgi_turi.objects.all()
+        
+        context = {
+            'tashkilotlar': tashkilotlar,
+            'yoqilgi_turlari': yoqilgi_turlari,
+        }
+        return render(request, 'stats.html', context)
+    except Exception as e:
+        # Xatolik yuz bersa, bo'sh kontekst bilan sahifani ko'rsatish
+        return render(request, 'stats.html', {})
+@login_required
 def get_statistics_data(request):
     """Statistika ma'lumotlarini JSON formatida qaytarish"""
-    # Filtrlarni olish
-    period = request.GET.get('period', '30')
-    tashkilot_id = request.GET.get('tashkilot', 'all')
-    yoqilgi_id = request.GET.get('yoqilgi', 'all')
-    
-    # Asosiy ma'lumotlarni olish
     try:
-        period_days = int(period)
-    except ValueError:
-        period_days = 30
-    
-    start_date = timezone.now() - timedelta(days=period_days)
-    
-    # Compilated ma'lumotlarini filtrlash
-    compilated_data = Compilated.objects.filter(created_ad__gte=start_date)
-    
-    if tashkilot_id != 'all':
-        compilated_data = compilated_data.filter(tashkilot_id=tashkilot_id)
-    
-    # Yoqilgi turi bo'yicha filtr (agar kerak bo'lsa)
-    # if yoqilgi_id != 'all':
-    #     compilated_data = compilated_data.filter(yoqilgi_turi_id=yoqilgi_id)
-    
-    # Umumiy statistik ma'lumotlar
-    total_fuel = compilated_data.aggregate(total=Sum('hajm'))['total'] or 0
-    avg_daily = total_fuel / period_days if period_days > 0 else 0
-    max_fuel = compilated_data.aggregate(max=Max('hajm'))['max'] or 0
-    min_fuel = compilated_data.aggregate(min=Min('hajm'))['min'] or 0
-    active_cars = compilated_data.values('avto').distinct().count()
-    total_records = compilated_data.count()
-    
-    # Tashkilotlar bo'yicha ma'lumotlar
-    tashkilot_stats = compilated_data.values(
-        'tashkilot__title'
-    ).annotate(
-        total_fuel=Sum('hajm'),
-        record_count=Count('id')
-    ).order_by('-total_fuel')
-    
-    # Avtomobillar bo'yicha ma'lumotlar
-    avto_stats = compilated_data.values(
-        'avto__title',
-        'avto__avto_number'
-    ).annotate(
-        total_fuel=Sum('hajm'),
-        record_count=Count('id')
-    ).order_by('-total_fuel')[:10]  # Faqat top 10
-    
-    # Kunlik ma'lumotlar
-    daily_stats = compilated_data.annotate(
-        day=TruncDay('created_ad')
-    ).values('day').annotate(
-        daily_total=Sum('hajm'),
-        record_count=Count('id')
-    ).order_by('day')
-    
-    # Oylik ma'lumotlar
-    monthly_stats = compilated_data.annotate(
-        month=TruncMonth('created_ad')
-    ).values('month').annotate(
-        monthly_total=Sum('hajm'),
-        record_count=Count('id')
-    ).order_by('month')
-    
-    # Haftalik ma'lumotlar
-    weekly_stats = compilated_data.annotate(
-        week=TruncWeek('created_ad')
-    ).values('week').annotate(
-        weekly_total=Sum('hajm'),
-        record_count=Count('id')
-    ).order_by('week')
-    
-    # Batafsil statistika
-    detail_period = request.GET.get('detail_period', 'daily')
-    
-    if detail_period == 'daily':
-        detailed_stats = compilated_data.annotate(
-            period=TruncDay('created_ad')
-        ).values('period').annotate(
+        # Filtrlarni olish
+        period = request.GET.get('period', '30')
+        tashkilot_id = request.GET.get('tashkilot', 'all')
+        yoqilgi_id = request.GET.get('yoqilgi', 'all')
+        detail_period = request.GET.get('detail_period', 'daily')
+        
+        # Periodni tekshirish va konvertatsiya qilish
+        try:
+            period_days = int(period)
+            if period_days <= 0:
+                period_days = 30
+        except (ValueError, TypeError):
+            period_days = 30
+        
+        # Sana oralig'ini belgilash
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=period_days)
+        
+        # Compilated ma'lumotlarini filtrlash
+        compilated_data = Compilated.objects.filter(
+            created_ad__gte=start_date,
+            created_ad__lte=end_date
+        )
+        
+        # Tashkilot bo'yicha filtr
+        if tashkilot_id != 'all':
+            try:
+                compilated_data = compilated_data.filter(tashkilot_id=int(tashkilot_id))
+            except (ValueError, TypeError):
+                pass  # Noto'g'ri ID berilsa, filtrni qo'llamaymiz
+        
+        # Yoqilgi turi bo'yicha filtr
+        if yoqilgi_id != 'all':
+            try:
+                compilated_data = compilated_data.filter(yoqilgi_turi_id=int(yoqilgi_id))
+            except (ValueError, TypeError):
+                pass  # Noto'g'ri ID berilsa, filtrni qo'llamaymiz
+        
+        # Ma'lumotlar mavjudligini tekshirish
+        if not compilated_data.exists():
+            return JsonResponse({
+                'summary': {
+                    'total_fuel': 0,
+                    'avg_daily': 0,
+                    'max_fuel': 0,
+                    'min_fuel': 0,
+                    'active_cars': 0,
+                    'total_records': 0
+                },
+                'tashkilot_stats': [],
+                'avto_stats': [],
+                'daily_stats': [],
+                'monthly_stats': [],
+                'weekly_stats': [],
+                'detailed_stats': [],
+                'recent_records': []
+            })
+        
+        # Umumiy statistik ma'lumotlar
+        aggregates = compilated_data.aggregate(
+            total=Sum('hajm'),
+            avg=Avg('hajm'),
+            max=Max('hajm'),
+            min=Min('hajm'),
+            count=Count('id')
+        )
+        
+        total_fuel = aggregates['total'] or 0
+        avg_daily = total_fuel / period_days if period_days > 0 else 0
+        max_fuel = aggregates['max'] or 0
+        min_fuel = aggregates['min'] or 0
+        active_cars = compilated_data.values('avto').distinct().count()
+        total_records = aggregates['count'] or 0
+        
+        # Tashkilotlar bo'yicha ma'lumotlar
+        tashkilot_stats = list(compilated_data.values(
+            'tashkilot__id',
+            'tashkilot__title'
+        ).annotate(
             total_fuel=Sum('hajm'),
             record_count=Count('id'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    elif detail_period == 'weekly':
-        detailed_stats = compilated_data.annotate(
-            period=TruncWeek('created_ad')
-        ).values('period').annotate(
+            avg_fuel=Avg('hajm')
+        ).order_by('-total_fuel'))
+        
+        # Avtomobillar bo'yicha ma'lumotlar
+        avto_stats = list(compilated_data.values(
+            'avto__id',
+            'avto__title',
+            'avto__avto_number'
+        ).annotate(
             total_fuel=Sum('hajm'),
             record_count=Count('id'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    else:  # monthly
-        detailed_stats = compilated_data.annotate(
-            period=TruncMonth('created_ad')
-        ).values('period').annotate(
-            total_fuel=Sum('hajm'),
-            record_count=Count('id'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    
-    # So'nggi 10 ta yoqilg'i quyish ma'lumotlari (rasmlar bilan)
-    recent_records = compilated_data.select_related(
-        'tashkilot', 'avto', 'who_user'
-    ).order_by('-created_ad')[:10]
-    
-    recent_records_list = []
-    for record in recent_records:
-        recent_records_list.append({
-            'id': record.id,
-            'tashkilot_title': record.tashkilot.title,
-            'avto_title': record.avto.title,
-            'avto_number': record.avto.avto_number,
-            'user_name': record.who_user.username,
-            'hajm': record.hajm,
-            'created_ad': record.created_ad.strftime('%Y-%m-%d %H:%M'),
-            'photo_url': record.photo.url if record.photo and record.photo.name != 'none.jpg' else None
-        })
-    
-    # JSON formatga o'tkazish
-    response_data = {
-        'summary': {
-            'total_fuel': round(total_fuel, 1),
-            'avg_daily': round(avg_daily, 1),
-            'max_fuel': round(max_fuel, 1),
-            'min_fuel': round(min_fuel, 1),
-            'active_cars': active_cars,
-            'total_records': total_records
-        },
-        'tashkilot_stats': list(tashkilot_stats),
-        'avto_stats': list(avto_stats),
-        'daily_stats': list(daily_stats),
-        'monthly_stats': list(monthly_stats),
-        'weekly_stats': list(weekly_stats),
-        'detailed_stats': list(detailed_stats),
-        'recent_records': recent_records_list
-    }
-    
-    return JsonResponse(response_data)
-
+            avg_fuel=Avg('hajm')
+        ).order_by('-total_fuel')[:10])  # Faqat top 10
+        
+        # Kunlik ma'lumotlar
+        daily_stats = list(compilated_data.annotate(
+            day=TruncDay('created_ad')
+        ).values('day').annotate(
+            daily_total=Sum('hajm'),
+            record_count=Count('id')
+        ).order_by('day'))
+        
+        # Oylik ma'lumotlar
+        monthly_stats = list(compilated_data.annotate(
+            month=TruncMonth('created_ad')
+        ).values('month').annotate(
+            monthly_total=Sum('hajm'),
+            record_count=Count('id')
+        ).order_by('month'))
+        
+        # Haftalik ma'lumotlar
+        weekly_stats = list(compilated_data.annotate(
+            week=TruncWeek('created_ad')
+        ).values('week').annotate(
+            weekly_total=Sum('hajm'),
+            record_count=Count('id')
+        ).order_by('week'))
+        
+        # Batafsil statistika
+        if detail_period == 'daily':
+            detailed_stats = compilated_data.annotate(
+                period=TruncDay('created_ad')
+            ).values('period').annotate(
+                total_fuel=Sum('hajm'),
+                record_count=Count('id'),
+                tashkilot_count=Count('tashkilot', distinct=True),
+                avto_count=Count('avto', distinct=True),
+                avg_fuel=Avg('hajm')
+            ).order_by('-period')
+        elif detail_period == 'weekly':
+            detailed_stats = compilated_data.annotate(
+                period=TruncWeek('created_ad')
+            ).values('period').annotate(
+                total_fuel=Sum('hajm'),
+                record_count=Count('id'),
+                tashkilot_count=Count('tashkilot', distinct=True),
+                avto_count=Count('avto', distinct=True),
+                avg_fuel=Avg('hajm')
+            ).order_by('-period')
+        else:  # monthly
+            detailed_stats = compilated_data.annotate(
+                period=TruncMonth('created_ad')
+            ).values('period').annotate(
+                total_fuel=Sum('hajm'),
+                record_count=Count('id'),
+                tashkilot_count=Count('tashkilot', distinct=True),
+                avto_count=Count('avto', distinct=True),
+                avg_fuel=Avg('hajm')
+            ).order_by('-period')
+        
+        # So'nggi 10 ta yoqilg'i quyish ma'lumotlari
+        recent_records = compilated_data.select_related(
+            'tashkilot', 'avto', 'who_user'
+        ).order_by('-created_ad')[:10]
+        
+        recent_records_list = []
+        for record in recent_records:
+            photo_url = None
+            if record.photo and hasattr(record.photo, 'url') and record.photo.name != 'none.jpg':
+                try:
+                    photo_url = request.build_absolute_uri(record.photo.url)
+                except:
+                    photo_url = None
+            
+            recent_records_list.append({
+                'id': record.id,
+                'tashkilot_title': record.tashkilot.title if record.tashkilot else 'Noma\'lum',
+                'avto_title': record.avto.title if record.avto else 'Noma\'lum',
+                'avto_number': record.avto.avto_number if record.avto else '',
+                'user_name': record.who_user.username if record.who_user else 'Noma\'lum',
+                'hajm': float(record.hajm) if record.hajm else 0,
+                'yoqilgi_turi': record.yoqilgi_turi if record.yoqilgi_turi else 'Noma\'lum',
+                'all_price': float(record.all_price) if record.all_price else 0,
+                'created_ad': record.created_ad.strftime('%Y-%m-%d %H:%M') if record.created_ad else 'Noma\'lum',
+                'photo_url': photo_url
+            })
+        
+        # Ma'lumotlarni formatlash va yuborish
+        response_data = {
+            'success': True,
+            'summary': {
+                'total_fuel': round(float(total_fuel), 1),
+                'avg_daily': round(float(avg_daily), 1),
+                'max_fuel': round(float(max_fuel), 1),
+                'min_fuel': round(float(min_fuel), 1),
+                'active_cars': active_cars,
+                'total_records': total_records,
+                'period_days': period_days
+            },
+            'tashkilot_stats': tashkilot_stats,
+            'avto_stats': avto_stats,
+            'daily_stats': daily_stats,
+            'monthly_stats': monthly_stats,
+            'weekly_stats': weekly_stats,
+            'detailed_stats': list(detailed_stats),
+            'recent_records': recent_records_list
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        # Xatolik yuz bersa, xabar bilan javob qaytarish
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'summary': {
+                'total_fuel': 0,
+                'avg_daily': 0,
+                'max_fuel': 0,
+                'min_fuel': 0,
+                'active_cars': 0,
+                'total_records': 0
+            },
+            'tashkilot_stats': [],
+            'avto_stats': [],
+            'daily_stats': [],
+            'monthly_stats': [],
+            'weekly_stats': [],
+            'detailed_stats': [],
+            'recent_records': []
+        }, status=500)
+@login_required
 def get_filter_options(request):
     """Filtrlash uchun variantlarni qaytarish"""
-    tashkilotlar = Tashkilot.objects.all().values('id', 'title')
-    yoqilgi_turlari = Yoqilgi_turi.objects.all().values('id', 'title')
-    avtomobillar = Avto.objects.all().values('id', 'title', 'avto_number', 'tashkilot_id')
-    
-    response_data = {
-        'tashkilotlar': list(tashkilotlar),
-        'yoqilgi_turlari': list(yoqilgi_turlari),
-        'avtomobillar': list(avtomobillar)
-    }
-    
-    return JsonResponse(response_data)
-def get_statistics_data(request):
-    """Statistika ma'lumotlarini JSON formatida qaytarish"""
-    # Filtrlarni olish
-    period = request.GET.get('period', '30')
-    tashkilot_id = request.GET.get('tashkilot', 'all')
-    yoqilgi_id = request.GET.get('yoqilgi', 'all')
-    
-    # Asosiy ma'lumotlarni olish
     try:
-        period_days = int(period)
-    except ValueError:
-        period_days = 30
-    
-    start_date = timezone.now() - timedelta(days=period_days)
-    
-    # Compilated ma'lumotlarini filtrlash
-    compilated_data = Compilated.objects.filter(created_ad__gte=start_date)
-    
-    if tashkilot_id != 'all':
-        compilated_data = compilated_data.filter(tashkilot_id=tashkilot_id)
-    
-    # Yoqilgi turi bo'yicha filtr (agar kerak bo'lsa)
-    # if yoqilgi_id != 'all':
-    #     compilated_data = compilated_data.filter(yoqilgi_turi_id=yoqilgi_id)
-    
-    # Umumiy statistik ma'lumotlar
-    total_fuel = compilated_data.aggregate(total=Sum('hajm'))['total'] or 0
-    avg_daily = total_fuel / period_days if period_days > 0 else 0
-    max_fuel = compilated_data.aggregate(max=Max('hajm'))['max'] or 0
-    active_cars = compilated_data.values('avto').distinct().count()
-    
-    # Tashkilotlar bo'yicha ma'lumotlar
-    tashkilot_stats = compilated_data.values(
-        'tashkilot__title'
-    ).annotate(
-        total_fuel=Sum('hajm')
-    ).order_by('-total_fuel')
-    
-    # Avtomobillar bo'yicha ma'lumotlar
-    avto_stats = compilated_data.values(
-        'avto__title',
-        'avto__avto_number'
-    ).annotate(
-        total_fuel=Sum('hajm')
-    ).order_by('-total_fuel')[:10]  # Faqat top 10
-    
-    # Kunlik ma'lumotlar
-    daily_stats = compilated_data.annotate(
-        day=TruncDay('created_ad')
-    ).values('day').annotate(
-        daily_total=Sum('hajm')
-    ).order_by('day')
-    
-    # Oylik ma'lumotlar
-    monthly_stats = compilated_data.annotate(
-        month=TruncMonth('created_ad')
-    ).values('month').annotate(
-        monthly_total=Sum('hajm')
-    ).order_by('month')
-    
-    # Haftalik ma'lumotlar
-    weekly_stats = compilated_data.annotate(
-        week=TruncWeek('created_ad')
-    ).values('week').annotate(
-        weekly_total=Sum('hajm')
-    ).order_by('week')
-    
-    # Batafsil statistika
-    detail_period = request.GET.get('detail_period', 'daily')
-    
-    if detail_period == 'daily':
-        detailed_stats = compilated_data.annotate(
-            period=TruncDay('created_ad')
-        ).values('period').annotate(
-            total_fuel=Sum('hajm'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    elif detail_period == 'weekly':
-        detailed_stats = compilated_data.annotate(
-            period=TruncWeek('created_ad')
-        ).values('period').annotate(
-            total_fuel=Sum('hajm'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    else:  # monthly
-        detailed_stats = compilated_data.annotate(
-            period=TruncMonth('created_ad')
-        ).values('period').annotate(
-            total_fuel=Sum('hajm'),
-            tashkilot_count=Count('tashkilot', distinct=True),
-            avto_count=Count('avto', distinct=True)
-        ).order_by('-period')
-    
-    # JSON formatga o'tkazish
-    response_data = {
-        'summary': {
-            'total_fuel': round(total_fuel, 1),
-            'avg_daily': round(avg_daily, 1),
-            'max_fuel': round(max_fuel, 1),
-            'active_cars': active_cars
-        },
-        'tashkilot_stats': list(tashkilot_stats),
-        'avto_stats': list(avto_stats),
-        'daily_stats': list(daily_stats),
-        'monthly_stats': list(monthly_stats),
-        'weekly_stats': list(weekly_stats),
-        'detailed_stats': list(detailed_stats)
-    }
-    
-    return JsonResponse(response_data)
-
-def get_filter_options(request):
-    """Filtrlash uchun variantlarni qaytarish"""
-    tashkilotlar = Tashkilot.objects.all().values('id', 'title')
-    yoqilgi_turlari = Yoqilgi_turi.objects.all().values('id', 'title')
-    avtomobillar = Avto.objects.all().values('id', 'title', 'avto_number')
-    
-    response_data = {
-        'tashkilotlar': list(tashkilotlar),
-        'yoqilgi_turlari': list(yoqilgi_turlari),
-        'avtomobillar': list(avtomobillar)
-    }
-    
-    return JsonResponse(response_data)
-
-
+        tashkilotlar = list(Tashkilot.objects.all().values('id', 'title').order_by('title'))
+        yoqilgi_turlari = list(Yoqilgi_turi.objects.all().values('id', 'title').order_by('title'))
+        avtomobillar = list(Avto.objects.select_related('tashkilot').values(
+            'id', 'title', 'avto_number', 'tashkilot_id'
+        ).order_by('title'))
+        
+        response_data = {
+            'success': True,
+            'tashkilotlar': tashkilotlar,
+            'yoqilgi_turlari': yoqilgi_turlari,
+            'avtomobillar': avtomobillar
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'tashkilotlar': [],
+            'yoqilgi_turlari': [],
+            'avtomobillar': []
+        }, status=500)
+@login_required
+def export_statistics_excel(request):
+    """Statistika ma'lumotlarini Excel fayl sifatida eksport qilish"""
+    try:
+        import pandas as pd
+        from django.http import HttpResponse
+        
+        # Filtrlarni olish (statistika ma'lumotlari bilan bir xil)
+        period = request.GET.get('period', '30')
+        tashkilot_id = request.GET.get('tashkilot', 'all')
+        yoqilgi_id = request.GET.get('yoqilgi', 'all')
+        
+        # Sana oralig'ini belgilash
+        try:
+            period_days = int(period)
+            if period_days <= 0:
+                period_days = 30
+        except (ValueError, TypeError):
+            period_days = 30
+            
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=period_days)
+        
+        # Ma'lumotlarni olish
+        compilated_data = Compilated.objects.filter(
+            created_ad__gte=start_date,
+            created_ad__lte=end_date
+        ).select_related('tashkilot', 'avto', 'who_user')
+        
+        if tashkilot_id != 'all':
+            try:
+                compilated_data = compilated_data.filter(tashkilot_id=int(tashkilot_id))
+            except (ValueError, TypeError):
+                pass
+        
+        if yoqilgi_id != 'all':
+            try:
+                compilated_data = compilated_data.filter(yoqilgi_turi_id=int(yoqilgi_id))
+            except (ValueError, TypeError):
+                pass
+        
+        # Excel fayl yaratish
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        filename = f"yoqilgi_statistikasi_{timezone.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        # Ma'lumotlarni DataFrame ga o'tkazish
+        data_list = []
+        for record in compilated_data:
+            data_list.append({
+                'Sana': record.created_ad.strftime('%Y-%m-%d %H:%M'),
+                'Tashkilot': record.tashkilot.title if record.tashkilot else '',
+                'Avtomobil': record.avto.title if record.avto else '',
+                'Avtomobil raqami': record.avto.avto_number if record.avto else '',
+                'Yoqilg\'i turi': record.yoqilgi_turi,
+                'Miqdor (L)': float(record.hajm) if record.hajm else 0,
+                'Jami narx': float(record.all_price) if record.all_price else 0,
+                'Foydalanuvchi': record.who_user.username if record.who_user else '',
+            })
+        
+        df = pd.DataFrame(data_list)
+        
+        # Excel faylini yaratish
+        with pd.ExcelWriter(response, engine='openpyxl') as writer:
+            # Asosiy ma'lumotlar
+            if not df.empty:
+                df.to_excel(writer, sheet_name='Yoqilg\'i Quyishlar', index=False)
+            
+            # Statistika jadvali
+            summary_data = {
+                'Ko\'rsatkich': [
+                    'Jami Yoqilg\'i (L)',
+                    'O\'rtacha Kunlik (L)', 
+                    'Maksimal (L)',
+                    'Avtomobillar Soni',
+                    'Yozuvlar Soni',
+                    'Davr (kun)'
+                ],
+                'Qiymat': [
+                    round(df['Miqdor (L)'].sum(), 1) if not df.empty else 0,
+                    round(df['Miqdor (L)'].sum() / period_days, 1) if not df.empty and period_days > 0 else 0,
+                    round(df['Miqdor (L)'].max(), 1) if not df.empty else 0,
+                    df['Avtomobil'].nunique() if not df.empty else 0,
+                    len(df),
+                    period_days
+                ]
+            }
+            summary_df = pd.DataFrame(summary_data)
+            summary_df.to_excel(writer, sheet_name='Statistika', index=False)
+        
+        return response
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Excel fayl yaratishda xatolik: {str(e)}'
+        }, status=500)
+@login_required
 def yoqilgi_quyish(request):
     """Yoqilg'i qo'shish sahifasi"""
     tashkilotlar = Tashkilot.objects.all()
@@ -491,7 +563,7 @@ def yoqilgi_quyish(request):
         'yoqilgi_turlari': yoqilgi_turlari,
     }
     return render(request, 'yoqilgi_quyish.html', context)
-
+@login_required
 def bugungi_yoqilgilar(request):
     """Bugungi yoqilg'ilar sahifasi"""
     tashkilotlar = Tashkilot.objects.all()
@@ -653,6 +725,7 @@ def send_telegram(request):
             return JsonResponse({'success': False, 'error': str(e)})
     
     return JsonResponse({'success': False, 'error': 'Faqat POST so\'rovi qabul qilinadi'})
+@login_required
 def add_fuel(request):
     if request.method == 'POST':
         try:
@@ -715,6 +788,7 @@ def add_fuel(request):
     }
     return render(request, 'add_fuel.html', context)
 from datetime import date
+@login_required
 def get_today_fuel_api(request):
     """Bugungi yoqilg'ilarni olish API"""
     today = date.today()
@@ -770,7 +844,7 @@ def get_today_fuel_api(request):
     }
     
     return JsonResponse(response_data)
-
+@login_required
 def get_avtomobillar_api(request):
     """Tashkilot bo'yicha avtomobillarni olish API"""
     tashkilot_id = request.GET.get('tashkilot_id')
@@ -803,7 +877,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 from decimal import Decimal
-
+@login_required
 def export_statistics_excel(request):
     """Statistika ma'lumotlarini Excel faylga eksport qilish"""
     try:
@@ -1039,6 +1113,7 @@ def export_statistics_excel(request):
             'success': False, 
             'error': str(e)
         })
+@login_required
 def export_today_excel(request):
     """Bugungi ma'lumotlarni Excel faylga eksport qilish"""
     try:
@@ -1148,10 +1223,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Tashkilot, Avto, Yoqilgi_turi
 from .forms import TashkilotForm, AvtoForm, YoqilgiTuriForm
-
+@login_required
 def admin_panel(request):
     context = {
-        "users":User.objects.all(),
+        "users":User.objects.filter(is_superuser=False),
         'tashkilotlar': Tashkilot.objects.all(),
         'avto_list': Avto.objects.select_related('tashkilot').all(),
         'yoqilgilar': Yoqilgi_turi.objects.all(),
@@ -1159,6 +1234,7 @@ def admin_panel(request):
     return render(request, 'admin.html', context)
 
 # Tashkilot CRUD
+@login_required
 def tashkilot_edit(request, pk):
     tashkilot = get_object_or_404(Tashkilot, pk=pk)
     if request.method == 'POST':
@@ -1170,7 +1246,7 @@ def tashkilot_edit(request, pk):
     else:
         form = TashkilotForm(instance=tashkilot)
     return render(request, 'tashkilot_edit.html', {'form': form})
-
+@login_required
 def tashkilot_delete(request, pk):
     tashkilot = get_object_or_404(Tashkilot, pk=pk)
     if request.method == 'POST':
@@ -1180,6 +1256,7 @@ def tashkilot_delete(request, pk):
     return render(request, 'tashkilot_delete.html', {'tashkilot': tashkilot})
 
 # Avto CRUD (xuddi shu logika)
+@login_required
 def avto_edit(request, pk):
     avto = get_object_or_404(Avto, pk=pk)
     tashkilotlar = Tashkilot.objects.all()
@@ -1192,7 +1269,7 @@ def avto_edit(request, pk):
     else:
         form = AvtoForm(instance=avto)
     return render(request, 'avto_edit.html', {'form': form,"tashkilotlar":tashkilotlar})
-
+@login_required
 def avto_delete(request, pk):
     avto = get_object_or_404(Avto, pk=pk)
     if request.method == 'POST':
@@ -1202,6 +1279,7 @@ def avto_delete(request, pk):
     return render(request, 'avto_delete.html', {'avto': avto})
 
 # Yoqilgi turi CRUD (xuddi shu logika)
+@login_required
 def yoqilgi_turi_edit(request, pk):
     yoqilgi = get_object_or_404(Yoqilgi_turi, pk=pk)
     if request.method == 'POST':
@@ -1213,7 +1291,7 @@ def yoqilgi_turi_edit(request, pk):
     else:
         form = YoqilgiTuriForm(instance=yoqilgi)
     return render(request, 'yoqilgi_turi_edit.html', {'form': form})
-
+@login_required
 def yoqilgi_turi_delete(request, pk):
     yoqilgi = get_object_or_404(Yoqilgi_turi, pk=pk)
     if request.method == 'POST':
@@ -1221,3 +1299,117 @@ def yoqilgi_turi_delete(request, pk):
         messages.success(request, 'Yoqilg\'i turi muvaffaqiyatli o\'chirildi!')
         return redirect('admin_panel')
     return render(request, 'yoqilgi_turi_delete.html', {'yoqilgi_turi': yoqilgi})
+
+
+@login_required
+def home_worker(request):
+    """Oddiy ishchi uchun bosh sahifa"""
+    try:
+        # Bugungi sana
+        today = timezone.now().date()
+        
+        # Bugungi ma'lumotlar
+        today_records = Compilated.objects.filter(created_ad__date=today)
+        total_fuel = today_records.aggregate(total=Sum('hajm'))['total'] or 0
+        total_count = today_records.count()
+        active_cars = today_records.values('avto').distinct().count()
+        avg_fuel = round(total_fuel / active_cars, 1) if active_cars > 0 else 0
+        
+        # So'nggi faoliyat
+        recent_activities = today_records.select_related('tashkilot', 'avto').order_by('-created_ad')[:5]
+        
+        # Tashkilotlar ro'yxati (avtomobil qo'shish uchun)
+        tashkilotlar = Tashkilot.objects.all()
+        
+        # So'nggi faoliyatni formatlash
+        recent_activities_list = []
+        for activity in recent_activities:
+            recent_activities_list.append({
+                'avto_title': activity.avto.title if activity.avto else 'Noma\'lum',
+                'avto_number': activity.avto.avto_number if activity.avto else '',
+                'tashkilot_title': activity.tashkilot.title if activity.tashkilot else 'Noma\'lum',
+                'hajm': activity.hajm,
+                'time': activity.created_ad.strftime('%H:%M')
+            })
+        
+        context = {
+            'total_fuel': round(total_fuel, 1),
+            'total_count': total_count,
+            'active_cars': active_cars,
+            'avg_fuel': avg_fuel,
+            'recent_activities': recent_activities_list,
+            'tashkilotlar': tashkilotlar,
+        }
+        
+        return render(request, 'home_worker.html', context)
+        
+    except Exception as e:
+        # Xatolik yuz bersa, bo'sh ma'lumotlar bilan sahifani ko'rsatish
+        context = {
+            'total_fuel': 0,
+            'total_count': 0,
+            'active_cars': 0,
+            'avg_fuel': 0,
+            'recent_activities': [],
+            'tashkilotlar': Tashkilot.objects.all(),
+        }
+        return render(request, 'home_worker.html', context)
+
+@login_required
+def add_tashkilot_worker(request):
+    """Oddiy ishchi uchun tashkilot qo'shish"""
+    if request.method == 'POST':
+        try:
+            title = request.POST.get('title')
+            group_id = request.POST.get('group_id', 4885110792)
+            
+            if not title:
+                messages.error(request, 'Tashkilot nomini kiriting!')
+                return redirect('home')
+            
+            # Tashkilotni yaratish
+            tashkilot = Tashkilot.objects.create(
+                title=title,
+                group_id=group_id
+            )
+            
+            messages.success(request, f'"{title}" tashkiloti muvaffaqiyatli qo\'shildi!')
+            
+        except Exception as e:
+            messages.error(request, f'Tashkilot qo\'shishda xatolik: {str(e)}')
+    
+    return redirect('home')
+
+@login_required
+def add_avto_worker(request):
+    """Oddiy ishchi uchun avtomobil qo'shish"""
+    if request.method == 'POST':
+        try:
+            tashkilot_id = request.POST.get('tashkilot_id')
+            title = request.POST.get('title')
+            avto_number = request.POST.get('avto_number')
+            
+            if not all([tashkilot_id, title, avto_number]):
+                messages.error(request, 'Barcha maydonlarni to\'ldiring!')
+                return redirect('home')
+            
+            # Tashkilotni tekshirish
+            try:
+                tashkilot = Tashkilot.objects.get(id=tashkilot_id)
+            except Tashkilot.DoesNotExist:
+                messages.error(request, 'Tashkilot topilmadi!')
+                return redirect('home')
+            
+            # Avtomobilni yaratish
+            avto = Avto.objects.create(
+                tashkilot=tashkilot,
+                title=title,
+                avto_number=avto_number
+            )
+            
+            messages.success(request, f'"{title}" avtomobili muvaffaqiyatli qo\'shildi!')
+            
+        except Exception as e:
+            messages.error(request, f'Avtomobil qo\'shishda xatolik: {str(e)}')
+    
+    return redirect('home')

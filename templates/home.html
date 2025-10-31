@@ -237,7 +237,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             border-left: 3px solid #2a5298;
         }
@@ -261,6 +261,106 @@
             font-weight: bold;
             color: #2a5298;
             font-size: 18px;
+        }
+
+        /* Form styles for worker */
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-body {
+            padding: 25px;
         }
         
         @media (max-width: 768px) {
@@ -289,10 +389,10 @@
             .welcome-section {
                 padding: 20px;
             }
-        }
-        
-        .hidden {
-            display: none !important;
+
+            .form-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -304,6 +404,11 @@
                 <h1>🚗 Yoqilg'i Boshqaruvi Tizimi</h1>
                 <div class="user-info">
                     <span id="current-user">👤 {{ request.user.username }}</span>
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'admin_panel' %}">
+                        <button class="btn-secondary">Admin panel</button>
+                    </a>
+                    {% endif %}
                     <a href="{% url 'logout' %}"><button class="btn-secondary">🚪 Chiqish</button></a>
                 </div>
             </div>
@@ -318,6 +423,7 @@
                     <p>Yoqilg'i boshqaruv tizimiga xush kelibsiz. Quyidagi amallarni bajarishingiz mumkin:</p>
                 </div>
                 
+                <!-- Asosiy amallar -->
                 <div class="action-buttons">
                     <div class="action-card" onclick="location.href='{% url 'yoqilgi_quyish' %}'">
                         <div class="action-icon">⛽</div>
@@ -331,9 +437,19 @@
                         <p>Bugun quyilgan yoqilg'ilar ro'yxatini ko'rish</p>
                     </div>
                     
+                    <div class="action-card" onclick="showModal('tashkilotModal')">
+                        <div class="action-icon">🏢</div>
+                        <h4>Tashkilot Qo'shish</h4>
+                        <p>Yangi tashkilot qo'shish</p>
+                    </div>
                     
+                    <div class="action-card" onclick="showModal('avtoModal')">
+                        <div class="action-icon">🚗</div>
+                        <h4>Avtomobil Qo'shish</h4>
+                        <p>Yangi avtomobil qo'shish</p>
+                    </div>
                 </div>
-                
+
                 <!-- Tezkor statistik ma'lumotlar -->
                 <div class="stats-overview">
                     <div class="stat-card">
@@ -348,35 +464,136 @@
                         <div class="stat-label">Amallar soni</div>
                     </div>
                     
+                    <div class="stat-card">
+                        <div class="stat-label">Faol Avtomobillar</div>
+                        <div class="stat-value" id="active-cars">{{active_cars}}</div>
+                        <div class="stat-label">Soni</div>
+                    </div>
                     
                 </div>
                 
                 <!-- So'nggi faoliyat -->
                 <div class="recent-activity">
                     <h3>So'nggi Faoliyat</h3>
-                    {% for i in recent_activities %}
-                        <div class="activity-list" id="recent-activities">
-                            <div class="activity-item">
-                                <div class="activity-info">
-                                    <div class="activity-title">{{i.avto_title}} ({{i.avto_number}})</div>
-                                    <div class="activity-time">{{i.time}} - {{i.tashkilot_title}}</div>
-                                </div>
-                                <div class="activity-amount">{{i.hajm}} L</div>
+                    <div class="activity-list" id="recent-activities">
+                        {% for i in recent_activities %}
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <div class="activity-title">{{i.avto_title}} ({{i.avto_number}})</div>
+                                <div class="activity-time">{{i.time}} - {{i.tashkilot_title}}</div>
                             </div>
-                            
+                            <div class="activity-amount">{{i.hajm}} L</div>
                         </div>
-                    {% endfor %}
+                        {% empty %}
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <div class="activity-title">Hech qanday faoliyat topilmadi</div>
+                                <div class="activity-time">Bugun hali yoqilg'i quyilmagan</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Tashkilot qo'shish modali -->
+    <div id="tashkilotModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏢 Yangi Tashkilot Qo'shish</h3>
+                <button class="close" onclick="closeModal('tashkilotModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="tashkilotForm" method="POST" action="{% url 'add_tashkilot_worker' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="tashkilot_title">Tashkilot nomi</label>
+                        <input type="text" id="tashkilot_title" name="title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="group_id">Telegram Gruh ID</label>
+                        <input type="number" id="group_id" name="group_id" class="form-control" value="4885110792" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal('tashkilotModal')">Bekor qilish</button>
+                        <button type="submit" class="btn-success">Saqlash</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avtomobil qo'shish modali -->
+    <div id="avtoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🚗 Yangi Avtomobil Qo'shish</h3>
+                <button class="close" onclick="closeModal('avtoModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="avtoForm" method="POST" action="{% url 'add_avto_worker' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="avto_tashkilot">Tashkilot</label>
+                        <select id="avto_tashkilot" name="tashkilot_id" class="form-control" required>
+                            <option value="">Tanlang</option>
+                            {% for t in tashkilotlar %}
+                                <option value="{{ t.id }}">{{ t.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="avto_title">Avtomobil nomi</label>
+                        <input type="text" id="avto_title" name="title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avto_number">Avtomobil raqami</label>
+                        <input type="text" id="avto_number" name="avto_number" class="form-control" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal('avtoModal')">Bekor qilish</button>
+                        <button type="submit" class="btn-success">Saqlash</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal funksiyalari
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Modal tashqarisini bosganda yopish
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Formlarni yuborishdan keyin modallarni yopish
+        document.getElementById('tashkilotForm').addEventListener('submit', function() {
+            setTimeout(() => {
+                closeModal('tashkilotModal');
+            }, 1000);
+        });
+
+        document.getElementById('avtoForm').addEventListener('submit', function() {
+            setTimeout(() => {
+                closeModal('avtoModal');
+            }, 1000);
+        });
+
+        // Statistikani yangilash
         document.addEventListener('DOMContentLoaded', function() {
-            // Bugungi statistikani yuklash
             loadTodayStats();
-            
-            // Har 30 soniyada yangilash
             setInterval(loadTodayStats, 30000);
         });
         
@@ -388,43 +605,11 @@
                     document.getElementById('today-count').textContent = data.total_count;
                     document.getElementById('active-cars').textContent = data.active_cars;
                     document.getElementById('avg-fuel').textContent = data.avg_fuel + ' L';
-                    
-                    // So'nggi faoliyatni yangilash
-                    updateRecentActivities(data.recent_activities);
                 })
                 .catch(error => {
                     console.error('Statistikani yuklashda xatolik:', error);
                 });
         }
-        
-        function updateRecentActivities(activities) {
-            const container = document.getElementById('recent-activities');
-            
-            if (activities.length === 0) {
-                container.innerHTML = `
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <div class="activity-title">Hech qanday faoliyat topilmadi</div>
-                            <div class="activity-time">Bugun hali yoqilg'i quyilmagan</div>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = activities.map(activity => `
-                <div class="activity-item">
-                    <div class="activity-info">
-                        <div class="activity-title">${activity.avto_title} (${activity.avto_number})</div>
-                        <div class="activity-time">${activity.time} - ${activity.tashkilot_title}</div>
-                    </div>
-                    <div class="activity-amount">${activity.hajm} L</div>
-                </div>
-            `).join('');
-        }
-        
-        // Foydalanuvchi nomini yangilash
-        document.getElementById('current-user').textContent = '👤 ' + '{{ request.user.username }}';
     </script>
 </body>
 </html>

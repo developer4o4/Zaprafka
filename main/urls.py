@@ -3,6 +3,8 @@ from .views import *
 urlpatterns = [
 	path("",login_view,name='login'),
 	path("home/",home,name='home'),
+    path('add-tashkilot-worker/', add_tashkilot_worker, name='add_tashkilot_worker'),
+    path('add-avto-worker/', add_avto_worker, name='add_avto_worker'),
     path('a_panel',admin_panel,name='admin_panel'),
     path('logout',logout_view,name='logout'),
     path('add_user/',add_user,name='add_user'),
