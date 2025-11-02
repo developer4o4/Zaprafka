@@ -44,21 +44,28 @@ def home(request):
     return render(request, "home.html",response_data)
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+
 def login_view(request):
-	if request.method == "POST":
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		
-		user = authenticate(request, username=username, password=password)
-		if user == None:
-			return redirect('login')
-		if user is not None:
-			login(request, user)
-		if user.is_superuser:
-			return redirect('admin_panel')
-		return redirect("home")
-	else:
-		return render(request, "login.html", {"error": "Invalid username or password."})
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            return redirect('login')
+
+        login(request, user)
+        if user.is_superuser:
+            return redirect('admin_panel')
+        return redirect("home")
+
+    else:
+        if request.user.is_authenticated:
+            return redirect('home')  # kerakli sahifani yozing
+        else:
+            return render(request, "login.html", {"error": "Parol yoki username hato!"})
 
 @login_required
 # def admin_panel(request):
