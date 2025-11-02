@@ -496,7 +496,7 @@
                 <h3><i class="fas fa-car me-2"></i>Avtomobillar</h3>
             </div>
             <div class="p-4">
-                {% if avto_list %}
+                {% if avtos %}
                 <div class="table-responsive">
                     <table class="admin-table">
                         <thead>
@@ -508,7 +508,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for a in avto_list %}
+                            {% for a in avtos %}
                             <tr>
                                 <td>{{ a.tashkilot.title }}</td>
                                 <td>

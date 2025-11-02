@@ -156,10 +156,11 @@ def add_avto(request):
                 tashkilot=tashkilot
             )
             # shu joyda render qaytariladi, redirect emas
-            return render(request, 'admin.html', {
-                'tashkilotlar': tashkilotlar,
-                'success': "Avto muvaffaqiyatli qo‘shildi!"
-            })
+            return redirect('admin_panel')
+            # return render(request, 'admin.html', {
+            #     'tashkilotlar': tashkilotlar,
+            #     'success': "Avto muvaffaqiyatli qo‘shildi!"
+            # })
         else:
             return render(request, 'admin.html', {
                 'tashkilotlar': tashkilotlar,
@@ -1229,6 +1230,7 @@ def admin_panel(request):
         "users":User.objects.filter(is_superuser=False),
         'tashkilotlar': Tashkilot.objects.all(),
         'avto_list': Avto.objects.select_related('tashkilot').all(),
+        "avtos":Avto.objects.all(),
         'yoqilgilar': Yoqilgi_turi.objects.all(),
     }
     return render(request, 'admin.html', context)

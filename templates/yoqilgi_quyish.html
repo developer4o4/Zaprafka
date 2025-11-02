@@ -634,44 +634,44 @@
             });
 
             // Narxni formatlash
-function formatPrice(price) {
-    // Sonni butun qismiga aylantirish va formatlash
-    const integerPrice = Math.round(price);
-    
-    // Bo'shliq bilan ajratish
-    return new Intl.NumberFormat('uz-UZ').format(integerPrice) + ' so\'m';
-}
+            function formatPrice(price) {
+                // Sonni butun qismiga aylantirish va formatlash
+                const integerPrice = Math.round(price);
+                
+                // Bo'shliq bilan ajratish
+                return new Intl.NumberFormat('uz-UZ').format(integerPrice) + ' so\'m';
+            }
 
-// Yoqilg'i turi o'zgarganda narxni ko'rsatish
-yoqilgiSelect.addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    currentFuelPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            // Yoqilg'i turi o'zgarganda narxni ko'rsatish
+            yoqilgiSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                currentFuelPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
 
-    if (currentFuelPrice > 0) {
-        fuelPriceElement.textContent = formatPrice(currentFuelPrice);
-        calculateTotalPrice();
-        priceInfo.style.display = 'block';
-    } else {
-        priceInfo.style.display = 'none';
-    }
+                if (currentFuelPrice > 0) {
+                    fuelPriceElement.textContent = formatPrice(currentFuelPrice);
+                    calculateTotalPrice();
+                    priceInfo.style.display = 'block';
+                } else {
+                    priceInfo.style.display = 'none';
+                }
 
-    validateForm();
-});
+                validateForm();
+            });
 
-// Miqdor o'zgarganda umumiy narxni hisoblash
-miqdorInput.addEventListener('input', function() {
-    calculateTotalPrice();
-    validateForm();
-});
+            // Miqdor o'zgarganda umumiy narxni hisoblash
+            miqdorInput.addEventListener('input', function() {
+                calculateTotalPrice();
+                validateForm();
+            });
 
-// Umumiy narxni hisoblash
-function calculateTotalPrice() {
-    const quantity = parseFloat(miqdorInput.value) || 0;
-    fuelQuantityElement.textContent = quantity.toFixed(2) + ' litr';
+            // Umumiy narxni hisoblash
+            function calculateTotalPrice() {
+                const quantity = parseFloat(miqdorInput.value) || 0;
+                fuelQuantityElement.textContent = quantity.toFixed(2) + ' litr';
 
-    currentTotalPrice = quantity * currentFuelPrice;
-    totalPriceElement.textContent = formatPrice(currentTotalPrice);
-}
+                currentTotalPrice = quantity * currentFuelPrice;
+                totalPriceElement.textContent = formatPrice(currentTotalPrice);
+            }
 
             // Tashkilot o'zgarganda avtomobillarni yuklash
             tashkilotSelect.addEventListener('change', function () {
@@ -913,118 +913,30 @@ function calculateTotalPrice() {
                 }
             });
 
-            // Tasdiqlash kamerasi funksiyalari
-            function startConfirmationCamera() {
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    confirmationCameraStatus.textContent = '📷 Kamera ochilmoqda...';
-                    confirmationCameraStatus.className = 'camera-status pending';
-
-                    navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        }
-                    })
-                        .then(function (mediaStream) {
-                            confirmationStream = mediaStream;
-
-                            // Video elementini yaratish
-                            confirmationVideo = document.createElement('video');
-                            confirmationVideo.srcObject = mediaStream;
-                            confirmationVideo.autoplay = true;
-                            confirmationVideo.playsInline = true;
-
-                            // Canvas elementini yaratish
-                            confirmationCanvas = document.createElement('canvas');
-
-                            // Preview elementini tozalash va videoni qo'shish
-                            confirmationCameraPreview.innerHTML = '';
-                            confirmationCameraPreview.appendChild(confirmationVideo);
-
-                            // Tugmalarni sozlash
-                            confirmationStartCameraBtn.disabled = true;
-                            confirmationCaptureBtn.disabled = false;
-
-                            confirmationCameraStatus.textContent = '✅ Kamera tayyor - Endi rasmga olishingiz mumkin';
-                            confirmationCameraStatus.className = 'camera-status success';
-
-                            // Video yuklanganida canvas o'lchamlarini sozlash
-                            confirmationVideo.addEventListener('loadedmetadata', function () {
-                                confirmationCanvas.width = confirmationVideo.videoWidth;
-                                confirmationCanvas.height = confirmationVideo.videoHeight;
-                            });
-                        })
-                        .catch(function (error) {
-                            console.error('Kamerani ochishda xatolik:', error);
-                            confirmationCameraStatus.textContent = '❌ Kamera ochilmadi - Iltimos, kameraga ruxsat bering';
-                            confirmationCameraStatus.className = 'camera-status error';
-                            showNotification('Kamerani ochishda xatolik yuz berdi. Iltimos, kameraga ruxsat bering.', 'error');
-                        });
-                } else {
-                    confirmationCameraStatus.textContent = '❌ Brauzeringiz kamerani qo\'llab-quvvatlamaydi';
-                    confirmationCameraStatus.className = 'camera-status error';
-                    showNotification('Kamera qurilmangiz qo\'llab-quvvatlanmaydi', 'error');
-                }
-            }
-
-            function captureConfirmationPhoto() {
-                if (confirmationVideo && confirmationCanvas) {
-                    const ctx = confirmationCanvas.getContext('2d');
-                    ctx.drawImage(confirmationVideo, 0, 0, confirmationCanvas.width, confirmationCanvas.height);
-
-                    // Canvas'dan rasmni olish
-                    const imageDataURL = confirmationCanvas.toDataURL('image/jpeg', 0.8);
-                    confirmationCapturedImage.src = imageDataURL;
-                    confirmationCapturedImageData.value = imageDataURL;
-
-                    // Elementlarni ko'rsatish/yashirish
-                    confirmationCameraPreview.style.display = 'none';
-                    confirmationCapturedImage.style.display = 'block';
-                    confirmationCaptureBtn.style.display = 'none';
-                    confirmationRetakeBtn.style.display = 'block';
-
-                    // Kamerani to'xtatish
-                    if (confirmationStream) {
-                        confirmationStream.getTracks().forEach(track => track.stop());
-                    }
-
-                    isConfirmationPhotoTaken = true;
-                    validateConfirmationForm();
-                }
-            }
-
-            function retakeConfirmationPhoto() {
-                // Elementlarni qayta sozlash
-                confirmationCameraPreview.style.display = 'block';
-                confirmationCapturedImage.style.display = 'none';
-                confirmationCaptureBtn.style.display = 'block';
-                confirmationRetakeBtn.style.display = 'none';
-                confirmationCapturedImageData.value = '';
-
-                confirmationCameraStatus.textContent = '📷 Kamera tayyorlanmoqda...';
-                confirmationCameraStatus.className = 'camera-status pending';
-
-                isConfirmationPhotoTaken = false;
-                validateConfirmationForm();
-
-                // Kamerani qayta yoqish
-                startConfirmationCamera();
-            }
-
+            // KAMERA FUNKSIYALARI - YANGILANGAN VERSIYA
             // Asosiy kamera funksiyalari
             function startCamera(previewElement, statusElement, startBtn, captureBtn) {
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    statusElement.textContent = '📷 Kamera ochilmoqda...';
-                    statusElement.className = 'camera-status pending';
+                // Kamerani to'xtatish (agar oldin ochilgan bo'lsa)
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
 
-                    navigator.mediaDevices.getUserMedia({
+                statusElement.textContent = '📷 Kamera ochilmoqda...';
+                statusElement.className = 'camera-status pending';
+
+                // Kameraga ruxsat so'rash
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const constraints = {
                         video: {
-                            facingMode: 'environment',
+                            facingMode: 'environment', // Orqa kamera
                             width: { ideal: 1280 },
                             height: { ideal: 720 }
-                        }
-                    })
+                        },
+                        audio: false
+                    };
+
+                    // Kameraga ruxsat so'rash
+                    navigator.mediaDevices.getUserMedia(constraints)
                         .then(function (mediaStream) {
                             stream = mediaStream;
 
@@ -1033,6 +945,8 @@ function calculateTotalPrice() {
                             video.srcObject = mediaStream;
                             video.autoplay = true;
                             video.playsInline = true;
+                            video.setAttribute('muted', 'true');
+                            video.setAttribute('playsinline', 'true');
 
                             // Canvas elementini yaratish
                             canvas = document.createElement('canvas');
@@ -1053,12 +967,31 @@ function calculateTotalPrice() {
                                 canvas.width = video.videoWidth;
                                 canvas.height = video.videoHeight;
                             });
+
+                            // Xatolikni qayta ishlash
+                            video.addEventListener('error', function (e) {
+                                console.error('Video xatosi:', e);
+                                statusElement.textContent = '❌ Video yuklashda xatolik';
+                                statusElement.className = 'camera-status error';
+                            });
                         })
                         .catch(function (error) {
                             console.error('Kamerani ochishda xatolik:', error);
-                            statusElement.textContent = '❌ Kamera ochilmadi - Iltimos, kameraga ruxsat bering';
+                            
+                            // Xatolik turiga qarab xabar berish
+                            let errorMessage = 'Kamerani ochishda xatolik yuz berdi';
+                            
+                            if (error.name === 'NotAllowedError') {
+                                errorMessage = 'Kamera ruxsati rad etildi. Iltimos, brauzer sozlamalaridan kameraga ruxsat bering.';
+                            } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
+                                errorMessage = 'Kamera topilmadi yoki sozlamalar qo\'llab-quvvatlanmaydi.';
+                            } else if (error.name === 'NotReadableError') {
+                                errorMessage = 'Kamera boshqa dastur tomonidan ishlatilmoqda.';
+                            }
+                            
+                            statusElement.textContent = '❌ ' + errorMessage;
                             statusElement.className = 'camera-status error';
-                            showNotification('Kamerani ochishda xatolik yuz berdi. Iltimos, kameraga ruxsat bering.', 'error');
+                            showNotification(errorMessage, 'error');
                         });
                 } else {
                     statusElement.textContent = '❌ Brauzeringiz kamerani qo\'llab-quvvatlamaydi';
@@ -1070,6 +1003,12 @@ function calculateTotalPrice() {
             function capturePhoto(imageElement, imageDataElement, previewElement, captureBtn, retakeBtn) {
                 if (video && canvas) {
                     const ctx = canvas.getContext('2d');
+                    
+                    // Canvas o'lchamlarini video o'lchamlariga moslashtirish
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    // Rasmni chizish
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
                     // Canvas'dan rasmni olish
@@ -1111,9 +1050,138 @@ function calculateTotalPrice() {
                 startBtn.click();
             }
 
+            // Tasdiqlash kamerasi funksiyalari
+            function startConfirmationCamera() {
+                // Kamerani to'xtatish (agar oldin ochilgan bo'lsa)
+                if (confirmationStream) {
+                    confirmationStream.getTracks().forEach(track => track.stop());
+                }
+
+                confirmationCameraStatus.textContent = '📷 Kamera ochilmoqda...';
+                confirmationCameraStatus.className = 'camera-status pending';
+
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const constraints = {
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    };
+
+                    navigator.mediaDevices.getUserMedia(constraints)
+                        .then(function (mediaStream) {
+                            confirmationStream = mediaStream;
+
+                            // Video elementini yaratish
+                            confirmationVideo = document.createElement('video');
+                            confirmationVideo.srcObject = mediaStream;
+                            confirmationVideo.autoplay = true;
+                            confirmationVideo.playsInline = true;
+                            confirmationVideo.setAttribute('muted', 'true');
+                            confirmationVideo.setAttribute('playsinline', 'true');
+
+                            // Canvas elementini yaratish
+                            confirmationCanvas = document.createElement('canvas');
+
+                            // Preview elementini tozalash va videoni qo'shish
+                            confirmationCameraPreview.innerHTML = '';
+                            confirmationCameraPreview.appendChild(confirmationVideo);
+
+                            // Tugmalarni sozlash
+                            confirmationStartCameraBtn.disabled = true;
+                            confirmationCaptureBtn.disabled = false;
+
+                            confirmationCameraStatus.textContent = '✅ Kamera tayyor - Endi rasmga olishingiz mumkin';
+                            confirmationCameraStatus.className = 'camera-status success';
+
+                            // Video yuklanganida canvas o'lchamlarini sozlash
+                            confirmationVideo.addEventListener('loadedmetadata', function () {
+                                confirmationCanvas.width = confirmationVideo.videoWidth;
+                                confirmationCanvas.height = confirmationVideo.videoHeight;
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error('Kamerani ochishda xatolik:', error);
+                            
+                            let errorMessage = 'Kamerani ochishda xatolik yuz berdi';
+                            
+                            if (error.name === 'NotAllowedError') {
+                                errorMessage = 'Kamera ruxsati rad etildi. Iltimos, brauzer sozlamalaridan kameraga ruxsat bering.';
+                            } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
+                                errorMessage = 'Kamera topilmadi yoki sozlamalar qo\'llab-quvvatlanmaydi.';
+                            } else if (error.name === 'NotReadableError') {
+                                errorMessage = 'Kamera boshqa dastur tomonidan ishlatilmoqda.';
+                            }
+                            
+                            confirmationCameraStatus.textContent = '❌ ' + errorMessage;
+                            confirmationCameraStatus.className = 'camera-status error';
+                            showNotification(errorMessage, 'error');
+                        });
+                } else {
+                    confirmationCameraStatus.textContent = '❌ Brauzeringiz kamerani qo\'llab-quvvatlamaydi';
+                    confirmationCameraStatus.className = 'camera-status error';
+                    showNotification('Kamera qurilmangiz qo\'llab-quvvatlanmaydi', 'error');
+                }
+            }
+
+            function captureConfirmationPhoto() {
+                if (confirmationVideo && confirmationCanvas) {
+                    const ctx = confirmationCanvas.getContext('2d');
+                    
+                    // Canvas o'lchamlarini video o'lchamlariga moslashtirish
+                    confirmationCanvas.width = confirmationVideo.videoWidth;
+                    confirmationCanvas.height = confirmationVideo.videoHeight;
+                    
+                    ctx.drawImage(confirmationVideo, 0, 0, confirmationCanvas.width, confirmationCanvas.height);
+
+                    // Canvas'dan rasmni olish
+                    const imageDataURL = confirmationCanvas.toDataURL('image/jpeg', 0.8);
+                    confirmationCapturedImage.src = imageDataURL;
+                    confirmationCapturedImageData.value = imageDataURL;
+
+                    // Elementlarni ko'rsatish/yashirish
+                    confirmationCameraPreview.style.display = 'none';
+                    confirmationCapturedImage.style.display = 'block';
+                    confirmationCaptureBtn.style.display = 'none';
+                    confirmationRetakeBtn.style.display = 'block';
+
+                    // Kamerani to'xtatish
+                    if (confirmationStream) {
+                        confirmationStream.getTracks().forEach(track => track.stop());
+                    }
+
+                    isConfirmationPhotoTaken = true;
+                    validateConfirmationForm();
+                }
+            }
+
+            function retakeConfirmationPhoto() {
+                // Elementlarni qayta sozlash
+                confirmationCameraPreview.style.display = 'block';
+                confirmationCapturedImage.style.display = 'none';
+                confirmationCaptureBtn.style.display = 'block';
+                confirmationRetakeBtn.style.display = 'none';
+                confirmationCapturedImageData.value = '';
+
+                confirmationCameraStatus.textContent = '📷 Kamera tayyorlanmoqda...';
+                confirmationCameraStatus.className = 'camera-status pending';
+
+                isConfirmationPhotoTaken = false;
+                validateConfirmationForm();
+
+                // Kamerani qayta yoqish
+                confirmationStartCameraBtn.click();
+            }
+
             // Bekor qilish
             cancelBtn.addEventListener('click', function () {
                 if (confirm('Haqiqatan ham bekor qilmoqchimisiz? Kiritilgan ma\'lumotlar saqlanmaydi.')) {
+                    // Kamerani to'xtatish
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
                     window.location.href = "{% url 'home' %}";
                 }
             });
@@ -1129,10 +1197,19 @@ function calculateTotalPrice() {
                 }, 5000);
             }
 
+            // Sahifa yopilganda kamerani to'xtatish
+            window.addEventListener('beforeunload', function() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                if (confirmationStream) {
+                    confirmationStream.getTracks().forEach(track => track.stop());
+                }
+            });
+
             // Dastlabki tekshirish
             validateForm();
         });
     </script>
 </body>
-
 </html>
