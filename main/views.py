@@ -745,8 +745,10 @@ def add_fuel(request):
             all_price = Decimal(request.POST.get('all_price', 0))  # Decimal ga o'zgartirish
             captured_image = request.POST.get('captured_image')
             confirmation_photo = request.POST.get('confirmation_photo')
-            yoqilgi_turi = request.POST.get("yoqilgi")
-            print(yoqilgi_turi)
+            yoqilgi_id = request.POST.get("yoqilgi")  # bu tanlangan ID
+            if yoqilgi_id:
+                yoqilgi_obj = Yoqilgi_turi.objects.get(id=yoqilgi_id)
+                print(yoqilgi_obj)
             # Rasmni saqlash funksiyasi
             def save_base64_image(base64_string, filename):
                 if base64_string and base64_string != '':
@@ -764,7 +766,7 @@ def add_fuel(request):
             compilated = Compilated(
                 tashkilot_id=tashkilot_id,
                 avto_id=avto_id,
-                yoqilgi_turi=yoqilgi_turi,
+                yoqilgi_turi=yoqilgi_obj,
                 who_user=request.user,
                 hajm=miqdor,
                 all_price=all_price,
