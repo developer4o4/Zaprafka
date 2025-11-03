@@ -1153,6 +1153,7 @@ def export_today_excel(request):
                     'Tashkilot': record.tashkilot.title,
                     'Avtomobil': record.avto.title,
                     'Avtomobil Raqami': record.avto.avto_number,
+                    'Yoqilgʻi Turi': record.yoqilgi_turi,
                     'Yoqilgʻi Miqdori (L)': record.hajm,
                     'Foydalanuvchi': record.who_user.username,
                     'Rasm Fayli': record.photo.name if record.photo else 'Mavjud emas'
