@@ -1580,9 +1580,274 @@ def end_day_api(request):
             'error': str(e)
         }, status=500)
     
+from django.http import Http404
 
-def custom_404_view(request, exception):
-    return render(request, '404.html', status=404)
+def custom_404_view(request, exception=None):
+    """404 xato sahifasi"""
+    try:
+        return render(request, '404.html', status=404)
+    except Exception as e:
+        # Agar 404.html topilmasa, oddiy HTML qaytaramiz
+        html_content = """
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahifa topilmadi - Yoqilg'i Boshqaruvi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .error-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .search-box {
+            margin: 30px 0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-btn {
+            padding: 12px 25px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .quick-links {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .quick-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 30px 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">🔍</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Sahifa Topilmadi</h1>
+        
+        <p class="error-message">
+            Kechirasiz, siz qidirgan sahifa mavjud emas yoki o'chirilgan bo'lishi mumkin.
+        </p>
+        
+        <!-- Qidiruv qismi -->
+        
+        
+        <!-- Asosiy amallar -->
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                🏠 Bosh Sahifaga Qaytish
+            </a>
+            <button onclick="history.back()" class="btn btn-secondary">
+                ↩️ Orqaga Qaytish
+            </button>
+        </div>
+        
+        <!-- Tezkor havolalar -->
+        
+    </div>
 
-def custom_500_view(request):
-    return render(request, '500.html', status=500)
+    <script>
+        // Qidiruv funksiyasi
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-input').value.trim();
+            if (searchTerm) {
+                // Soddaroq qidiruv - sahifa nomi bo'yicha
+                const pages = {
+                    'bosh sahifa': "{% url 'home_page' %}",
+                    'yoqilgi': "{% url 'yoqilgi_quyish' %}",
+                    'hisobot': "{% url 'bugungi_yoqilgilar' %}",
+                    'admin': "{% url 'admin_panel' %}",
+                    'chiqish': "{% url 'logout' %}"
+                };
+                
+                const lowerTerm = searchTerm.toLowerCase();
+                let found = false;
+                
+                for (const [key, url] of Object.entries(pages)) {
+                    if (lowerTerm.includes(key) || key.includes(lowerTerm)) {
+                        window.location.href = url;
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    alert('Sahifa topilmadi. Bosh sahifaga yo\'naltirilmoqdasiz.');
+                    window.location.href = "{% url 'home_page' %}";
+                }
+            }
+        });
+        
+        // Enter bosilganda qidirish
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-btn').click();
+            }
+        });
+        
+        // Sahifa yuklanganda fokusni qidiruv inputiga o'tkazish
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.search-input').focus();
+        });
+    </script>
+</body>
+</html>
+        """
+        from django.http import HttpResponse
+        return HttpResponse(html_content, status=404)
+

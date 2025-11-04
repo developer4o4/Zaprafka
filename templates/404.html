@@ -195,10 +195,7 @@
         </p>
         
         <!-- Qidiruv qismi -->
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="Sahifa nomini yozing...">
-            <button class="search-btn">Qidirish</button>
-        </div>
+        
         
         <!-- Asosiy amallar -->
         <div class="error-actions">
@@ -211,13 +208,7 @@
         </div>
         
         <!-- Tezkor havolalar -->
-        <div class="quick-links">
-            <a href="{% url 'yoqilgi_quyish' %}" class="quick-link">⛽ Yoqilg'i Qo'shish</a>
-            <a href="{% url 'bugungi_yoqilgilar' %}" class="quick-link">📊 Bugungi Yoqilg'ilar</a>
-            {% if request.user.is_superuser %}
-            <a href="{% url 'admin_panel' %}" class="quick-link">⚙️ Admin Panel</a>
-            {% endif %}
-        </div>
+        
     </div>
 
     <script>

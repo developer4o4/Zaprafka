@@ -1,7 +1,5 @@
 from django.urls import path
 from .views import *
-handler404 = 'main.views.custom_404_view'
-handler500 = 'main.views.custom_500_view'
 urlpatterns = [
 	path("",login_view,name='login'),
 	path("home/",home,name='home'),
@@ -33,3 +31,4 @@ urlpatterns = [
     path('api/today-report/', today_report_api, name='today_report_api'),
     path('api/end-day/', end_day_api, name='end_day_api'),
 ]
+handler404 = custom_404_view
