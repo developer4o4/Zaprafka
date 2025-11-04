@@ -30,5 +30,6 @@ class Compilated(models.Model):
     hajm = models.FloatField(default=0)
     created_ad = models.DateTimeField(default=timezone.now)
     photo = models.FileField(upload_to='images/',default="none.jpg") 
-    yoqilgi_turi = models.CharField(max_length=50,default="AI-82")
+    photo_2 = models.FileField(upload_to='images/',default="none.jpg") 
+    yoqilgi_turi = models.CharField(max_length=50,default="tanlanmagan")
     all_price = models.DecimalField(max_digits=50, decimal_places=2, default=0)

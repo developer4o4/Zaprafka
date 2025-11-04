@@ -777,9 +777,14 @@ def add_fuel(request):
                 captured_image, 
                 f'process_{request.user.id}_{int(timezone.now().timestamp())}'
             )
+            process_photo_file_2 = save_base64_image(
+                confirmation_photo, 
+                f'process_{request.user.id}_{int(timezone.now().timestamp())}'
+            )
             if process_photo_file:
                 compilated.photo = process_photo_file
-            
+            if process_photo_file_2:
+                compilated.photo_2 = process_photo_file_2
             compilated.save()
             
             return JsonResponse({'success': True})
