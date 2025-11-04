@@ -29,6 +29,6 @@ class Compilated(models.Model):
     who_user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     hajm = models.FloatField(default=0)
     created_ad = models.DateTimeField(default=timezone.now)
-    photo = models.FileField(upload_to='static/images/',default="none.jpg") 
+    photo = models.FileField(upload_to='images/',default="none.jpg") 
     yoqilgi_turi = models.CharField(max_length=50,default="AI-82")
     all_price = models.DecimalField(max_digits=50, decimal_places=2, default=0)
