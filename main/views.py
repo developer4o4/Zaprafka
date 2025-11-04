@@ -1454,12 +1454,11 @@ def send_telegram_message(message):
     try:
         telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         
-        # Xabar uzunligini tekshirish
         if len(message) > 4000:
             message = message[:4000] + "..."
         
         payload = {
-            'chat_id': "6094051871",
+            'chat_id': "352987963",
             'text': message,
             'parse_mode': 'Markdown'
         }
