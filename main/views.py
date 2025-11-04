@@ -1425,3 +1425,153 @@ def add_avto_worker(request):
             messages.error(request, f'Avtomobil qo\'shishda xatolik: {str(e)}')
     
     return redirect('home')
+
+
+def today_report_api(request):
+    """Bugungi hisobotni JSON formatida qaytaradi"""
+    today = date.today()
+    activities = Compilated.objects.filter(created_ad__date=today).select_related('avto', 'tashkilot')
+    
+    activity_data = []
+    for activity in activities:
+        activity_data.append({
+            'avto_title': activity.avto.title,
+            'avto_number': activity.avto.avto_number,
+            'hajm': activity.hajm,
+            'tashkilot_title': activity.tashkilot.title,
+            'time': activity.created_ad.strftime('%H:%M')
+        })
+    
+    return JsonResponse({
+        'activities': activity_data,
+        'total_count': len(activity_data)
+    })
+
+from django.views.decorators.http import require_POST
+def send_telegram_message(message):
+    """Telegramga xabar yuborish"""
+    bot_token = '8384548755:AAE_O3g_2Q971QHNU8eqk3NCo7bxTAZrf9o'
+    try:
+        telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        
+        # Xabar uzunligini tekshirish
+        if len(message) > 4000:
+            message = message[:4000] + "..."
+        
+        payload = {
+            'chat_id': "6094051871",
+            'text': message,
+            'parse_mode': 'Markdown'
+        }
+        
+        response = requests.post(telegram_url, data=payload, timeout=10)
+        
+        if response.status_code == 200:
+            return True, "Xabar muvaffaqiyatli yuborildi"
+        else:
+            try:
+                error_data = response.json()
+            except Exception:
+                error_data = response.text
+            return False, f"Telegram xatosi: {error_data}"
+            
+    except Exception as e:
+        return False, f"Xabar yuborishda xatolik: {str(e)}"
+
+
+@csrf_exempt
+@require_POST
+def end_day_api(request):
+    """Kunni yakunlash va hisobotni Telegramga yuborish"""
+    try:
+        today = date.today()
+        now = timezone.now()
+        activities = Compilated.objects.filter(created_ad__date=today).select_related('avto', 'tashkilot', 'who_user')
+        
+        # Telegram xabarini tayyorlash
+        message = f"📊 *Kunlik Yoqilg'i Hisoboti* 📊\n"
+        message += f"📅 *Sana:* {today.strftime('%Y-%m-%d')}\n"
+        message += f"⏰ *Yakunlangan vaqt:* {now.strftime('%H:%M')}\n"
+        message += f"👤 *Yakunlovchi:* {request.user.get_full_name() or request.user.username}\n\n"
+        
+        total_fuel = 0
+        total_price = 0
+        activity_count = activities.count()
+        
+        if activity_count > 0:
+            # Tashkilotlar bo'yicha guruhlash
+            org_data = {}
+            for activity in activities:
+                org_name = activity.tashkilot.title
+                if org_name not in org_data:
+                    org_data[org_name] = []
+                org_data[org_name].append(activity)
+            
+            # Xabarni tuzish
+            for org_name, org_activities in org_data.items():
+                message += f"🏢 *{org_name}*\n"
+                org_total_fuel = 0
+                org_total_price = 0
+                
+                for activity in org_activities:
+                    activity_price = float(activity.all_price or 0)
+                    
+                    message += f"  • {activity.avto.title} ({activity.avto.avto_number}):\n"
+                    message += f"    - Yoqilg'i: {activity.hajm} L\n"
+                    message += f"    - Turi: {activity.yoqilgi_turi}\n"
+                    message += f"    - Narx: {activity_price:,.0f} so'm\n"
+                    message += f"    - Vaqt: {activity.created_ad.strftime('%H:%M')}\n\n"
+                    
+                    org_total_fuel += activity.hajm
+                    org_total_price += activity_price
+                    total_fuel += activity.hajm
+                    total_price += activity_price
+                
+                message += f"  *Jami yoqilg'i: {org_total_fuel:.2f} L*\n"
+                message += f"  *Jami narx: {org_total_price:,.0f} so'm*\n\n"
+            
+            message += f"📈 *UMUMIY HISOBOT:*\n"
+            message += f"  • Yoqilg'i: {total_fuel:.2f} L\n"
+            message += f"  • Narx: {total_price:,.0f} so'm\n"
+            message += f"  • Avtomobillar: {activity_count} ta\n"
+        else:
+            message += "Bugun hech qanday yoqilg'i quyilmadi."
+        
+        message += f"\n---\n🔄 *Sistema:* Zaprafka\n👤 *Operator:* {request.user.get_full_name() or request.user.username}"
+        
+        # Telegramga xabarni yuborish
+        success, result_message = send_telegram_message(message)
+        
+        # Har holda ma'lumotlarni o'chirish
+        deleted_count, _ = activities.delete()
+        
+        if success:
+            return JsonResponse({
+                'success': True,
+                'message': 'Kun muvaffaqiyatli yakunlandi va hisobot yuborildi',
+                'total_fuel': total_fuel,
+                'total_price': total_price,
+                'total_activities': activity_count,
+                'deleted_count': deleted_count,
+                'telegram_status': 'sent'
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'message': f'Kun yakunlandi, lekin Telegramga yuborishda xatolik: {result_message}',
+                'total_fuel': total_fuel,
+                'total_price': total_price,
+                'total_activities': activity_count,
+                'deleted_count': deleted_count,
+                'telegram_status': 'failed',
+                'telegram_error': result_message
+            })
+            
+    except Exception as e:
+        import traceback
+        print(f"Xatolik: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

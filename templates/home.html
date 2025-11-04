@@ -101,6 +101,18 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
         }
+
+        /* Kunni yakunlash tugmasi uchun yangi stil */
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+        }
         
         .dashboard {
             background: white;
@@ -138,6 +150,29 @@
             font-size: 16px;
             max-width: 600px;
             margin: 0 auto;
+        }
+
+        /* Kunni yakunlash bo'limi uchun yangi stil */
+        .end-day-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-radius: 12px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .end-day-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .end-day-section p {
+            color: #856404;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto 20px;
         }
         
         .action-buttons {
@@ -362,6 +397,38 @@
         .modal-body {
             padding: 25px;
         }
+
+        /* Hisobot ma'lumotlari uchun yangi stillar */
+        .report-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #2a5298;
+        }
+        
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .report-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .report-total {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2a5298;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #2a5298;
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -421,6 +488,15 @@
                 <div class="welcome-section">
                     <h3>Assalomu alaykum, {{ request.user.username }}!</h3>
                     <p>Yoqilg'i boshqaruv tizimiga xush kelibsiz. Quyidagi amallarni bajarishingiz mumkin:</p>
+                </div>
+                
+                <!-- Kunni yakunlash bo'limi (YANGI QO'SHILGAN) -->
+                <div class="end-day-section">
+                    <h3>📅 Kunni Yakunlash</h3>
+                    <p>Kun yakunida bugungi yoqilg'i ma'lumotlarini hisobot qilib yuboring va ma'lumotlarni nolga tushiring.</p>
+                    <button class="btn-warning" onclick="showModal('endDayModal')">
+                        📊 Kunni Yakunlash
+                    </button>
                 </div>
                 
                 <!-- Asosiy amallar -->
@@ -498,6 +574,31 @@
         </div>
     </div>
 
+    <!-- Kunni yakunlash modali (YANGI QO'SHILGAN) -->
+    <div id="endDayModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Kunni Yakunlash</h3>
+                <button class="close" onclick="closeModal('endDayModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="report-data">
+                    <h4>Bugungi Hisobot:</h4>
+                    <div id="today-report">
+                        <!-- Hisobot ma'lumotlari JavaScript orqali to'ldiriladi -->
+                    </div>
+                </div>
+                <p style="margin: 15px 0; color: #666; font-size: 14px;">
+                    Hisobot Telegram orqali yuboriladi va ma'lumotlar nolga tushiriladi.
+                </p>
+                <div class="form-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeModal('endDayModal')">Bekor qilish</button>
+                    <button type="button" class="btn-warning" onclick="endDay()">Tasdiqlash va Yuborish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tashkilot qo'shish modali -->
     <div id="tashkilotModal" class="modal">
         <div class="modal-content">
@@ -565,6 +666,11 @@
         // Modal funksiyalari
         function showModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
+            
+            // Agar kunni yakunlash modali ochilsa, hisobotni yuklash
+            if (modalId === 'endDayModal') {
+                loadTodayReport();
+            }
         }
 
         function closeModal(modalId) {
@@ -604,11 +710,110 @@
                     document.getElementById('today-fuel').textContent = data.total_fuel + ' L';
                     document.getElementById('today-count').textContent = data.total_count;
                     document.getElementById('active-cars').textContent = data.active_cars;
-                    document.getElementById('avg-fuel').textContent = data.avg_fuel + ' L';
                 })
                 .catch(error => {
                     console.error('Statistikani yuklashda xatolik:', error);
                 });
+        }
+        
+        // Bugungi hisobotni yuklash (YANGI FUNKSIYA)
+        function loadTodayReport() {
+            fetch('/api/today-report/')
+                .then(response => response.json())
+                .then(data => {
+                    const reportContainer = document.getElementById('today-report');
+                    let reportHTML = '';
+                    
+                    if (data.activities && data.activities.length > 0) {
+                        let totalFuel = 0;
+                        
+                        data.activities.forEach(activity => {
+                            reportHTML += `
+                                <div class="report-item">
+                                    <span>${activity.avto_title} (${activity.avto_number})</span>
+                                    <span>${activity.hajm} L</span>
+                                </div>
+                            `;
+                            totalFuel += parseFloat(activity.hajm);
+                        });
+                        
+                        reportHTML += `
+                            <div class="report-total">
+                                <span>Jami:</span>
+                                <span>${totalFuel.toFixed(2)} L</span>
+                            </div>
+                        `;
+                    } else {
+                        reportHTML = '<p>Bugun hech qanday yoqilg\'i quyilmagan</p>';
+                    }
+                    
+                    reportContainer.innerHTML = reportHTML;
+                })
+                .catch(error => {
+                    console.error('Hisobotni yuklashda xatolik:', error);
+                    document.getElementById('today-report').innerHTML = '<p>Hisobotni yuklashda xatolik yuz berdi</p>';
+                });
+        }
+        
+        // Kunni yakunlash funksiyasi (YANGI FUNKSIYA)
+        function endDay() {
+            const confirmEnd = confirm("Kunni yakunlashni tasdiqlaysizmi? Hisobot Telegramga yuboriladi va ma'lumotlar nolga tushiriladi.");
+            
+            if (confirmEnd) {
+                // Yuklash animatsiyasi
+                const confirmButton = document.querySelector('#endDayModal .btn-warning');
+                const originalText = confirmButton.textContent;
+                confirmButton.textContent = 'Yuborilmoqda...';
+                confirmButton.disabled = true;
+                
+                fetch('/api/end-day/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Kun muvaffaqiyatli yakunlandi! Hisobot Telegramga yuborildi.');
+                        closeModal('endDayModal');
+                        
+                        // Statistikani yangilash
+                        loadTodayStats();
+                        
+                        // So'nggi faoliyatni yangilash
+                        location.reload();
+                    } else {
+                        alert('Xatolik yuz berdi: ' + (data.error || 'Noma\'lum xatolik'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Kunni yakunlashda xatolik:', error);
+                    alert('Server bilan aloqada xatolik yuz berdi');
+                })
+                .finally(() => {
+                    // Tugma holatini tiklash
+                    confirmButton.textContent = originalText;
+                    confirmButton.disabled = false;
+                });
+            }
+        }
+        
+        // CSRF token olish uchun yordamchi funksiya (YANGI FUNKSIYA)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
     </script>
 </body>

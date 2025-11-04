@@ -28,4 +28,6 @@ urlpatterns = [
     path('avto/delete/<int:pk>/', avto_delete, name='avto_delete'),
     path('yoqilgi-turi/edit/<int:pk>/', yoqilgi_turi_edit, name='yoqilgi_turi_edit'),
     path('yoqilgi-turi/delete/<int:pk>/', yoqilgi_turi_delete, name='yoqilgi_turi_delete'),
+    path('api/today-report/', today_report_api, name='today_report_api'),
+    path('api/end-day/', end_day_api, name='end_day_api'),
 ]
