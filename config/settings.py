@@ -9,6 +9,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://national.infinite-co.uz',
     'https://www.national.infinite-co.uz',
 ]
+handler404 = 'main.views.custom_404_view'
+handler500 = 'main.views.custom_500_view'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -17,9 +19,8 @@ CSRF_TRUSTED_ORIGINS = [
 SECRET_KEY = 'django-insecure-zvaq*_#$0%5^pw=^ntzvkgbds5qap^5e3l2bt-d09#_hgg0+-0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
 
 
 # Application definition

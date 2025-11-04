@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+handler404 = 'main.views.custom_404_view'
+handler500 = 'main.views.custom_500_view'
 urlpatterns = [
 	path("",login_view,name='login'),
 	path("home/",home,name='home'),
