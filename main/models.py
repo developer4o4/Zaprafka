@@ -24,9 +24,9 @@ class Yoqilgi_turi(models.Model):
     def __str__(self):
         return self.title
 class Compilated(models.Model):
-    tashkilot = models.ForeignKey(Tashkilot,on_delete=models.DO_NOTHING)
-    avto = models.ForeignKey(Avto,on_delete=models.DO_NOTHING)
-    who_user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    tashkilot = models.ForeignKey(Tashkilot,on_delete=models.SET_NULL)
+    avto = models.ForeignKey(Avto,on_delete=models.SET_NULL)
+    who_user = models.ForeignKey(User,on_delete=models.SET_NULL)
     hajm = models.FloatField(default=0)
     created_ad = models.DateTimeField(default=timezone.now)
     photo = models.FileField(upload_to='images/',default="none.jpg") 
