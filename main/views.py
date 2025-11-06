@@ -1289,6 +1289,7 @@ def avto_edit(request, pk):
 @login_required
 def avto_delete(request, pk):
     avto = get_object_or_404(Avto, pk=pk)
+    print(avto)
     if request.method == 'POST':
         avto.delete()
         messages.success(request, 'Avtomobil muvaffaqiyatli o\'chirildi!')
@@ -1808,7 +1809,7 @@ def custom_404_view(request, exception=None):
             if (searchTerm) {
                 // Soddaroq qidiruv - sahifa nomi bo'yicha
                 const pages = {
-                    'bosh sahifa': "{% url 'home_page' %}",
+                    'bosh sahifa': "{% url '/' %}",
                     'yoqilgi': "{% url 'yoqilgi_quyish' %}",
                     'hisobot': "{% url 'bugungi_yoqilgilar' %}",
                     'admin': "{% url 'admin_panel' %}",
@@ -1828,7 +1829,7 @@ def custom_404_view(request, exception=None):
                 
                 if (!found) {
                     alert('Sahifa topilmadi. Bosh sahifaga yo\'naltirilmoqdasiz.');
-                    window.location.href = "{% url 'home_page' %}";
+                    window.location.href = "{% url '/' %}";
                 }
             }
         });
