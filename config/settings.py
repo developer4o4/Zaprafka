@@ -18,7 +18,7 @@ handler404 = 'main.views.custom_404_view'
 SECRET_KEY = 'django-insecure-zvaq*_#$0%5^pw=^ntzvkgbds5qap^5e3l2bt-d09#_hgg0+-0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 
