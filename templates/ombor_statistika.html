@@ -1,0 +1,456 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ombor Statistika - Yoqilg'i Boshqaruvi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card h3 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ombor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .ombor-item {
+            background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #2a5298;
+            transition: all 0.3s ease;
+        }
+        
+        .ombor-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.15);
+        }
+        
+        .ombor-item h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .ombor-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .ombor-quantity {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .progress-container {
+            background: #e9ecef;
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .quyishlar-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .quyish-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 3px solid #2a5298;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .quyish-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .quyish-info {
+            flex: 1;
+        }
+        
+        .quyish-title {
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 5px;
+        }
+        
+        .quyish-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .quyish-amount {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.3);
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .ombor-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quyish-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .quyish-details {
+                flex-wrap: wrap;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .quyishlar-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .quyishlar-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .quyishlar-list::-webkit-scrollbar-thumb {
+            background: #2a5298;
+            border-radius: 10px;
+        }
+        
+        .quyishlar-list::-webkit-scrollbar-thumb:hover {
+            background: #1e3c72;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Ombor Statistika</h1>
+            <p>Yoqilg'i ombori holati va statistik ma'lumotlar</p>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Omborlar holati -->
+            <div class="stat-card">
+                <h3>🏭 Omborlar Holati</h3>
+                <div class="ombor-grid">
+                    {% for ombor in omborlar %}
+                    <div class="ombor-item">
+                        <h4>{{ ombor.title }}</h4>
+                        <div class="ombor-info">
+                            <span>Qolgan miqdor:</span>
+                            <span class="ombor-quantity">{{ ombor.miqdori }} L</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: {% widthratio ombor.miqdori 10000 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <i>📦</i>
+                        <p>Hozircha ombor mavjud emas</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Bugungi quyishlar -->
+            <div class="stat-card">
+                <h3>⛽ Bugungi Quyishlar</h3>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ bugungi_jami }} L</div>
+                        <div class="stat-label">Jami Yoqilg'i</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ bugungi_quyishlar.count }}</div>
+                        <div class="stat-label">Quyishlar Soni</div>
+                    </div>
+                </div>
+                
+                <div class="quyishlar-list" style="margin-top: 20px;">
+                    {% for quyish in bugungi_quyishlar %}
+                    <div class="quyish-item">
+                        <div class="quyish-info">
+                            <div class="quyish-title">
+                                {{ quyish.avto.title }} ({{ quyish.avto.avto_number }})
+                            </div>
+                            <div class="quyish-details">
+                                <span>🏢 {{ quyish.tashkilot.title }}</span>
+                                <span>🛢️ {{ quyish.yoqilgi_turi }}</span>
+                                <span>⏰ {{ quyish.created_ad|time }}</span>
+                            </div>
+                        </div>
+                        <div class="quyish-amount">
+                            {{ quyish.hajm }} L
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <i>⛽</i>
+                        <p>Bugun hech qanday yoqilg'i quyilmagan</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Umumiy statistika -->
+            <div class="stat-card">
+                <h3>📈 Umumiy Statistika</h3>
+                <button class="btn" onclick="loadUmumiyStatistika()">
+                    📊 Statistikani Yuklash
+                </button>
+                <div id="umumiy-statistika" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadUmumiyStatistika() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Yuklanmoqda...';
+            button.disabled = true;
+            
+            fetch('/api/umumiy-statistika/')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    
+                    if (data.yoqilgi_turlari_bo_yicha.length > 0) {
+                        html += '<div class="stats-container">';
+                        html += '<h4 style="color: #2a5298; margin: 20px 0 10px 0;">🛢️ Yoqilg\'i Turlari Bo\'yicha</h4>';
+                        data.yoqilgi_turlari_bo_yicha.forEach(stat => {
+                            html += `
+                                <div class="stat-item">
+                                    <div class="stat-value">${stat.total_hajm} L</div>
+                                    <div class="stat-label">${stat.yoqilgi_turi}</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">
+                                        ${stat.total_count} marta
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    if (data.tashkilotlar_bo_yicha.length > 0) {
+                        html += '<div class="stats-container">';
+                        html += '<h4 style="color: #2a5298; margin: 20px 0 10px 0;">🏢 Tashkilotlar Bo\'yicha</h4>';
+                        data.tashkilotlar_bo_yicha.forEach(stat => {
+                            html += `
+                                <div class="stat-item">
+                                    <div class="stat-value">${stat.total_hajm} L</div>
+                                    <div class="stat-label">${stat.tashkilot}</div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    if (data.avtomobillar_bo_yicha.length > 0) {
+                        html += '<div style="margin-top: 20px;">';
+                        html += '<h4 style="color: #2a5298; margin-bottom: 15px;">🚗 Avtomobillar Bo\'yicha</h4>';
+                        data.avtomobillar_bo_yicha.forEach(stat => {
+                            html += `
+                                <div class="quyish-item">
+                                    <div class="quyish-info">
+                                        <div class="quyish-title">${stat.avto} (${stat.avto_number})</div>
+                                        <div class="quyish-details">
+                                            <span>🏢 ${stat.tashkilot}</span>
+                                            <span>📊 ${stat.total_count} marta</span>
+                                        </div>
+                                    </div>
+                                    <div class="quyish-amount">${stat.total_hajm} L</div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    if (!html) {
+                        html = '<div class="empty-state"><p>Statistika ma\'lumotlari topilmadi</p></div>';
+                    }
+                    
+                    document.getElementById('umumiy-statistika').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('umumiy-statistika').innerHTML = 
+                        '<div class="empty-state"><p>Statistikani yuklashda xatolik yuz berdi</p></div>';
+                    console.error('Xatolik:', error);
+                })
+                .finally(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+        }
+        
+        // Progress barlarni animatsiya qilish
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

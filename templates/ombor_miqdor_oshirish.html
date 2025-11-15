@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container-custom">
+    <h3><i class="fas fa-plus-circle me-2"></i>{{ ombor.title }} – Miqdorini Oshirish</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group-custom">
+            <label>Qo‘shilayotgan miqdor (musbat yoki manfiy bo‘lishi mumkin):</label>
+            <input type="number" name="miqdor" class="form-control-custom" required>
+        </div>
+        <div class="form-buttons-custom">
+            <a href="{% url 'ombor_list' %}" class="btn btn-secondary-custom btn-custom">Bekor qilish</a>
+            <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tashkilotlar Ro'yxati - Yoqilg'i Boshqaruvi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .dashboard h2 {
+            color: #2a5298;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .tashkilot-link {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .tashkilot-link:hover {
+            color: #1e3c72;
+            text-decoration: underline;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>🏢 Tashkilotlar Ro'yxati</h1>
+            <div class="user-info">
+                <span>👤 {{ request.user.username }}</span>
+                <a href="{% url 'statistics' %}"><button class="btn-secondary">📊 Statistika</button></a>
+                <a href="{% url 'admin_panel' %}"><button class="btn-secondary">🏠 Bosh Sahifa</button></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <h2>Tashkilotlar Bo'yicha Yoqilg'i Sarfi Statistikasi</h2>
+
+            <!-- Umumiy statistika -->
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-label">Jami Tashkilotlar</div>
+                    <div class="stat-value" id="total-tashkilotlar">0</div>
+                    <div class="stat-label">🏢 Tashkilotlar soni</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Jami Yoqilg'i</div>
+                    <div class="stat-value" id="total-fuel">0 L</div>
+                    <div class="stat-label">⛽ Umumiy miqdor</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Jami Quyishlar</div>
+                    <div class="stat-value" id="total-records">0</div>
+                    <div class="stat-label">📝 Yozuvlar soni</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Faol Avtomobillar</div>
+                    <div class="stat-value" id="total-avtomobillar">0</div>
+                    <div class="stat-label">🚗 Avtomobillar</div>
+                </div>
+            </div>
+
+            <!-- Tashkilotlar jadvali -->
+            <div class="form-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tashkilot Nomi</th>
+                            <th>Umumiy Yoqilg'i (L)</th>
+                            <th>Quyishlar Soni</th>
+                            <th>Avtomobillar Soni</th>
+                            <th>Oxirgi Faoliyat</th>
+                            <th>Harakatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tashkilotlar-body">
+                        <tr>
+                            <td colspan="7" class="loading">
+                                <div class="loading-spinner"></div>
+                                Ma'lumotlar yuklanmoqda...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sahifa yuklanganda ma'lumotlarni yuklash
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTashkilotlarStats();
+        });
+
+        // Tashkilotlar statistikasini yuklash
+        function loadTashkilotlarStats() {
+            fetch("{% url 'get_tashkilot_stats_api' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateTashkilotlarTable(data.tashkilotlar);
+                        updateSummaryStats(data.tashkilotlar);
+                    } else {
+                        showError('Ma\'lumotlarni yuklashda xatolik');
+                    }
+                })
+                .catch(error => {
+                    console.error('Xatolik:', error);
+                    showError('Server bilan aloqa xatosi');
+                });
+        }
+
+        // Tashkilotlar jadvalini yangilash
+        function updateTashkilotlarTable(tashkilotlar) {
+            const tbody = document.getElementById('tashkilotlar-body');
+            
+            if (tashkilotlar.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #666; padding: 40px;">
+                            📭 Hech qanday ma'lumot topilmadi
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = tashkilotlar.map((tashkilot, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${tashkilot.title}</strong>
+                    </td>
+                    <td><strong>${tashkilot.total_fuel} L</strong></td>
+                    <td>${tashkilot.total_records}</td>
+                    <td>${tashkilot.avto_count}</td>
+                    <td>${tashkilot.last_activity}</td>
+                    <td>
+                        <button class="btn-primary" onclick="openTashkilotDetail(${tashkilot.id})">
+                            📋 Batafsil
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Umumiy statistikani yangilash
+        function updateSummaryStats(tashkilotlar) {
+            const totalTashkilotlar = tashkilotlar.length;
+            const totalFuel = tashkilotlar.reduce((sum, t) => sum + t.total_fuel, 0);
+            const totalRecords = tashkilotlar.reduce((sum, t) => sum + t.total_records, 0);
+            const totalAvtomobillar = tashkilotlar.reduce((sum, t) => sum + t.avto_count, 0);
+
+            document.getElementById('total-tashkilotlar').textContent = totalTashkilotlar;
+            document.getElementById('total-fuel').textContent = totalFuel.toFixed(1) + ' L';
+            document.getElementById('total-records').textContent = totalRecords;
+            document.getElementById('total-avtomobillar').textContent = totalAvtomobillar;
+        }
+
+        // Tashkilot tafsilotlarini ochish
+        function openTashkilotDetail(tashkilotId) {
+            window.open(`/tashkilot-detail/${tashkilotId}/`, '_blank');
+        }
+
+        // Xatolikni ko'rsatish
+        function showError(message) {
+            const tbody = document.getElementById('tashkilotlar-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; color: #dc3545; padding: 40px;">
+                        ❌ ${message}
+                    </td>
+                </tr>
+            `;
+        }
+    </script>
+</body>
+</html>

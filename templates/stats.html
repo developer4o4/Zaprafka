@@ -434,13 +434,36 @@
 
         <div class="container">
             <div class="dashboard">
-                <h2>Yoqilg'i Sarfi Statistikasi</h2>
+                <h2>Yoqilg'i Sarfi Statistikasi - {{month_name}}</h2>
 
                 <!-- Excel export tugmasi -->
+                <!-- Excel export uchun filtrlarni qo'shamiz -->
                 <div class="excel-export">
-                    <button class="btn-success" onclick="exportStatisticsToExcel()">
-                        📊 Statistika Excel ga Yuklab Olish
-                    </button>
+                    <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="excel-year">📅 Yil:</label>
+                            <select id="excel-year" class="form-select">
+                                <option value="">Barcha yillar</option>
+                                {% for year in excel_years %}
+                                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="excel-month">📊 Oy:</label>
+                            <select id="excel-month" class="form-select">
+                                <option value="">Barcha oylar</option>
+                                {% for month in months %}
+                                <option value="{{ month.number }}" {% if month.number == selected_month %}selected{% endif %}>{{ month.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button class="btn-success" onclick="exportStatisticsToExcel()">
+                            📊 Excel ga Yuklab Olish
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-filters">
@@ -540,7 +563,7 @@
                         </table>
                     </div>
                 </div>
-
+                
                 <!-- Batafsil statistika -->
                 <div class="form-container">
                     <h3>📋 Batafsil Statistika</h3>
@@ -614,17 +637,72 @@
             // Dastlabki ma'lumotlarni yuklash
             updateAllCharts();
         });
-
+        function hideLoading() {
+            const loadingDiv = document.getElementById('loading-overlay');
+            if (loadingDiv) {
+                loadingDiv.style.display = 'none';
+            }
+        }
         // Excel export funksiyasi
         function exportStatisticsToExcel() {
-            const period = document.getElementById('stats-period').value;
-            const tashkilot = document.getElementById('stats-tashkilot').value;
-            const yoqilgi = document.getElementById('stats-yoqilgi').value;
+            const year = document.getElementById('excel-year').value;
+            const month = document.getElementById('excel-month').value;
 
-            let url = `/export-statistics-excel/?period=${period}&tashkilot=${tashkilot}&yoqilgi=${yoqilgi}`;
-            
+            let url = `/export-statistics-excel/?`;
+
+            if (year) {
+                url += `year=${year}`;
+            }
+            if (month) {
+                url += `&month=${month}`;
+            }
+
             console.log('Export URL:', url);
-            window.open(url, '_blank');
+
+            // Yuklanishni ko'rsatish
+            function showLoading(message = 'Yuklanmoqda...') {
+                let loadingDiv = document.getElementById('loading-overlay');
+                if (!loadingDiv) {
+                    loadingDiv = document.createElement('div');
+                    loadingDiv.id = 'loading-overlay';
+                    loadingDiv.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 18px;
+        `;
+                    document.body.appendChild(loadingDiv);
+                }
+
+                loadingDiv.innerHTML = `
+        <div style="text-align: center; background: white; padding: 30px; border-radius: 10px; color: #333;">
+            <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
+            <div>${message}</div>
+        </div>
+    `;
+                loadingDiv.style.display = 'flex';
+            }
+
+            // Faylni yuklab olish
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Yuklanishni yashirish
+            setTimeout(() => {
+                hideLoading();
+            }, 2000);
         }
 
         // Bosh sahifaga qaytish
@@ -666,7 +744,7 @@
 
         // Filtrlarni yuklash
         function loadFilterOptions() {
-            fetch("{% url 'statistics_filters' %}")
+            fetch("{% url 'get_filter_options' %}")
                 .then(response => response.json())
                 .then(data => {
                     // Tashkilotlarni yuklash
@@ -696,7 +774,7 @@
             const tashkilotId = document.getElementById('stats-tashkilot').value;
             const yoqilgiId = document.getElementById('stats-yoqilgi').value;
 
-            const url = `{% url 'statistics_data' %}?period=${period}&tashkilot=${tashkilotId}&yoqilgi=${yoqilgiId}`;
+            const url = `{% url 'get_statistics_data_all' %}?period=${period}&tashkilot=${tashkilotId}&yoqilgi=${yoqilgiId}`;
 
             return fetch(url)
                 .then(response => response.json())
@@ -987,6 +1065,117 @@
                 }).join('');
             });
         }
+        function exportStatisticsToExcel() {
+            const year = document.getElementById('excel-year').value;
+            const month = document.getElementById('excel-month').value;
+            
+            let url = `/export-statistics-excel/?`;
+            
+            if (year) {
+                url += `year=${year}`;
+            }
+            if (month) {
+                url += `&month=${month}`;
+            }
+            
+            console.log('Export URL:', url);
+            
+            // Yuklanishni ko'rsatish
+            showLoading('Excel fayl yuklanmoqda...');
+            
+            // Faylni yuklab olish
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Yuklanishni yashirish
+            setTimeout(() => {
+                hideLoading();
+            }, 2000);
+        }
+
+        // Statistika yangilash
+        function updateStatistics() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            
+            let url = `/statistics/?year=${year}&month=${month}`;
+            window.location.href = url;
+        }
+
+        // Yuklanish ko'rsatkichi
+        function showLoading(message = 'Yuklanmoqda...') {
+            let loadingDiv = document.getElementById('loading-overlay');
+            if (!loadingDiv) {
+                loadingDiv = document.createElement('div');
+                loadingDiv.id = 'loading-overlay';
+                loadingDiv.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
+                    color: white;
+                    font-size: 18px;
+                `;
+                document.body.appendChild(loadingDiv);
+            }
+            
+            loadingDiv.innerHTML = `
+                <div style="text-align: center; background: white; padding: 30px; border-radius: 10px; color: #333;">
+                    <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
+                    <div>${message}</div>
+                </div>
+            `;
+            loadingDiv.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            const loadingDiv = document.getElementById('loading-overlay');
+            if (loadingDiv) {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // Modal oynasini sozlash
+        function setupModal() {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const closeBtn = document.getElementsByClassName('close')[0];
+
+            // Rasmni bosganda modalni ochish
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('photo-preview')) {
+                    modal.style.display = 'block';
+                    modalImg.src = e.target.src;
+                }
+            });
+
+            // Yopish tugmasi
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+            }
+
+            // Modal tashqarisini bosganda yopish
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+
+        // Sahifa yuklanganda
+        document.addEventListener('DOMContentLoaded', function () {
+            setupModal();
+        });
     </script>
 </body>
 

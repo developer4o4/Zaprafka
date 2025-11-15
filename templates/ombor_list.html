@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header d-flex justify-content-between align-items-center">
+        <h2>📦 Omborlar</h2>
+        <a href="{% url 'add_ombor' %}" class="btn btn-success-custom btn-custom">
+            <i class="fas fa-plus"></i> Yangi Ombor Qo‘shish
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="admin-card p-4">
+        {% if omborlar %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nomi</th>
+                    <th>Miqdori</th>
+                    <th>Qo‘shilgan sana</th>
+                    <th>Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in omborlar %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'ombor_tarix' o.id %}" class="text-decoration-none">
+                            <strong>{{ o.title }}</strong>
+                        </a>
+                    </td>
+
+                    <td><span class="badge bg-primary">{{ o.miqdori }}</span></td>
+                    <td>{{ o.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'ombor_miqdor_oshirish' o.id %}" class="btn btn-warning-custom btn-sm-custom">
+                            <i class="fas fa-plus"></i> Miqdorini oshirish
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">Hozircha omborlar mavjud emas.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

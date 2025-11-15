@@ -18,7 +18,7 @@ handler404 = 'main.views.custom_404_view'
 SECRET_KEY = 'django-insecure-zvaq*_#$0%5^pw=^ntzvkgbds5qap^5e3l2bt-d09#_hgg0+-0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 
@@ -105,6 +105,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -113,7 +115,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [ BASE_DIR /  'static']
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/var/www/zaprafka/media'
+# MEDIA_ROOT = '/var/www/zaprafka/media'
+MEDIA_ROOT = ''
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
