@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>🔴 Qarzdor Tashkilotlar</h2>
+    
+    <!-- Umumiy statistika -->
+    <div class="stats-summary">
+        <div class="stat-card" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+            <div class="stat-label">Jami Qarzdorlar</div>
+            <div class="stat-value">{{ qarzdor_count }}</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #fd7e14, #e55a00);">
+            <div class="stat-label">Umumiy Qarz</div>
+            <div class="stat-value">{{ total_qarz }} so'm</div>
+        </div>
+    </div>
+
+    <!-- Qarzdor tashkilotlar jadvali -->
+    <div class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tashkilot Nomi</th>
+                    <th>Qarz Miqdori</th>
+                    <th>Balans</th>
+                    <th>Maksimal Qarz</th>
+                    <th>Harakatlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tashkilot in qarzdor_tashkilotlar %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ tashkilot.title }}</strong></td>
+                    <td>
+                        <strong style="color: #dc3545;">
+                            🔴 {{ tashkilot.qarz_miqdori }} so'm
+                        </strong>
+                    </td>
+                    <td>
+                        <strong style="color: #dc3545;">
+                            {{ tashkilot.balance }} so'm
+                        </strong>
+                    </td>
+                    <td>{{ tashkilot.max_qarz }} so'm</td>
+                    <td>
+                        <a href="{% url 'tashkilot_balans' tashkilot.id %}" class="btn btn-primary">
+                            💰 Balans
+                        </a>
+                        <a href="{% url 'tashkilot_qarz_tarix' tashkilot.id %}" class="btn btn-warning">
+                            📋 Qarz Tarixi
+                        </a>
+                        <a href="{% url 'tashkilot_balans_qoshish' tashkilot.id %}" class="btn btn-success">
+                            💵 To'lash
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #28a745; padding: 40px;">
+                        ✅ Hech qanday qarzdor tashkilot yo'q
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

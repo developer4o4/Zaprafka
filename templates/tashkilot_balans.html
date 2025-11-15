@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="header-content">
+        <h2>💰 {{ tashkilot.title }} - Balans Tarixi</h2>
+        <div>
+            <a href="{% url 'tashkilot_balans_qoshish' tashkilot.id %}" class="btn btn-success">
+                💰 Balans To'ldirish
+            </a>
+            <a href="{% url 'tashkilotlar_balans' %}" class="btn btn-secondary">
+                ← Ortga
+            </a>
+        </div>
+    </div>
+
+    <!-- Balans ko'rsatkichi -->
+    <div class="stat-card" style="max-width: 300px; margin: 20px 0;">
+        <div class="stat-label">Joriy Balans</div>
+        <div class="stat-value" style="color: {% if tashkilot.balance > 0 %}#28a745{% else %}#dc3545{% endif %};">
+            {{ tashkilot.balance }} so'm
+        </div>
+    </div>
+
+    <!-- Balans tarixi -->
+    <div class="form-container">
+        <h3>📋 Balans Tarixi</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sana</th>
+                    <th>Miqdor</th>
+                    <th>Qoldiq</th>
+                    <th>Izoh</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarix in balans_tarix %}
+                <tr>
+                    <td>{{ tarix.sana|date:"Y-m-d H:i" }}</td>
+                    <td style="color: {% if tarix.miqdor > 0 %}#28a745{% else %}#dc3545{% endif %};">
+                        <strong>
+                            {% if tarix.miqdor > 0 %}+{% endif %}{{ tarix.miqdor }} so'm
+                        </strong>
+                    </td>
+                    <td><strong>{{ tarix.qoldiq }} so'm</strong></td>
+                    <td>{{ tarix.izoh }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #666;">
+                        📭 Hech qanday operatsiya topilmadi
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

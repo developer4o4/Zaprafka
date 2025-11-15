@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="header-content">
+        <h2>🔴 {{ tashkilot.title }} - Qarz Tarixi</h2>
+        <div>
+            <a href="{% url 'tashkilot_balans_qoshish' tashkilot.id %}" class="btn btn-success">
+                💵 Qarzni To'lash
+            </a>
+            <a href="{% url 'qarzdor_tashkilotlar' %}" class="btn btn-secondary">
+                ← Ortga
+            </a>
+        </div>
+    </div>
+
+    <!-- Qarz statistikasi -->
+    <div class="stats-summary">
+        <div class="stat-card" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+            <div class="stat-label">Joriy Qarz</div>
+            <div class="stat-value">{{ tashkilot.qarz_miqdori }} so'm</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #fd7e14, #e55a00);">
+            <div class="stat-label">Balans</div>
+            <div class="stat-value">{{ tashkilot.balance }} so'm</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #6c757d, #5a6268);">
+            <div class="stat-label">Maksimal Qarz</div>
+            <div class="stat-value">{{ tashkilot.max_qarz }} so'm</div>
+        </div>
+    </div>
+
+    <!-- Qarz operatsiyalari tarixi -->
+    <div class="form-container">
+        <h3>📋 Qarz Operatsiyalari Tarixi</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sana</th>
+                    <th>Chiqqan Summa</th>
+                    <th>Qoldiq</th>
+                    <th>Izoh</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarix in qarz_tarix %}
+                <tr>
+                    <td>{{ tarix.sana|date:"Y-m-d H:i" }}</td>
+                    <td style="color: #dc3545;">
+                        <strong>-{{ tarix.miqdor|floatformat:0 }} so'm</strong>
+                    </td>
+                    <td style="color: {% if tarix.qoldiq < 0 %}#dc3545{% else %}#28a745{% endif %};">
+                        <strong>{{ tarix.qoldiq }} so'm</strong>
+                    </td>
+                    <td>{{ tarix.izoh }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #666;">
+                        📭 Hech qanday qarz operatsiyasi topilmadi
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Qarz holatidagi yoqilg'i quyishlar -->
+    <div class="form-container">
+        <h3>⛽ Qarz Holatida Quyilgan Yoqilg'ilar</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sana</th>
+                    <th>Avtomobil</th>
+                    <th>Yoqilg'i</th>
+                    <th>Miqdor (L)</th>
+                    <th>Narx</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quyish in qarz_quyishlar %}
+                <tr>
+                    <td>{{ quyish.created_ad|date:"Y-m-d H:i" }}</td>
+                    <td>{{ quyish.avto.title }} ({{ quyish.avto.avto_number }})</td>
+                    <td>{{ quyish.yoqilgi_turi }}</td>
+                    <td><strong>{{ quyish.hajm }} L</strong></td>
+                    <td style="color: #dc3545;">
+                        <strong>{{ quyish.all_price }} so'm</strong>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #666;">
+                        📭 Hech qanday qarz holatida quyilgan yoqilg'i topilmadi
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

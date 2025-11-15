@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>🏢 Tashkilotlar Balansi</h2>
+    
+    <!-- Umumiy statistika -->
+    <div class="stats-summary">
+        <div class="stat-card">
+            <div class="stat-label">Jami Tashkilotlar</div>
+            <div class="stat-value">{{ tashkilot_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Umumiy Balans</div>
+            <div class="stat-value">{{ total_balance }} so'm</div>
+        </div>
+    </div>
+
+    <!-- Tashkilotlar jadvali -->
+    <div class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tashkilot Nomi</th>
+                    <th>Balans</th>
+                    <th>Status</th>
+                    <th>Harakatlar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tashkilot in tashkilotlar %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ tashkilot.title }}</strong></td>
+                    <td>
+                        <strong style="color: {% if tashkilot.balance > 0 %}#28a745{% else %}#dc3545{% endif %};">
+                            {{ tashkilot.balance }} so'm
+                        </strong>
+                    </td>
+                    <td>
+                        {% if tashkilot.balance > 100000 %}
+                            <span style="color: #28a745;">✅ Yuqori</span>
+                        {% elif tashkilot.balance > 0 %}
+                            <span style="color: #ffc107;">⚠️ O'rtacha</span>
+                        {% else %}
+                            <span style="color: #dc3545;">❌ Balans yetarli emas</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'tashkilot_balans' tashkilot.id %}" class="btn btn-primary">
+                            📊 Tarix
+                        </a>
+                        <a href="{% url 'tashkilot_balans_qoshish' tashkilot.id %}" class="btn btn-success">
+                            💰 To'ldirish
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

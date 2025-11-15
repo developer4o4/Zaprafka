@@ -53,9 +53,10 @@ urlpatterns = [
     path('api/kunlik-hisobot/', views.kunlik_hisobot_api, name='kunlik_hisobot_api'),
     
     # ==================== TELEGRAM INTEGRATION URLs ====================
-    path('send-telegram/', views.send_telegram, name='send_telegram'),
     path('end-day/', views.end_day_api, name='end_day_api'),
-    
+    path('add-fuel/', views.add_fuel, name='add_fuel'),
+    path('send-telegram/', views.send_telegram, name='send_telegram'),
+    path('telegram-callback/', views.handle_telegram_callback, name='telegram_callback'),
     # ==================== WORKER SPECIFIC URLs ====================
     path('add-tashkilot-worker/', views.add_tashkilot_worker, name='add_tashkilot_worker'),
     path('add-avto-worker/', views.add_avto_worker, name='add_avto_worker'),
@@ -71,7 +72,13 @@ urlpatterns = [
     path('tashkilotlar-roxyati/', views.tashkilotlar_roxyati, name='tashkilotlar_roxyati'),
     path('tashkilot-detail/<int:tashkilot_id>/', views.tashkilot_detail, name='tashkilot_detail'),
     path('api/tashkilot-stats/', views.get_tashkilot_stats_api, name='get_tashkilot_stats_api'),
-    
+
+    # ==================== TASHKILOT BALANS URLs ====================
+    path('tashkilotlar-balans/', views.tashkilotlar_balans, name='tashkilotlar_balans'),
+    path('tashkilot-balans/<int:tashkilot_id>/', views.tashkilot_balans, name='tashkilot_balans'),
+    path('tashkilot-balans-qoshish/<int:tashkilot_id>/', views.tashkilot_balans_qoshish, name='tashkilot_balans_qoshish'),
+    path('qarzdor-tashkilotlar/', views.qarzdor_tashkilotlar, name='qarzdor_tashkilotlar'),
+    path('tashkilot-qarz-tarix/<int:tashkilot_id>/', views.tashkilot_qarz_tarix, name='tashkilot_qarz_tarix'),
     # ==================== ERROR HANDLING ====================
     path('404/', views.custom_404_view, name='custom_404'),
 ]

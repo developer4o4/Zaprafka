@@ -592,7 +592,7 @@ def send_telegram(request):
             bot_token = '8384548755:AAE_O3g_2Q971QHNU8eqk3NCo7bxTAZrf9o'
             
             # Chat ID ni formatlash
-            chat_id = f"-{group_id}"
+            chat_id = f"-{group_id}"    
             
             # 1. Avval matnli xabarni yuborish
             url = f'https://api.telegram.org/bot{bot_token}/sendMessage'

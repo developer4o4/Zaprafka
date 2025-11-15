@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>💰 {{ tashkilot.title }} - Balans To'ldirish</h2>
+    
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="miqdor">💵 Miqdor (so'm):</label>
+                <input type="number" id="miqdor" name="miqdor" step="0.01" min="1" required 
+                       placeholder="To'ldirish miqdorini kiriting">
+            </div>
+            
+            <div class="form-group">
+                <label for="izoh">📝 Izoh (ixtiyoriy):</label>
+                <input type="text" id="izoh" name="izoh" 
+                       placeholder="Operatsiya uchun izoh">
+            </div>
+            
+            <div class="current-balance" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <strong>Joriy balans:</strong> {{ tashkilot.balance }} so'm
+            </div>
+            
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-success">
+                    💰 Balansni To'ldirish
+                </button>
+                <a href="{% url 'tashkilot_balans' tashkilot.id %}" class="btn btn-secondary">
+                    ← Ortga
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

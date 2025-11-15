@@ -441,7 +441,8 @@
                             <select id="tashkilot" name="tashkilot" required>
                                 <option value="">Tashkilotni tanlang</option>
                                 {% for tashkilot in tashkilotlar %}
-                                <option value="{{ tashkilot.id }}" data-group-id="{{ tashkilot.group_id }}">{{tashkilot.title }}</option>
+                                <option value="{{ tashkilot.id }}" data-group-id="{{ tashkilot.group_id }}">
+                                    {{tashkilot.title }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -637,13 +638,13 @@
             function formatPrice(price) {
                 // Sonni butun qismiga aylantirish va formatlash
                 const integerPrice = Math.round(price);
-                
+
                 // Bo'shliq bilan ajratish
                 return new Intl.NumberFormat('uz-UZ').format(integerPrice) + ' so\'m';
             }
 
             // Yoqilg'i turi o'zgarganda narxni ko'rsatish
-            yoqilgiSelect.addEventListener('change', function() {
+            yoqilgiSelect.addEventListener('change', function () {
                 const selectedOption = this.options[this.selectedIndex];
                 currentFuelPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
 
@@ -659,7 +660,7 @@
             });
 
             // Miqdor o'zgarganda umumiy narxni hisoblash
-            miqdorInput.addEventListener('input', function() {
+            miqdorInput.addEventListener('input', function () {
                 calculateTotalPrice();
                 validateForm();
             });
@@ -801,8 +802,6 @@
                 // Telegramga yuborish va saqlash
                 sendToTelegramAndSave();
             });
-
-            // Telegramga yuborish va saqlash funksiyasi
             function sendToTelegramAndSave() {
                 telegramStatus.textContent = '📤 Telegramga xabar yuborilmoqda...';
                 telegramStatus.className = 'telegram-status sending';
@@ -834,7 +833,7 @@
                 const selectedTashkilot = tashkilotSelect.options[tashkilotSelect.selectedIndex];
                 const groupId = selectedTashkilot.getAttribute('data-group-id');
 
-                // Telegram xabarini tayyorlash
+                // Telegram xabarini tayyorlash - FUNKSIYA ICHIDA
                 const tashkilotText = tashkilotSelect.options[tashkilotSelect.selectedIndex].text;
                 const avtomobileText = avtomobileSelect.options[avtomobileSelect.selectedIndex].text;
                 const yoqilgiText = yoqilgiSelect.options[yoqilgiSelect.selectedIndex].text;
@@ -851,6 +850,25 @@
 ⏰ Vaqt: ${new Date().toLocaleString('uz-UZ')}
 👤 Qo'shgan foydalanuvchi: {{ request.user.username }}
     `;
+
+                // Inline keyboard tayyorlash
+                const fuelId = data.fuel_id || Date.now();
+                const callbackData = `fuel_${fuelId}_${Date.now()}`;
+
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "✅ Tasdiqlash",
+                                callback_data: `confirm_${callbackData}`
+                            },
+                            {
+                                text: "❌ Rad etish", 
+                                callback_data: `reject_${callbackData}`
+                            }
+                        ]
+                    ]
+                };
 
                 // Avval ma'lumotlarni saqlash
                 fetch("{% url 'add_fuel' %}", {
@@ -869,7 +887,9 @@
                                     group_id: groupId,
                                     message: telegramMessage,
                                     process_photo: capturedImageData.value,
-                                    confirmation_photo: confirmationCapturedImageData.value
+                                    confirmation_photo: confirmationCapturedImageData.value,
+                                    inline_keyboard: inlineKeyboard,
+                                    fuel_id: data.fuel_id || Date.now() // Agar backenddan fuel_id kelmasa
                                 }),
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -880,7 +900,12 @@
                             throw new Error(data.error || 'Ma\'lumotlarni saqlashda xatolik');
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             telegramStatus.textContent = '✅ Ma\'lumotlar saqlandi va Telegramga yuborildi';
@@ -977,10 +1002,10 @@
                         })
                         .catch(function (error) {
                             console.error('Kamerani ochishda xatolik:', error);
-                            
+
                             // Xatolik turiga qarab xabar berish
                             let errorMessage = 'Kamerani ochishda xatolik yuz berdi';
-                            
+
                             if (error.name === 'NotAllowedError') {
                                 errorMessage = 'Kamera ruxsati rad etildi. Iltimos, brauzer sozlamalaridan kameraga ruxsat bering.';
                             } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
@@ -988,7 +1013,7 @@
                             } else if (error.name === 'NotReadableError') {
                                 errorMessage = 'Kamera boshqa dastur tomonidan ishlatilmoqda.';
                             }
-                            
+
                             statusElement.textContent = '❌ ' + errorMessage;
                             statusElement.className = 'camera-status error';
                             showNotification(errorMessage, 'error');
@@ -1003,11 +1028,11 @@
             function capturePhoto(imageElement, imageDataElement, previewElement, captureBtn, retakeBtn) {
                 if (video && canvas) {
                     const ctx = canvas.getContext('2d');
-                    
+
                     // Canvas o'lchamlarini video o'lchamlariga moslashtirish
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
-                    
+
                     // Rasmni chizish
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -1104,9 +1129,9 @@
                         })
                         .catch(function (error) {
                             console.error('Kamerani ochishda xatolik:', error);
-                            
+
                             let errorMessage = 'Kamerani ochishda xatolik yuz berdi';
-                            
+
                             if (error.name === 'NotAllowedError') {
                                 errorMessage = 'Kamera ruxsati rad etildi. Iltimos, brauzer sozlamalaridan kameraga ruxsat bering.';
                             } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
@@ -1114,7 +1139,7 @@
                             } else if (error.name === 'NotReadableError') {
                                 errorMessage = 'Kamera boshqa dastur tomonidan ishlatilmoqda.';
                             }
-                            
+
                             confirmationCameraStatus.textContent = '❌ ' + errorMessage;
                             confirmationCameraStatus.className = 'camera-status error';
                             showNotification(errorMessage, 'error');
@@ -1129,11 +1154,11 @@
             function captureConfirmationPhoto() {
                 if (confirmationVideo && confirmationCanvas) {
                     const ctx = confirmationCanvas.getContext('2d');
-                    
+
                     // Canvas o'lchamlarini video o'lchamlariga moslashtirish
                     confirmationCanvas.width = confirmationVideo.videoWidth;
                     confirmationCanvas.height = confirmationVideo.videoHeight;
-                    
+
                     ctx.drawImage(confirmationVideo, 0, 0, confirmationCanvas.width, confirmationCanvas.height);
 
                     // Canvas'dan rasmni olish
@@ -1198,7 +1223,7 @@
             }
 
             // Sahifa yopilganda kamerani to'xtatish
-            window.addEventListener('beforeunload', function() {
+            window.addEventListener('beforeunload', function () {
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                 }
@@ -1212,4 +1237,5 @@
         });
     </script>
 </body>
+
 </html>

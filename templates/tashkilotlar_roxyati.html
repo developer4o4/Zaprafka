@@ -306,6 +306,12 @@
                         <button class="btn-primary" onclick="openTashkilotDetail(${tashkilot.id})">
                             📋 Batafsil
                         </button>
+                        <button class="btn-primary" onclick="openTashkilotQarz(${tashkilot.id})">
+                            📋 Qarzlari
+                        </button>
+                        <button class="btn-primary" onclick="openTashkilotBalance(${tashkilot.id})">
+                            📋 Balance
+                        </button>
                     </td>
                 </tr>
             `).join('');
@@ -326,9 +332,14 @@
 
         // Tashkilot tafsilotlarini ochish
         function openTashkilotDetail(tashkilotId) {
-            window.open(`/tashkilot-detail/${tashkilotId}/`, '_blank');
+            window.open(`/tashkilot-detail/${tashkilotId}/`);
         }
-
+        function openTashkilotQarz(tashkilotId) {
+            window.open(`/tashkilot-qarz-tarix/${tashkilotId}/`);
+        }
+        function openTashkilotBalance(tashkilotId) {
+            window.open(`/tashkilot-balans/${tashkilotId}/`);
+        }
         // Xatolikni ko'rsatish
         function showError(message) {
             const tbody = document.getElementById('tashkilotlar-body');
