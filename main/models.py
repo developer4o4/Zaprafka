@@ -266,7 +266,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
-
 class FuelMessage(models.Model):
     STATUS_PENDING = 'pending'
     STATUS_CONFIRMED = 'confirmed'
@@ -281,7 +280,7 @@ class FuelMessage(models.Model):
     group_id = models.CharField(max_length=100)
     group_name = models.CharField(max_length=255)
     message_id = models.IntegerField()
-    fuel_data = models.JSONField()  # Yoqilg'i ma'lumotlari
+    fuel_data = models.JSONField(default=dict)  # Default qo'shildi
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -295,8 +294,14 @@ class FuelMessage(models.Model):
         """Necha kun o'tganligini hisoblash"""
         return (timezone.now() - self.created_at).days
     
+    def __str__(self):
+        return f"{self.group_name} - {self.get_status_display()} - {self.created_at.strftime('%d.%m.%Y')}"
+    
     class Meta:
         indexes = [
             models.Index(fields=['status', 'created_at']),
             models.Index(fields=['callback_data']),
         ]
+        verbose_name = 'Fuel Message'
+        verbose_name_plural = 'Fuel Messages'
+        ordering = ['-created_at']

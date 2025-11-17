@@ -353,7 +353,6 @@ def yoqilgi_quyish(request):
         'yoqilgi_turlari': Yoqilgi_turi.objects.all(),
     }
     return render(request, 'yoqilgi_quyish.html', context)
-
 @login_required
 def add_fuel(request):
     """Yoqilg'i qo'shish"""
@@ -361,22 +360,34 @@ def add_fuel(request):
         try:
             # Ma'lumotlarni olish
             tashkilot_id = request.POST.get('tashkilot')
-            avto_id = request.POST.get('avtomobile')
+            avtomobile_id = request.POST.get('avtomobile')  # avto_id -> avtomobile_id
             yoqilgi_id = request.POST.get('yoqilgi')
             miqdor = float(request.POST.get('miqdor', 0))
             all_price = Decimal(request.POST.get('all_price', 0))
             captured_image = request.POST.get('captured_image')
             confirmation_photo = request.POST.get('confirmation_photo')
             
-            # Yoqilg'i turini olish
+            # Ma'lumotlarni tekshirish
+            if not all([tashkilot_id, avtomobile_id, yoqilgi_id, miqdor, all_price]):
+                return JsonResponse({'success': False, 'error': 'Barcha maydonlarni to\'ldiring'})
+            
+            # Objectlarni olish
+            tashkilot = get_object_or_404(Tashkilot, id=tashkilot_id)
+            avtomobile = get_object_or_404(Avto, id=avtomobile_id)
             yoqilgi_obj = get_object_or_404(Yoqilgi_turi, id=yoqilgi_id)
             
             # Rasmni saqlash funksiyasi
             def save_base64_image(base64_string, filename):
                 if base64_string and base64_string != '':
                     try:
-                        format, imgstr = base64_string.split(';base64,')
-                        ext = format.split('/')[-1]
+                        # Base64 formatini tekshirish
+                        if ';base64,' in base64_string:
+                            format, imgstr = base64_string.split(';base64,')
+                            ext = format.split('/')[-1]
+                        else:
+                            imgstr = base64_string
+                            ext = 'jpg'
+                        
                         data = ContentFile(base64.b64decode(imgstr), name=f'{filename}.{ext}')
                         return data
                     except Exception as e:
@@ -384,10 +395,12 @@ def add_fuel(request):
                         return None
                 return None
             
-            # Ma'lumotlarni saqlash
+            # Compilated modelini yaratish va saqlash
+            timestamp = int(timezone.now().timestamp())
+            
             compilated = Compilated(
-                tashkilot_id=tashkilot_id,
-                avto_id=avto_id,
+                tashkilot=tashkilot,
+                avto=avtomobile,
                 yoqilgi_turi=yoqilgi_obj.title,
                 who_user=request.user,
                 hajm=miqdor,
@@ -395,7 +408,6 @@ def add_fuel(request):
             )
             
             # Rasmlarni saqlash
-            timestamp = int(timezone.now().timestamp())
             process_photo_file = save_base64_image(
                 captured_image, 
                 f'process_{request.user.id}_{timestamp}'
@@ -412,7 +424,34 @@ def add_fuel(request):
             
             compilated.save()
             
-            return JsonResponse({'success': True})
+            # FuelMessage yaratish (agar kerak bo'lsa)
+            try:
+                fuel_message = FuelMessage.objects.create(
+                    group_id=tashkilot.group_id,  # Tashkilotdan group_id olish
+                    group_name=tashkilot.title,
+                    message_id=timestamp,  # Vaqtinchalik ID
+                    fuel_data={
+                        'tashkilot': tashkilot.title,
+                        'avtomobile': f"{avtomobile.title} ({avtomobile.avto_number})",
+                        'yoqilgi': yoqilgi_obj.title,
+                        'miqdor': miqdor,
+                        'narx': float(all_price),
+                        'user': request.user.username,
+                        'created_at': timezone.now().isoformat()
+                    },
+                    callback_data=f"fuel_{compilated.id}_{timestamp}",
+                    status=FuelMessage.STATUS_PENDING
+                )
+                fuel_id = fuel_message.id
+            except Exception as e:
+                print(f"FuelMessage yaratish xatosi: {e}")
+                fuel_id = compilated.id  # Agar FuelMessage yaratishda xatolik bo'lsa, compilated ID sini ishlatamiz
+            
+            return JsonResponse({
+                'success': True,
+                'fuel_id': fuel_id,
+                'message': 'Ma\'lumotlar muvaffaqiyatli saqlandi'
+            })
             
         except Exception as e:
             print(f"Xatolik: {str(e)}")
@@ -866,7 +905,149 @@ def send_photo_with_caption(bot_token, chat_id, photo_data, caption, reply_marku
     
     response = requests.post(url, json=payload)
     return response.json()
-
+import time
+@csrf_exempt
+def send_telegram(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            group_id = data.get('group_id')
+            message = data.get('message')
+            process_photo = data.get('process_photo')
+            confirmation_photo = data.get('confirmation_photo')
+            inline_keyboard = data.get('inline_keyboard')
+            fuel_id = data.get('fuel_id')
+            
+            bot_token = '8384548755:AAE_O3g_2Q971QHNU8eqk3NCo7bxTAZrf9o'
+            chat_id = f"-{group_id}"
+            
+            # Guruh nomini olish
+            group_name = get_group_name(bot_token, group_id)
+            
+            # Callback data yaratish
+            callback_data = f"fuel_{fuel_id}_{int(time.time())}"
+            
+            # Inline keyboard yangilash
+            if inline_keyboard:
+                inline_keyboard['inline_keyboard'][0][0]['callback_data'] = f"confirm_{callback_data}"
+                reply_markup = json.dumps(inline_keyboard)
+            else:
+                reply_markup = None
+            
+            response = None
+            message_id = None
+            
+            # Rasmlarni yuborish
+            photos_data = []
+            if process_photo and process_photo != '':
+                photos_data.append(process_photo)
+            if confirmation_photo and confirmation_photo != '':
+                photos_data.append(confirmation_photo)
+            
+            # Agar rasm mavjud bo'lsa, faqat bitta rasm yuboramiz
+            if photos_data:
+                # Faqat birinchi rasmni yuboramiz
+                photo_data = photos_data[0]
+                url = f'https://api.telegram.org/bot{bot_token}/sendPhoto'
+                
+                try:
+                    # Base64 rasmni faylga aylantirish
+                    photo_data_clean = photo_data.split(',')[1] if ',' in photo_data else photo_data
+                    photo_bytes = base64.b64decode(photo_data_clean)
+                    
+                    files = {
+                        'photo': ('photo.jpg', photo_bytes, 'image/jpeg')
+                    }
+                    data = {
+                        'chat_id': chat_id,
+                        'caption': message,
+                        'parse_mode': 'HTML'
+                    }
+                    
+                    response = requests.post(url, files=files, data=data)
+                    print(f"Rasm yuborish status: {response.status_code}")
+                    
+                except Exception as e:
+                    print(f"Rasm yuborish xatosi: {e}")
+                    # Agar rasm yuborishda xatolik bo'lsa, faqat matn yuboramiz
+                    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                    payload = {
+                        'chat_id': chat_id,
+                        'text': message,
+                        'parse_mode': 'HTML'
+                    }
+                    response = requests.post(url, json=payload)
+                    print(f"Matn yuborish status: {response.status_code}")
+            
+            else:
+                # Faqat matnli xabar
+                url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                payload = {
+                    'chat_id': chat_id,
+                    'text': message,
+                    'parse_mode': 'HTML'
+                }
+                response = requests.post(url, json=payload)
+                print(f"Matn xabari status: {response.status_code}")
+            
+            # Xabarni bazaga saqlash va inline button yuborish
+            if response and response.status_code == 200:
+                result = response.json()
+                print(f"Telegram API javobi: {result}")
+                
+                if result.get('ok'):
+                    # Message ID ni to'g'ri olish
+                    telegram_result = result['result']
+                    
+                    # Agar bu albom bo'lsa (list), agar bitta xabar bo'lsa (dict)
+                    if isinstance(telegram_result, list):
+                        # Albom holati - birinchi xabarning ID sini olamiz
+                        message_id = telegram_result[0].get('message_id')
+                    else:
+                        # Bitta xabar holati
+                        message_id = telegram_result.get('message_id')
+                    
+                    print(f"Olingan message_id: {message_id}")
+                    
+                    # FuelMessage yaratish
+                    fuel_message = FuelMessage.objects.create(
+                        group_id=group_id,
+                        group_name=group_name,
+                        message_id=message_id or int(time.time()),  # Agar message_id bo'lmasa, vaqtni ishlatamiz
+                        fuel_data={
+                            'message': message,
+                            'fuel_id': fuel_id,
+                            'group_id': group_id,
+                            'created_at': time.strftime('%Y-%m-%d %H:%M:%S')
+                        },
+                        callback_data=callback_data,
+                        status=FuelMessage.STATUS_PENDING
+                    )
+                    
+                    print(f"✅ FuelMessage saqlandi: {fuel_message.id}")
+                    
+                    # Inline buttonli xabar yuborish
+                    if message_id and reply_markup:
+                        url_buttons = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                        payload_buttons = {
+                            'chat_id': chat_id,
+                            'text': '📋 Quyidagi tugmalar orqali amalni bajarishingiz mumkin:',
+                            'reply_markup': reply_markup,
+                            'reply_to_message_id': message_id
+                        }
+                        
+                        button_response = requests.post(url_buttons, json=payload_buttons)
+                        print(f"Button xabari status: {button_response.status_code}")
+            
+            return JsonResponse({'success': True})
+            
+        except Exception as e:
+            print(f"❌ Telegram xatosi: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Faqat POST so\'rovi qabul qilinadi'})
 def get_group_name(bot_token, group_id):
     """Guruh nomini olish"""
     try:
@@ -881,257 +1062,6 @@ def get_group_name(bot_token, group_id):
         return f"Guruh {group_id}"
     except:
         return f"Guruh {group_id}"
-import time
-@csrf_exempt
-def send_telegram(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            group_id = data.get('group_id')
-            message = data.get('message')
-            process_photo = data.get('process_photo')
-            confirmation_photo = data.get('confirmation_photo')
-            inline_keyboard = data.get('inline_keyboard')  # INLINE KEYBOARD QABUL QILISH
-            fuel_id = data.get('fuel_id')
-            # Telegram bot tokeni
-            bot_token = '8384548755:AAE_O3g_2Q971QHNU8eqk3NCo7bxTAZrf9o'
-            
-            # Chat ID ni formatlash
-            chat_id = f"-{group_id}"    
-            group_name = get_group_name(bot_token, group_id)
-            
-            # Callback data yaratish
-            callback_data = f"fuel_{fuel_id}_{int(time.time())}"
-            
-            # Inline keyboard yangilash
-            if inline_keyboard:
-                inline_keyboard['inline_keyboard'][0][0]['callback_data'] = f"confirm_{callback_data}"
-                inline_keyboard['inline_keyboard'][0][1]['callback_data'] = f"reject_{callback_data}"
-                reply_markup = json.dumps(inline_keyboard)
-            else:
-                reply_markup = None
-            # Agar inline keyboard bo'lsa, uni tayyorlash
-            reply_markup = None
-            if inline_keyboard:
-                reply_markup = json.dumps(inline_keyboard)
-            
-            # 1. Avval matnli xabarni yuborish (agar rasm bo'lmasa)
-            if not process_photo and not confirmation_photo:
-                url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-                payload = {
-                    'chat_id': chat_id,
-                    'text': message,
-                    'parse_mode': 'HTML',
-                    'reply_markup': reply_markup  # INLINE BUTTON QO'SHISH
-                }
-                
-                response = requests.post(url, json=payload)
-                print(f"Matn xabari status: {response.status_code}")
-                return JsonResponse({'success': True})
-            
-            # 2. Rasmlarni yuborish
-            def create_media_group(photos_data, caption):
-                media = []
-                
-                for i, photo_data in enumerate(photos_data):
-                    if photo_data and photo_data != '':
-                        try:
-                            # Base64 rasmni faylga aylantirish
-                            photo_data_clean = photo_data.split(',')[1] if ',' in photo_data else photo_data
-                            photo_bytes = base64.b64decode(photo_data_clean)
-                            
-                            # Fayl nomi
-                            file_key = f'photo_{i}'
-                            
-                            # Har bir rasm uchun media ob'ekt yaratish
-                            media_item = {
-                                'type': 'photo',
-                                'media': f'attach://{file_key}'
-                            }
-                            
-                            # Faqat birinchi rasmga caption qo'shish
-                            if i == 0:
-                                media_item['caption'] = caption
-                                if reply_markup:
-                                    media_item['parse_mode'] = 'HTML'
-                            
-                            media.append(media_item)
-                            
-                        except Exception as e:
-                            print(f"Rasm tayyorlash xatosi: {e}")
-                            continue
-                
-                return media
-            
-            # Rasmlar ro'yxatini tayyorlash
-            photos_data = []
-            
-            if process_photo and process_photo != '':
-                photos_data.append(process_photo)
-            
-            if confirmation_photo and confirmation_photo != '':
-                photos_data.append(confirmation_photo)
-            
-            # Agar ikkala rasm ham mavjud bo'lsa, albom shaklida yuborish
-            if len(photos_data) >= 1:
-                if len(photos_data) == 2:
-                    print("Ikkita rasm albom shaklida yuborilmoqda...")
-                    # Ikkala rasmni albom shaklida yuborish
-                    url = f'https://api.telegram.org/bot{bot_token}/sendMediaGroup'
-                    
-                    media = create_media_group(photos_data, message)
-                    files = {}
-                    
-                    for i, photo_data in enumerate(photos_data):
-                        if photo_data and photo_data != '':
-                            try:
-                                # Base64 rasmni faylga aylantirish
-                                photo_data_clean = photo_data.split(',')[1] if ',' in photo_data else photo_data
-                                photo_bytes = base64.b64decode(photo_data_clean)
-                                
-                                # Fayl nomi
-                                file_key = f'photo_{i}'
-                                files[file_key] = (f'photo_{i}.jpg', photo_bytes, 'image/jpeg')
-                                
-                            except Exception as e:
-                                print(f"Rasm {i} tayyorlash xatosi: {e}")
-                                continue
-                    
-                    if media:
-                        payload = {
-                            'chat_id': chat_id,
-                            'media': json.dumps(media)
-                        }
-                        
-                        response = requests.post(url, data=payload, files=files)
-                        print(f"Albom status: {response.status_code}")
-                        
-                        # Albom yuborilgandan so'ng, alohida xabar yuboramiz
-                        if response.status_code == 200 and reply_markup:
-                            try:
-                                result = response.json()
-                                if result.get('ok'):
-                                    messages = result.get('result', [])
-                                    if messages:
-                                        # Oxirgi xabarni olamiz (albomdagi oxirgi rasm)
-                                        last_message = messages[-1]
-                                        last_message_id = last_message.get('message_id')
-                                        
-                                        # Albomdan keyin inline buttonli xabar yuboramiz
-                                        url_message = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-                                        payload_message = {
-                                            'chat_id': chat_id,
-                                            'text': "📋 Ma'lumotlar to'g'riligini tekshiring:",
-                                            'reply_markup': reply_markup,
-                                            'reply_to_message_id': last_message_id  # Albomga reply qilish
-                                        }
-                                        
-                                        response_message = requests.post(url_message, json=payload_message)
-                                        print(f"Button xabari status: {response_message.status_code}")
-                                        
-                            except Exception as e:
-                                print(f"Button xabar yuborish xatosi: {e}")
-                        
-                else:
-                    # Faqat bitta rasm bo'lsa, oddiy yuborish
-                    print("Bitta rasm yuborilmoqda...")
-                    url = f'https://api.telegram.org/bot{bot_token}/sendPhoto'
-                    
-                    photo_data = photos_data[0]
-                    photo_data_clean = photo_data.split(',')[1] if ',' in photo_data else photo_data
-                    photo_bytes = base64.b64decode(photo_data_clean)
-                    
-                    files = {
-                        'photo': ('photo.jpg', photo_bytes, 'image/jpeg')
-                    }
-                    data = {
-                        'chat_id': chat_id,
-                        'caption': message,
-                        'parse_mode': 'HTML',
-                        'reply_markup': reply_markup  # INLINE BUTTON QO'SHISH
-                    }
-                    
-                    response = requests.post(url, files=files, data=data)
-                    print(f"Bitta rasm status: {response.status_code}")
-            if response.status_code == 200:
-                result = response.json()
-                if result.get('ok'):
-                    message_id = result['result']['message_id']
-                    
-                    # FuelMessage yaratish
-                    fuel_message = FuelMessage.objects.create(
-                        group_id=group_id,
-                        group_name=group_name,
-                        message_id=message_id,
-                        fuel_data={
-                            'message': message,
-                            'fuel_id': fuel_id,
-                            'created_at': timezone.now().isoformat()
-                        },
-                        callback_data=callback_data,
-                        status=FuelMessage.STATUS_PENDING
-                    )
-                    
-                    print(f"Xabar saqlandi: {fuel_message.id}")
-            return JsonResponse({'success': True})
-            
-        except Exception as e:
-            print(f"Telegram xatosi: {str(e)}")
-            return JsonResponse({'success': False, 'error': str(e)})
-    
-    return JsonResponse({'success': False, 'error': 'Faqat POST so\'rovi qabul qilinadi'})
-
-@csrf_exempt
-def telegram_webhook(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            print("Webhook data:", data)
-            
-            if 'callback_query' in data:
-                callback_query = data['callback_query']
-                callback_data = callback_query.get('data')
-                message = callback_query.get('message')
-                chat_id = message.get('chat', {}).get('id')
-                message_id = message.get('message_id')
-                
-                bot_token = '8384548755:AAE_O3g_2Q971QHNU8eqk3NCo7bxTAZrf9o'
-                
-                if callback_data.startswith('confirm_'):
-                    # Tasdiqlash
-                    callback_id = callback_data.replace('confirm_', '')
-                    fuel_message = FuelMessage.objects.get(callback_data=callback_id)
-                    fuel_message.status = FuelMessage.STATUS_CONFIRMED
-                    fuel_message.save()
-                    
-                    answer_text = "✅ Yoqilg'i ma'lumotlari tasdiqlandi"
-                    answer_callback_query(bot_token, callback_query['id'], answer_text)
-                    
-                    # Xabarni yangilash
-                    new_text = "✅ TASDIQLANDI\n\n" + message.get('text', '')
-                    edit_message_text(bot_token, chat_id, message_id, new_text, None)
-                    
-                elif callback_data.startswith('reject_'):
-                    # Rad etish
-                    callback_id = callback_data.replace('reject_', '')
-                    fuel_message = FuelMessage.objects.get(callback_data=callback_id)
-                    fuel_message.status = FuelMessage.STATUS_REJECTED
-                    fuel_message.save()
-                    
-                    answer_text = "❌ Yoqilg'i ma'lumotlari rad etildi"
-                    answer_callback_query(bot_token, callback_query['id'], answer_text)
-                    
-                    # Xabarni yangilash
-                    new_text = "❌ RAD ETILDI\n\n" + message.get('text', '')
-                    edit_message_text(bot_token, chat_id, message_id, new_text, None)
-                
-            return JsonResponse({'success': True})
-            
-        except Exception as e:
-            print(f"Webhook xatosi: {e}")
-            return JsonResponse({'success': False, 'error': str(e)})
-    
-    return JsonResponse({'success': False, 'error': 'Faqat POST so\'rovi'})
 
 def check_pending_messages():
     """Tasdiqlanmagan xabarlarni tekshirish"""

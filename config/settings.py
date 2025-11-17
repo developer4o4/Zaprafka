@@ -105,18 +105,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_TIMEZONE = 'Asia/Tashkent'
-
-# Beat schedule
-CELERY_BEAT_SCHEDULE = {
-    'monitoring-every-5-days': {
-        'task': 'your_app.tasks.send_monitoring_report',
-        'schedule': 432000,  # 5 kun = 432000 soniya
-        'args': (),
-    },
-}
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB

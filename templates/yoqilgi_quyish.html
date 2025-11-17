@@ -833,7 +833,7 @@
                 const selectedTashkilot = tashkilotSelect.options[tashkilotSelect.selectedIndex];
                 const groupId = selectedTashkilot.getAttribute('data-group-id');
 
-                // Telegram xabarini tayyorlash - FUNKSIYA ICHIDA
+                // Telegram xabarini tayyorlash
                 const tashkilotText = tashkilotSelect.options[tashkilotSelect.selectedIndex].text;
                 const avtomobileText = avtomobileSelect.options[avtomobileSelect.selectedIndex].text;
                 const yoqilgiText = yoqilgiSelect.options[yoqilgiSelect.selectedIndex].text;
@@ -851,8 +851,8 @@
 👤 Qo'shgan foydalanuvchi: {{ request.user.username }}
     `;
 
-                // Inline keyboard tayyorlash
-                const fuelId = data.fuel_id || Date.now();
+                // Inline keyboard tayyorlash - FIXED: data.fuel_id o'rniga Date.now()
+                const fuelId = Date.now(); // data.fuel_id o'rniga
                 const callbackData = `fuel_${fuelId}_${Date.now()}`;
 
                 const inlineKeyboard = {
@@ -861,22 +861,33 @@
                             {
                                 text: "✅ Tasdiqlash",
                                 callback_data: `confirm_${callbackData}`
-                            },
-                            {
-                                text: "❌ Rad etish", 
-                                callback_data: `reject_${callbackData}`
                             }
                         ]
                     ]
                 };
+
+                console.log('Telegram yuborilmoqda:', {
+                    group_id: groupId,
+                    message: telegramMessage,
+                    has_process_photo: !!capturedImageData.value,
+                    has_confirmation_photo: !!confirmationCapturedImageData.value,
+                    inline_keyboard: inlineKeyboard
+                });
 
                 // Avval ma'lumotlarni saqlash
                 fetch("{% url 'add_fuel' %}", {
                     method: 'POST',
                     body: formData
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        console.log('Add fuel response:', data);
+
                         if (data.success) {
                             telegramStatus.textContent = '✅ Ma\'lumotlar saqlandi. Telegramga yuborilmoqda...';
 
@@ -889,7 +900,7 @@
                                     process_photo: capturedImageData.value,
                                     confirmation_photo: confirmationCapturedImageData.value,
                                     inline_keyboard: inlineKeyboard,
-                                    fuel_id: data.fuel_id || Date.now() // Agar backenddan fuel_id kelmasa
+                                    fuel_id: data.fuel_id || fuelId // Agar backenddan fuel_id kelmasa
                                 }),
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -907,6 +918,8 @@
                         return response.json();
                     })
                     .then(data => {
+                        console.log('Telegram response:', data);
+
                         if (data.success) {
                             telegramStatus.textContent = '✅ Ma\'lumotlar saqlandi va Telegramga yuborildi';
                             telegramStatus.className = 'telegram-status success';
