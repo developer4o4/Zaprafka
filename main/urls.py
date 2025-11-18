@@ -72,7 +72,9 @@ urlpatterns = [
     path('tashkilotlar-roxyati/', views.tashkilotlar_roxyati, name='tashkilotlar_roxyati'),
     path('tashkilot-detail/<int:tashkilot_id>/', views.tashkilot_detail, name='tashkilot_detail'),
     path('api/tashkilot-stats/', views.get_tashkilot_stats_api, name='get_tashkilot_stats_api'),
-
+    path('oylik-statistika/', views.oylik_statistika, name='oylik_statistika'),
+    path('api/oylik-statistika/', views.oylik_statistika_api, name='oylik_statistika_api'),
+    
     # ==================== TASHKILOT BALANS URLs ====================
     path('tashkilotlar-balans/', views.tashkilotlar_balans, name='tashkilotlar_balans'),
     path('tashkilot-balans/<int:tashkilot_id>/', views.tashkilot_balans, name='tashkilot_balans'),

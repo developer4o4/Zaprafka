@@ -18,84 +18,88 @@
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
+            padding: 30px 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             color: white;
         }
         
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
         }
         
         .header p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
         }
         
         .dashboard {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 25px;
+            gap: 30px;
         }
         
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
         
         .stat-card h3 {
-            color: #2a5298;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-weight: 600;
         }
         
         .ombor-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
         }
         
         .ombor-item {
             background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid #2a5298;
+            padding: 25px;
+            border-radius: 20px;
+            border-left: 5px solid #667eea;
             transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
         }
         
         .ombor-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(42, 82, 152, 0.15);
+            transform: translateX(8px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.15);
         }
         
         .ombor-item h4 {
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
         }
         
         .ombor-info {
@@ -106,9 +110,9 @@
         }
         
         .ombor-quantity {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #28a745;
+            color: #27ae60;
         }
         
         .progress-container {
@@ -116,36 +120,37 @@
             height: 12px;
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 10px;
+            margin-top: 15px;
         }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #28a745, #20c997);
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
             border-radius: 10px;
             transition: width 0.5s ease;
         }
         
         .quyishlar-list {
-            max-height: 400px;
+            max-height: 450px;
             overflow-y: auto;
         }
         
         .quyish-item {
             background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            border-left: 3px solid #2a5298;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         
         .quyish-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
         
         .quyish-info {
@@ -154,88 +159,156 @@
         
         .quyish-title {
             font-weight: 600;
-            color: #2a5298;
-            margin-bottom: 5px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 16px;
         }
         
         .quyish-details {
             display: flex;
-            gap: 15px;
-            font-size: 0.9rem;
+            gap: 20px;
+            font-size: 14px;
             color: #666;
+            flex-wrap: wrap;
         }
         
         .quyish-amount {
             font-weight: bold;
-            color: #28a745;
-            font-size: 1.1rem;
+            color: #27ae60;
+            font-size: 1.2rem;
         }
         
         .btn {
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 16px;
             font-weight: 600;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
         }
         
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
         }
         
         .stat-item {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 15px;
             text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .stat-value {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 14px;
             opacity: 0.9;
+            font-weight: 500;
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             color: #666;
         }
         
         .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 4rem;
+            margin-bottom: 20px;
             opacity: 0.5;
+        }
+        
+        .action-card {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(250, 112, 154, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .action-card:hover::before {
+            left: 100%;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(250, 112, 154, 0.4);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .action-icon {
+            font-size: 70px;
+            margin-bottom: 25px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .action-card h4 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .action-card p {
+            font-size: 15px;
+            line-height: 1.5;
+            opacity: 0.9;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+            max-width: 280px;
+            margin: 0 auto;
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
             .ombor-grid {
@@ -245,7 +318,7 @@
             .quyish-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 15px;
             }
             
             .quyish-details {
@@ -255,11 +328,19 @@
             .stats-container {
                 grid-template-columns: 1fr;
             }
+            
+            .action-card {
+                padding: 25px 20px;
+            }
+            
+            .action-icon {
+                font-size: 50px;
+            }
         }
         
         /* Scrollbar styling */
         .quyishlar-list::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         .quyishlar-list::-webkit-scrollbar-track {
@@ -268,12 +349,12 @@
         }
         
         .quyishlar-list::-webkit-scrollbar-thumb {
-            background: #2a5298;
+            background: #667eea;
             border-radius: 10px;
         }
         
         .quyishlar-list::-webkit-scrollbar-thumb:hover {
-            background: #1e3c72;
+            background: #5a6fd8;
         }
     </style>
 </head>
@@ -285,13 +366,21 @@
         </div>
         
         <div class="dashboard">
+            <!-- Oylik statistika action card -->
+            <div class="action-card" onclick="location.href='{% url 'oylik_statistika' %}'">
+                <div class="action-icon">📅</div>
+                <h4>Oylik Statistika</h4>
+                <p>Tashkilotlar bo'yicha oylik hisobot va balanslar</p>
+            </div>
+
             <!-- Omborlar holati -->
             <div class="stat-card">
                 <h3>🏭 Omborlar Holati</h3>
+                
                 <div class="ombor-grid">
                     {% for ombor in omborlar %}
                     <div class="ombor-item">
-                        <h4>{{ ombor.title }}</h4>
+                        <h4>📦 {{ ombor.title }}</h4>
                         <div class="ombor-info">
                             <span>Qolgan miqdor:</span>
                             <span class="ombor-quantity">{{ ombor.miqdori }} L</span>
@@ -303,6 +392,7 @@
                     {% empty %}
                     <div class="empty-state">
                         <i>📦</i>
+                        <h4>Omborlar mavjud emas</h4>
                         <p>Hozircha ombor mavjud emas</p>
                     </div>
                     {% endfor %}
@@ -323,12 +413,12 @@
                     </div>
                 </div>
                 
-                <div class="quyishlar-list" style="margin-top: 20px;">
+                <div class="quyishlar-list" style="margin-top: 25px;">
                     {% for quyish in bugungi_quyishlar %}
                     <div class="quyish-item">
                         <div class="quyish-info">
                             <div class="quyish-title">
-                                {{ quyish.avto.title }} ({{ quyish.avto.avto_number }})
+                                🚗 {{ quyish.avto.title }} ({{ quyish.avto.avto_number }})
                             </div>
                             <div class="quyish-details">
                                 <span>🏢 {{ quyish.tashkilot.title }}</span>
@@ -343,6 +433,7 @@
                     {% empty %}
                     <div class="empty-state">
                         <i>⛽</i>
+                        <h4>Quyishlar mavjud emas</h4>
                         <p>Bugun hech qanday yoqilg'i quyilmagan</p>
                     </div>
                     {% endfor %}
@@ -355,7 +446,7 @@
                 <button class="btn" onclick="loadUmumiyStatistika()">
                     📊 Statistikani Yuklash
                 </button>
-                <div id="umumiy-statistika" style="margin-top: 20px;"></div>
+                <div id="umumiy-statistika" style="margin-top: 25px;"></div>
             </div>
         </div>
     </div>
@@ -374,13 +465,13 @@
                     
                     if (data.yoqilgi_turlari_bo_yicha.length > 0) {
                         html += '<div class="stats-container">';
-                        html += '<h4 style="color: #2a5298; margin: 20px 0 10px 0;">🛢️ Yoqilg\'i Turlari Bo\'yicha</h4>';
+                        html += '<h4 style="color: #2c3e50; margin: 25px 0 15px 0;">🛢️ Yoqilg\'i Turlari Bo\'yicha</h4>';
                         data.yoqilgi_turlari_bo_yicha.forEach(stat => {
                             html += `
                                 <div class="stat-item">
                                     <div class="stat-value">${stat.total_hajm} L</div>
                                     <div class="stat-label">${stat.yoqilgi_turi}</div>
-                                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">
+                                    <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">
                                         ${stat.total_count} marta
                                     </div>
                                 </div>
@@ -391,7 +482,7 @@
                     
                     if (data.tashkilotlar_bo_yicha.length > 0) {
                         html += '<div class="stats-container">';
-                        html += '<h4 style="color: #2a5298; margin: 20px 0 10px 0;">🏢 Tashkilotlar Bo\'yicha</h4>';
+                        html += '<h4 style="color: #2c3e50; margin: 25px 0 15px 0;">🏢 Tashkilotlar Bo\'yicha</h4>';
                         data.tashkilotlar_bo_yicha.forEach(stat => {
                             html += `
                                 <div class="stat-item">
@@ -404,8 +495,8 @@
                     }
                     
                     if (data.avtomobillar_bo_yicha.length > 0) {
-                        html += '<div style="margin-top: 20px;">';
-                        html += '<h4 style="color: #2a5298; margin-bottom: 15px;">🚗 Avtomobillar Bo\'yicha</h4>';
+                        html += '<div style="margin-top: 25px;">';
+                        html += '<h4 style="color: #2c3e50; margin-bottom: 20px;">🚗 Avtomobillar Bo\'yicha</h4>';
                         data.avtomobillar_bo_yicha.forEach(stat => {
                             html += `
                                 <div class="quyish-item">

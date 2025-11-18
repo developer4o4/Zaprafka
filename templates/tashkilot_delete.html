@@ -4,46 +4,144 @@
 {% block title %}Tashkilotni O'chirish - Yoqilg'i Boshqaruvi{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Tashkilotni O'chirish</h4>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <h5><i class="fas fa-exclamation-circle me-2"></i>Diqqat!</h5>
-                        Quyidagi tashkilotni o'chirmoqchimisiz?
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h5>{{ tashkilot.title }}</h5>
-                        <p class="mb-1"><strong>Telegram Gruh ID:</strong> {{ tashkilot.group_id }}</p>
-                    </div>
-
-                    {% if tashkilot.avto_set.exists %}
-                    <div class="alert alert-danger">
-                        <h6><i class="fas fa-info-circle me-2"></i>Ogohlik!</h6>
-                        Ushbu tashkilotga bog'langan {{ tashkilot.avto_set.count }} ta avtomobil mavjud. 
-                        Tashkilotni o'chirsangiz, bog'langan avtomobillar ham o'chiriladi.
-                    </div>
-                    {% endif %}
-
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'admin_panel' %}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times me-1"></i> Bekor qilish
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash me-1"></i> O'chirish
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="modern-container">
+    <div class="modern-card">
+        <div class="modern-card-header modern-card-header-danger">
+            <h4 class="modern-card-title">⚠️ Tashkilotni O'chirish</h4>
+        </div>
+        <div class="modern-card-body">
+            <div class="modern-alert modern-alert-warning">
+                <h5>📢 Diqqat!</h5>
+                Quyidagi tashkilotni o'chirmoqchimisiz?
             </div>
+            
+            <div class="modern-info-section">
+                <h5>{{ tashkilot.title }}</h5>
+                <p><strong>Telegram Gruh ID:</strong> {{ tashkilot.group_id }}</p>
+            </div>
+
+            {% if tashkilot.avto_set.exists %}
+            <div class="modern-alert modern-alert-danger">
+                <h6>🚨 Ogohlik!</h6>
+                Ushbu tashkilotga bog'langan {{ tashkilot.avto_set.count }} ta avtomobil mavjud. 
+                Tashkilotni o'chirsangiz, bog'langan avtomobillar ham o'chiriladi.
+            </div>
+            {% endif %}
+
+            <form method="post" class="modern-form">
+                {% csrf_token %}
+                <div class="modern-form-actions">
+                    <a href="{% url 'admin_panel' %}" class="modern-btn modern-btn-secondary">
+                        ❌ Bekor qilish
+                    </a>
+                    <button type="submit" class="modern-btn modern-btn-danger">
+                        🗑️ O'chirish
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<style>
+.modern-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.modern-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid #e8ecef;
+}
+
+.modern-card-header {
+    padding: 1.5rem 2rem;
+    color: white;
+}
+
+.modern-card-header-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.modern-card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.modern-card-body {
+    padding: 2rem;
+}
+
+.modern-alert {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.modern-alert-warning {
+    background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+    color: #2d3436;
+    border-left: 4px solid #fdcb6e;
+}
+
+.modern-alert-danger {
+    background: linear-gradient(135deg, #ff7675, #e74c3c);
+    color: white;
+    border-left: 4px solid #e74c3c;
+}
+
+.modern-info-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #3498db;
+}
+
+.modern-form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.modern-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modern-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.modern-btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.modern-btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.modern-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+}
+</style>
 {% endblock %}

@@ -14,34 +14,40 @@
         }
         
         body {
-            background-color: #f8f9fa;
-            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
         
         header {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
         .header-content h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .user-info {
@@ -52,15 +58,16 @@
         
         #current-user {
             background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: 500;
+            backdrop-filter: blur(10px);
         }
         
         button {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 500;
@@ -71,61 +78,63 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(42, 82, 152, 0.4);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #28a745, #218838);
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
         }
         
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
         }
 
-        /* Kunni yakunlash tugmasi uchun yangi stil */
         .btn-warning {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             color: #212529;
-            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
         }
         
         .btn-warning:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
         }
         
         .dashboard {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #333;
         }
         
         .dashboard h2 {
-            color: #2a5298;
+            color: #2c3e50;
             margin-bottom: 30px;
-            font-size: 32px;
+            font-size: 36px;
             text-align: center;
             font-weight: 600;
         }
@@ -134,130 +143,161 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 30px;
-            background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
-            border-radius: 12px;
-            border-left: 4px solid #2a5298;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
         
         .welcome-section h3 {
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 24px;
+            margin-bottom: 15px;
+            font-size: 28px;
+            font-weight: 600;
         }
         
         .welcome-section p {
-            color: #666;
-            font-size: 16px;
+            font-size: 18px;
             max-width: 600px;
             margin: 0 auto;
+            opacity: 0.9;
         }
 
-        /* Kunni yakunlash bo'limi uchun yangi stil */
         .end-day-section {
             text-align: center;
             margin: 40px 0;
             padding: 30px;
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            border-radius: 12px;
-            border-left: 4px solid #ffc107;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border-radius: 20px;
+            color: #212529;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
         
         .end-day-section h3 {
-            color: #856404;
             margin-bottom: 15px;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 600;
         }
         
         .end-day-section p {
-            color: #856404;
             font-size: 16px;
             max-width: 600px;
             margin: 0 auto 20px;
+            opacity: 0.9;
         }
         
         .action-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
             margin: 40px 0;
         }
         
         .action-card {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             text-align: center;
             transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .action-card:hover::before {
+            left: 100%;
         }
         
         .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            border-color: #2a5298;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
         .action-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #2a5298;
+            font-size: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .action-card:hover .action-icon {
+            transform: scale(1.1) rotate(5deg);
         }
         
         .action-card h4 {
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 22px;
             font-weight: 600;
         }
         
         .action-card p {
             color: #666;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.5;
         }
         
         .stats-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
             margin: 40px 0;
         }
         
         .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             text-align: center;
-            border-top: 4px solid #2a5298;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
         
         .stat-value {
-            font-size: 32px;
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #2a5298;
-            margin: 10px 0;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .stat-label {
-            color: #666;
-            font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 16px;
+            opacity: 0.9;
         }
         
         .recent-activity {
             margin-top: 40px;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 12px;
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
         
         .recent-activity h3 {
-            color: #2a5298;
-            margin-bottom: 20px;
-            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 28px;
+            font-weight: 600;
         }
         
         .activity-list {
@@ -268,13 +308,19 @@
         
         .activity-item {
             background: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 3px solid #2a5298;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
         
         .activity-info {
@@ -282,69 +328,69 @@
         }
         
         .activity-title {
-            font-weight: 500;
-            color: #333;
+            font-weight: 600;
+            color: #2c3e50;
             margin-bottom: 5px;
+            font-size: 16px;
         }
         
         .activity-time {
             color: #666;
-            font-size: 12px;
+            font-size: 14px;
         }
         
         .activity-amount {
             font-weight: bold;
-            color: #2a5298;
+            color: #667eea;
             font-size: 18px;
         }
 
-        /* Form styles for worker */
         .form-container {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            margin: 20px 0;
-            border: 1px solid #e9ecef;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #2a5298;
+            color: #2c3e50;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #2a5298;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -353,32 +399,34 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
             background-color: white;
             margin: 5% auto;
             padding: 0;
-            border-radius: 12px;
+            border-radius: 25px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 12px 12px 0 0;
+            padding: 25px;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
         }
 
         .modal-header h3 {
             margin: 0;
-            font-size: 20px;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .close {
@@ -388,30 +436,31 @@
             cursor: pointer;
             background: none;
             border: none;
+            transition: all 0.3s ease;
         }
 
         .close:hover {
             color: #ff6b6b;
+            transform: scale(1.1);
         }
 
         .modal-body {
-            padding: 25px;
+            padding: 30px;
         }
 
-        /* Hisobot ma'lumotlari uchun yangi stillar */
         .report-data {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 3px solid #2a5298;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
         }
         
         .report-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #e9ecef;
         }
         
@@ -424,20 +473,20 @@
         .report-total {
             font-weight: bold;
             font-size: 18px;
-            color: #2a5298;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 2px solid #2a5298;
+            color: #667eea;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 20px 15px;
             }
             
             .header-content {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
                 text-align: center;
             }
             
@@ -454,7 +503,7 @@
             }
             
             .welcome-section {
-                padding: 20px;
+                padding: 25px;
             }
 
             .form-buttons {
@@ -467,13 +516,13 @@
     <!-- Bosh Sahifa -->
     <div id="home-page">
         <header>
-            <div class="container header-content">
+            <div class="header-content">
                 <h1>🚗 Yoqilg'i Boshqaruvi Tizimi</h1>
                 <div class="user-info">
                     <span id="current-user">👤 {{ request.user.username }}</span>
                     {% if request.user.is_superuser %}
                     <a href="{% url 'admin_panel' %}">
-                        <button class="btn-secondary">Admin panel</button>
+                        <button class="btn-secondary">🎛️ Admin panel</button>
                     </a>
                     {% endif %}
                     <a href="{% url 'logout' %}"><button class="btn-secondary">🚪 Chiqish</button></a>
@@ -483,14 +532,14 @@
         
         <div class="container">
             <div class="dashboard">
-                <h2>Xush kelibsiz!</h2>
+                <h2>Xush kelibsiz! 👋</h2>
                 
                 <div class="welcome-section">
-                    <h3>Assalomu alaykum, {{ request.user.username }}!</h3>
+                    <h3>Assalomu alaykum, {{ request.user.username }}! 👤</h3>
                     <p>Yoqilg'i boshqaruv tizimiga xush kelibsiz. Quyidagi amallarni bajarishingiz mumkin:</p>
                 </div>
                 
-                <!-- Kunni yakunlash bo'limi (YANGI QO'SHILGAN) -->
+                <!-- Kunni yakunlash bo'limi -->
                 <div class="end-day-section">
                     <h3>📅 Kunni Yakunlash</h3>
                     <p>Kun yakunida bugungi yoqilg'i ma'lumotlarini hisobot qilib yuboring va ma'lumotlarni nolga tushiring.</p>
@@ -545,12 +594,11 @@
                         <div class="stat-value" id="active-cars">{{active_cars}}</div>
                         <div class="stat-label">Soni</div>
                     </div>
-                    
                 </div>
                 
                 <!-- So'nggi faoliyat -->
                 <div class="recent-activity">
-                    <h3>So'nggi Faoliyat</h3>
+                    <h3>🕒 So'nggi Faoliyat</h3>
                     <div class="activity-list" id="recent-activities">
                         {% for i in recent_activities %}
                         <div class="activity-item">
@@ -574,7 +622,7 @@
         </div>
     </div>
 
-    <!-- Kunni yakunlash modali (YANGI QO'SHILGAN) -->
+    <!-- Kunni yakunlash modali -->
     <div id="endDayModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -592,8 +640,8 @@
                     Hisobot Telegram orqali yuboriladi va ma'lumotlar nolga tushiriladi.
                 </p>
                 <div class="form-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('endDayModal')">Bekor qilish</button>
-                    <button type="button" class="btn-warning" onclick="endDay()">Tasdiqlash va Yuborish</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('endDayModal')">❌ Bekor qilish</button>
+                    <button type="button" class="btn-warning" onclick="endDay()">✅ Tasdiqlash va Yuborish</button>
                 </div>
             </div>
         </div>
@@ -611,15 +659,15 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="tashkilot_title">Tashkilot nomi</label>
-                        <input type="text" id="tashkilot_title" name="title" class="form-control" required>
+                        <input type="text" id="tashkilot_title" name="title" class="form-control" placeholder="Tashkilot nomini kiriting..." required>
                     </div>
                     <div class="form-group">
                         <label for="group_id">Telegram Gruh ID</label>
                         <input type="number" id="group_id" name="group_id" class="form-control" value="4885110792" required>
                     </div>
                     <div class="form-buttons">
-                        <button type="button" class="btn-secondary" onclick="closeModal('tashkilotModal')">Bekor qilish</button>
-                        <button type="submit" class="btn-success">Saqlash</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('tashkilotModal')">❌ Bekor qilish</button>
+                        <button type="submit" class="btn-success">💾 Saqlash</button>
                     </div>
                 </form>
             </div>
@@ -647,15 +695,15 @@
                     </div>
                     <div class="form-group">
                         <label for="avto_title">Avtomobil nomi</label>
-                        <input type="text" id="avto_title" name="title" class="form-control" required>
+                        <input type="text" id="avto_title" name="title" class="form-control" placeholder="Avtomobil nomini kiriting..." required>
                     </div>
                     <div class="form-group">
                         <label for="avto_number">Avtomobil raqami</label>
-                        <input type="text" id="avto_number" name="avto_number" class="form-control" required>
+                        <input type="text" id="avto_number" name="avto_number" class="form-control" placeholder="Avtomobil raqamini kiriting..." required>
                     </div>
                     <div class="form-buttons">
-                        <button type="button" class="btn-secondary" onclick="closeModal('avtoModal')">Bekor qilish</button>
-                        <button type="submit" class="btn-success">Saqlash</button>
+                        <button type="button" class="btn-secondary" onclick="closeModal('avtoModal')">❌ Bekor qilish</button>
+                        <button type="submit" class="btn-success">💾 Saqlash</button>
                     </div>
                 </form>
             </div>
@@ -716,7 +764,7 @@
                 });
         }
         
-        // Bugungi hisobotni yuklash (YANGI FUNKSIYA)
+        // Bugungi hisobotni yuklash
         function loadTodayReport() {
             fetch('/api/today-report/')
                 .then(response => response.json())
@@ -755,7 +803,7 @@
                 });
         }
         
-        // Kunni yakunlash funksiyasi (YANGI FUNKSIYA)
+        // Kunni yakunlash funksiyasi
         function endDay() {
             const confirmEnd = confirm("Kunni yakunlashni tasdiqlaysizmi? Hisobot Telegramga yuboriladi va ma'lumotlar nolga tushiriladi.");
             
@@ -763,7 +811,7 @@
                 // Yuklash animatsiyasi
                 const confirmButton = document.querySelector('#endDayModal .btn-warning');
                 const originalText = confirmButton.textContent;
-                confirmButton.textContent = 'Yuborilmoqda...';
+                confirmButton.textContent = '⏳ Yuborilmoqda...';
                 confirmButton.disabled = true;
                 
                 fetch('/api/end-day/', {
@@ -776,7 +824,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Kun muvaffaqiyatli yakunlandi! Hisobot Telegramga yuborildi.');
+                        alert('✅ Kun muvaffaqiyatli yakunlandi! Hisobot Telegramga yuborildi.');
                         closeModal('endDayModal');
                         
                         // Statistikani yangilash
@@ -785,12 +833,12 @@
                         // So'nggi faoliyatni yangilash
                         location.reload();
                     } else {
-                        alert('Xatolik yuz berdi: ' + (data.error || 'Noma\'lum xatolik'));
+                        alert('❌ Xatolik yuz berdi: ' + (data.error || 'Noma\'lum xatolik'));
                     }
                 })
                 .catch(error => {
                     console.error('Kunni yakunlashda xatolik:', error);
-                    alert('Server bilan aloqada xatolik yuz berdi');
+                    alert('❌ Server bilan aloqada xatolik yuz berdi');
                 })
                 .finally(() => {
                     // Tugma holatini tiklash
@@ -800,7 +848,7 @@
             }
         }
         
-        // CSRF token olish uchun yordamchi funksiya (YANGI FUNKSIYA)
+        // CSRF token olish uchun yordamchi funksiya
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {

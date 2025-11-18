@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oylik Statistika - Yoqilg'i Boshqaruvi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .filters {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .filter-select {
+            padding: 12px 18px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .tashkilot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 25px;
+        }
+        
+        .tashkilot-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 6px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .tashkilot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tashkilot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .tashkilot-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .balance-status {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .balance-positive {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+        
+        .balance-negative {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+        
+        .balance-zero {
+            background: linear-gradient(135deg, #e2e3e5, #d6d8db);
+            color: #383d41;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat-item-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .stat-item-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .qarz-indicator {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-fill.qarz {
+            background: linear-gradient(90deg, #dc3545, #e83e8c);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tashkilot-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Oylik Statistika</h1>
+            <p>Tashkilotlar bo'yicha oylik yoqilg'i va balans statistikasi</p>
+        </div>
+        
+        <!-- Filtrlash -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>📅 Yil:</label>
+                <select class="filter-select" id="year-select">
+                    {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>📊 Oy:</label>
+                <select class="filter-select" id="month-select">
+                    {% for month_num, month_name in months %}
+                    <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>
+                        {{ month_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button class="btn" onclick="applyFilters()">
+                🔍 Ko'rsatish
+            </button>
+            
+            <div style="margin-left: auto;">
+                <span style="color: #2c3e50; font-weight: 600; font-size: 16px;">
+                    📅 {{ selected_year }} yil {{ month_name }} oyi
+                </span>
+            </div>
+        </div>
+        
+        <!-- Umumiy statistika -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.jami_yoqilgi|floatformat:1 }} L</div>
+                <div class="stat-label">⛽ Jami Yoqilg'i</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.jami_summasi|floatformat:0 }} so'm</div>
+                <div class="stat-label">💰 Jami Summa</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.jami_quyishlar }}</div>
+                <div class="stat-label">📊 Quyishlar Soni</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.jami_qarz|floatformat:0 }} so'm</div>
+                <div class="stat-label">🔴 Jami Qarz</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.qarz_tashkilotlar }}</div>
+                <div class="stat-label">🏢 Qarz Tashkilotlar</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">{{ umumiy_stats.faol_tashkilotlar }}</div>
+                <div class="stat-label">✅ Faol Tashkilotlar</div>
+            </div>
+        </div>
+        
+        <!-- Tashkilotlar statistikasi -->
+        <div class="tashkilot-grid">
+            {% for stat in tashkilot_stats %}
+            <div class="tashkilot-card">
+                <div class="tashkilot-header">
+                    <div class="tashkilot-title">🏢 {{ stat.tashkilot.title }}</div>
+                    <div class="balance-status {{ stat.balance_status.status }}">
+                        {{ stat.balance_status.text }}
+                    </div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-item-value">{{ stat.total_fuel|floatformat:1 }} L</div>
+                        <div class="stat-item-label">⛽ Yoqilg'i</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-item-value">{{ stat.total_price|floatformat:0 }} so'm</div>
+                        <div class="stat-item-label">💰 Summa</div>
+                    </div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-item-value">{{ stat.total_count }}</div>
+                        <div class="stat-item-label">📊 Quyishlar</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-item-value">{{ stat.qarz_quyishlar_soni }}</div>
+                        <div class="stat-item-label">🔴 Qarzda</div>
+                    </div>
+                </div>
+                
+                {% if stat.tashkilot.is_in_debt %}
+                <div class="qarz-indicator">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Qarz darajasi:</span>
+                        <span style="font-weight: bold; color: #dc3545;">
+                            {{ stat.qarz_foizi|floatformat:1 }}%
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill qarz" style="width: {{ stat.qarz_foizi }}%"></div>
+                    </div>
+                    <div style="font-size: 12px; color: #856404; margin-top: 8px;">
+                        Maksimal qarz: {{ stat.max_qarz|floatformat:0 }} so'm
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i>📊</i>
+                <h3>Ma'lumot topilmadi</h3>
+                <p>Tanlangan davrda hech qanday ma'lumot mavjud emas</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function applyFilters() {
+            const year = document.getElementById('year-select').value;
+            const month = document.getElementById('month-select').value;
+            
+            const url = new URL(window.location.href);
+            url.searchParams.set('year', year);
+            url.searchParams.set('month', month);
+            
+            window.location.href = url.toString();
+        }
+        
+        // Progress barlarni animatsiya qilish
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        });
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            fetch('/api/oylik-statistika/?' + new URLSearchParams({
+                year: {{ selected_year }},
+                month: {{ selected_month }}
+            }))
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Statistika yangilandi');
+                }
+            })
+            .catch(error => console.error('Yangilash xatosi:', error));
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -19,6 +19,8 @@ from django.core.files.base import ContentFile
 import requests
 
 from .models import *
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from .forms import TashkilotForm, AvtoForm, YoqilgiTuriForm
 
 # Telegram bot tokeni
@@ -1987,3 +1989,141 @@ def tashkilot_qarz_tarix(request, tashkilot_id):
         'qarz_quyishlar': qarz_quyishlar,
     }
     return render(request, 'tashkilot_qarz_tarix.html', context)
+from django.db.models import Sum, Count, Avg, Q
+from datetime import datetime, timedelta
+from django.utils import timezone
+
+def oylik_statistika(request):
+    """Oylik statistika sahifasi"""
+    # Joriy oy va yil
+    now = timezone.now()
+    current_year = now.year
+    current_month = now.month
+    
+    # Oylar ro'yxati
+    months = [
+        (1, 'Yanvar'), (2, 'Fevral'), (3, 'Mart'), (4, 'Aprel'),
+        (5, 'May'), (6, 'Iyun'), (7, 'Iyul'), (8, 'Avgust'),
+        (9, 'Sentabr'), (10, 'Oktabr'), (11, 'Noyabr'), (12, 'Dekabr')
+    ]
+    
+    # Filtrlarni olish
+    selected_year = int(request.GET.get('year', current_year))
+    selected_month = int(request.GET.get('month', current_month))
+    
+    # Sana oralig'ini belgilash
+    start_date = timezone.datetime(selected_year, selected_month, 1)
+    if selected_month == 12:
+        end_date = timezone.datetime(selected_year + 1, 1, 1)
+    else:
+        end_date = timezone.datetime(selected_year, selected_month + 1, 1)
+    
+    # Tashkilotlar bo'yicha statistika
+    tashkilot_stats = []
+    tashkilotlar = Tashkilot.objects.all()
+    
+    for tashkilot in tashkilotlar:
+        # Oylik yoqilg'i ma'lumotlari
+        oylik_quyishlar = Compilated.objects.filter(
+            tashkilot=tashkilot,
+            created_ad__gte=start_date,
+            created_ad__lt=end_date
+        )
+        
+        # Statistik ma'lumotlar
+        total_fuel = oylik_quyishlar.aggregate(total=Sum('hajm'))['total'] or 0
+        total_price = oylik_quyishlar.aggregate(total=Sum('all_price'))['total'] or 0
+        total_count = oylik_quyishlar.count()
+        
+        # Qarz holatidagi quyishlar
+        qarz_quyishlar = oylik_quyishlar.filter(qarz_holatida=True)
+        qarz_miqdori = qarz_quyishlar.aggregate(total=Sum('all_price'))['total'] or 0
+        
+        # Balans holati
+        balance_status = tashkilot.get_balance_status()
+        
+        tashkilot_stats.append({
+            'tashkilot': tashkilot,
+            'total_fuel': total_fuel,
+            'total_price': total_price,
+            'total_count': total_count,
+            'qarz_miqdori': qarz_miqdori,
+            'qarz_quyishlar_soni': qarz_quyishlar.count(),
+            'balance_status': balance_status,
+            'joriy_balans': tashkilot.balance,
+            'max_qarz': tashkilot.max_qarz,
+            'qarz_foizi': (abs(float(tashkilot.balance)) / float(tashkilot.max_qarz)) * 100 if tashkilot.balance < 0 else 0
+        })
+    
+    # Umumiy statistika
+    umumiy_stats = {
+        'jami_yoqilgi': sum(stat['total_fuel'] for stat in tashkilot_stats),
+        'jami_summasi': sum(float(stat['total_price']) for stat in tashkilot_stats),
+        'jami_quyishlar': sum(stat['total_count'] for stat in tashkilot_stats),
+        'jami_qarz': sum(float(stat['qarz_miqdori']) for stat in tashkilot_stats),
+        'qarz_tashkilotlar': len([stat for stat in tashkilot_stats if stat['tashkilot'].is_in_debt]),
+        'faol_tashkilotlar': len([stat for stat in tashkilot_stats if stat['total_count'] > 0])
+    }
+    
+    context = {
+        'tashkilot_stats': tashkilot_stats,
+        'umumiy_stats': umumiy_stats,
+        'current_year': current_year,
+        'current_month': current_month,
+        'selected_year': selected_year,
+        'selected_month': selected_month,
+        'months': months,
+        'years': range(current_year - 2, current_year + 1),  # Oxirgi 3 yil
+        'month_name': dict(months)[selected_month],
+    }
+    
+    return render(request, 'oylik_statistika.html', context)
+
+def oylik_statistika_api(request):
+    """Oylik statistika API"""
+    try:
+        year = int(request.GET.get('year', timezone.now().year))
+        month = int(request.GET.get('month', timezone.now().month))
+        
+        start_date = timezone.datetime(year, month, 1)
+        if month == 12:
+            end_date = timezone.datetime(year + 1, 1, 1)
+        else:
+            end_date = timezone.datetime(year, month + 1, 1)
+        
+        # Tashkilotlar bo'yicha ma'lumotlar
+        tashkilot_stats = []
+        for tashkilot in Tashkilot.objects.all():
+            quyishlar = Compilated.objects.filter(
+                tashkilot=tashkilot,
+                created_ad__gte=start_date,
+                created_ad__lt=end_date
+            )
+            
+            total_fuel = quyishlar.aggregate(total=Sum('hajm'))['total'] or 0
+            total_price = quyishlar.aggregate(total=Sum('all_price'))['total'] or 0
+            
+            tashkilot_stats.append({
+                'id': tashkilot.id,
+                'title': tashkilot.title,
+                'total_fuel': total_fuel,
+                'total_price': float(total_price),
+                'balance': float(tashkilot.balance),
+                'is_in_debt': tashkilot.is_in_debt,
+                'qarz_miqdori': float(tashkilot.qarz_miqdori),
+                'max_qarz': float(tashkilot.max_qarz),
+                'quyishlar_soni': quyishlar.count()
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'tashkilot_stats': tashkilot_stats,
+            'year': year,
+            'month': month
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })

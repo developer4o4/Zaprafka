@@ -2,38 +2,142 @@
 {% load static %}
 
 {% block content %}
-<div class="dashboard">
-    <h2>💰 {{ tashkilot.title }} - Balans To'ldirish</h2>
+<div class="modern-dashboard">
+    <h2 class="modern-title">💰 {{ tashkilot.title }} - Balans To'ldirish</h2>
     
-    <div class="form-container">
-        <form method="POST">
+    <div class="modern-form-container">
+        <form method="POST" class="modern-form">
             {% csrf_token %}
             
-            <div class="form-group">
-                <label for="miqdor">💵 Miqdor (so'm):</label>
+            <div class="modern-form-group">
+                <label for="miqdor" class="modern-label">💵 Miqdor (so'm):</label>
                 <input type="number" id="miqdor" name="miqdor" step="0.01" min="1" required 
-                       placeholder="To'ldirish miqdorini kiriting">
+                       placeholder="To'ldirish miqdorini kiriting" class="modern-input">
             </div>
             
-            <div class="form-group">
-                <label for="izoh">📝 Izoh (ixtiyoriy):</label>
+            <div class="modern-form-group">
+                <label for="izoh" class="modern-label">📝 Izoh (ixtiyoriy):</label>
                 <input type="text" id="izoh" name="izoh" 
-                       placeholder="Operatsiya uchun izoh">
+                       placeholder="Operatsiya uchun izoh" class="modern-input">
             </div>
             
-            <div class="current-balance" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <div class="modern-balance-info">
                 <strong>Joriy balans:</strong> {{ tashkilot.balance }} so'm
             </div>
             
-            <div class="form-buttons">
-                <button type="submit" class="btn btn-success">
+            <div class="modern-form-actions">
+                <button type="submit" class="modern-btn modern-btn-primary">
                     💰 Balansni To'ldirish
                 </button>
-                <a href="{% url 'tashkilot_balans' tashkilot.id %}" class="btn btn-secondary">
+                <a href="{% url 'tashkilot_balans' tashkilot.id %}" class="modern-btn modern-btn-secondary">
                     ← Ortga
                 </a>
             </div>
         </form>
     </div>
 </div>
+
+<style>
+.modern-dashboard {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.modern-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.modern-form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid #e8ecef;
+}
+
+.modern-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modern-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.modern-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e8ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.modern-balance-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.modern-form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.modern-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #00b894, #00a085);
+    color: white;
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+}
+
+.modern-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.modern-btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+</style>
 {% endblock %}

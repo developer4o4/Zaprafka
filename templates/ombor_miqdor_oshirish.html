@@ -1,16 +1,113 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+    .form-container-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
+        border-radius: 25px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        color: white;
+        max-width: 600px;
+    }
+    
+    .form-container-custom h3 {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+    
+    .form-group-custom {
+        margin-bottom: 25px;
+    }
+    
+    .form-group-custom label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-control-custom {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control-custom:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .form-control-custom::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .form-buttons-custom {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .btn-custom {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-secondary-custom {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-success-custom {
+        background: #2ecc71;
+        color: white;
+        border: 2px solid #27ae60;
+    }
+    
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
 <div class="form-container-custom">
-    <h3><i class="fas fa-plus-circle me-2"></i>{{ ombor.title }} – Miqdorini Oshirish</h3>
+    <h3><i class="fas fa-plus-circle me-2"></i>📦 {{ ombor.title }} – Miqdorini O'zgartirish</h3>
     <form method="post">
         {% csrf_token %}
         <div class="form-group-custom">
-            <label>Qo‘shilayotgan miqdor (musbat yoki manfiy bo‘lishi mumkin):</label>
-            <input type="number" name="miqdor" class="form-control-custom" required>
+            <label>Qo'shilayotgan miqdor (musbat yoki manfiy bo'lishi mumkin):</label>
+            <input type="number" name="miqdor" class="form-control-custom" placeholder="Miqdorni kiriting..." required>
+            <small style="color: rgba(255, 255, 255, 0.7); margin-top: 5px; display: block;">
+                ⓘ Ijobiy qiymat - qo'shish, manfiy qiymat - ayirish
+            </small>
         </div>
         <div class="form-buttons-custom">
-            <a href="{% url 'ombor_list' %}" class="btn btn-secondary-custom btn-custom">Bekor qilish</a>
-            <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+            <a href="{% url 'ombor_list' %}" class="btn btn-secondary-custom btn-custom">
+                ❌ Bekor qilish
+            </a>
+            <button type="submit" class="btn btn-success-custom btn-custom">
+                💾 Saqlash
+            </button>
         </div>
     </form>
 </div>

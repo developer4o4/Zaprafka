@@ -2,10 +2,122 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+    
+    .header-content {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-label {
+        font-size: 18px;
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    
+    .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 35px;
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    
+    th, td {
+        padding: 20px;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    tr:hover {
+        background-color: rgba(102, 126, 234, 0.03);
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+</style>
+
 <div class="dashboard">
     <div class="header-content">
         <h2>💰 {{ tashkilot.title }} - Balans Tarixi</h2>
-        <div>
+        <div style="display: flex; gap: 15px;">
             <a href="{% url 'tashkilot_balans_qoshish' tashkilot.id %}" class="btn btn-success">
                 💰 Balans To'ldirish
             </a>
@@ -16,8 +128,8 @@
     </div>
 
     <!-- Balans ko'rsatkichi -->
-    <div class="stat-card" style="max-width: 300px; margin: 20px 0;">
-        <div class="stat-label">Joriy Balans</div>
+    <div class="stat-card" style="max-width: 350px; margin: 20px auto;">
+        <div class="stat-label">💰 Joriy Balans</div>
         <div class="stat-value" style="color: {% if tashkilot.balance > 0 %}#28a745{% else %}#dc3545{% endif %};">
             {{ tashkilot.balance }} so'm
         </div>
@@ -29,10 +141,10 @@
         <table>
             <thead>
                 <tr>
-                    <th>Sana</th>
-                    <th>Miqdor</th>
-                    <th>Qoldiq</th>
-                    <th>Izoh</th>
+                    <th>📅 Sana</th>
+                    <th>💰 Miqdor</th>
+                    <th>💳 Qoldiq</th>
+                    <th>📝 Izoh</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,8 +161,9 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #666;">
-                        📭 Hech qanday operatsiya topilmadi
+                    <td colspan="4" style="text-align: center; color: #666; padding: 50px;">
+                        <i class="fas fa-history fa-3x mb-3"></i>
+                        <h4>📭 Hech qanday operatsiya topilmadi</h4>
                     </td>
                 </tr>
                 {% endfor %}

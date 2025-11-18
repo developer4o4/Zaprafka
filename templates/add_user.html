@@ -5,24 +5,115 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Yangi foydalanuvchi yaratish</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#f5f6fa; padding:20px; }
-    .card { max-width:400px; margin:50px auto; background:#fff; padding:20px;
-            border-radius:10px; box-shadow:0 4px 14px rgba(0,0,0,0.1); }
-    h2 { text-align:center; margin-top:0; }
-    label { display:block; font-weight:600; margin:8px 0 5px; }
-    input[type="text"], input[type="email"], input[type="password"] {
-      width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;
+    body { 
+        font-family: 'Arial', sans-serif; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    button { width:100%; background:#2563eb; color:#fff; border:none;
-             padding:10px; border-radius:6px; margin-top:12px; cursor:pointer; font-weight:600; }
-    button:hover { background:#1d4ed8; }
-    .msg-error { color:#b91c1c; background:#fee2e2; padding:8px; border-radius:6px; text-align:center; }
-    .msg-success { color:#166534; background:#dcfce7; padding:8px; border-radius:6px; text-align:center; }
+    
+    .card { 
+        max-width: 450px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    h2 { 
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 30px;
+        color: #2c3e50;
+        font-size: 28px;
+        font-weight: 600;
+    }
+    
+    label { 
+        display: block;
+        font-weight: 600;
+        margin: 20px 0 8px;
+        color: #34495e;
+    }
+    
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+    
+    input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button { 
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    button:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .msg-error { 
+        color: #e74c3c;
+        background: #ffeaea;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        border-left: 4px solid #e74c3c;
+        margin-bottom: 20px;
+    }
+    
+    .msg-success { 
+        color: #27ae60;
+        background: #eaffea;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        border-left: 4px solid #27ae60;
+        margin-bottom: 20px;
+    }
+    
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>Yangi foydalanuvchi yaratish</h2>
+    <h2>👤 Yangi foydalanuvchi yaratish</h2>
 
     {% if error %}
       <div class="msg-error">{{ error }}</div>
@@ -34,20 +125,18 @@
     <form method="post">
       {% csrf_token %}
       <label>Foydalanuvchi nomi</label>
-      <input type="text" name="username" placeholder="username" required>
+      <input type="text" name="username" placeholder="Foydalanuvchi nomi..." required>
 
       <label>Telefon raqam</label>
       <input type="text" name="tel" placeholder="+998957021012">
 
       <label>Parol</label>
-      <input type="password" name="password" placeholder="parol" required>
+      <input type="password" name="password" placeholder="Parol..." required>
 
-      <button type="submit">Foydalanuvchi yaratish</button>
+      <button type="submit">👤 Foydalanuvchi yaratish</button>
     </form>
 
-    <p style="text-align:center;margin-top:10px;">
-      <a href="{% url 'admin_panel' %}">⬅️ Bosh sahifaga qaytish</a>
-    </p>
+    <a href="{% url 'admin_panel' %}" class="back-link">← Bosh sahifaga qaytish</a>
   </div>
 </body>
 </html>

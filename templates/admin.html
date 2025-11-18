@@ -9,6 +9,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
@@ -17,8 +25,9 @@
         }
 
         .navbar {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
 
         .navbar-brand {
@@ -29,44 +38,47 @@
         .admin-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         .admin-header {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #2563eb;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .admin-card {
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
             padding: 0;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
         .admin-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card-header-custom {
-            background: linear-gradient(135deg, #366092, #2a5298);
+            background: var(--primary-gradient);
             color: white;
-            padding: 20px;
-            border-radius: 12px 12px 0 0;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
             margin: 0;
         }
 
         .card-header-custom h3 {
             margin: 0;
             font-weight: 600;
+            font-size: 1.4rem;
         }
 
         .admin-table {
@@ -75,148 +87,159 @@
         }
 
         .admin-table th {
-            background: #f8f9fa;
-            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 18px;
             text-align: left;
             font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
+            color: #2c3e50;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
         }
 
         .admin-table td {
-            padding: 15px;
-            border-bottom: 1px solid #f3f4f6;
+            padding: 18px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             vertical-align: middle;
         }
 
         .admin-table tr:hover {
-            background: #f9fafb;
+            background: rgba(102, 126, 234, 0.03);
         }
 
         .btn-custom {
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
-            padding: 10px 20px;
+            padding: 12px 25px;
             transition: all 0.3s ease;
             border: none;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .btn-primary-custom {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background: var(--primary-gradient);
             color: white;
         }
 
         .btn-success-custom {
-            background: linear-gradient(135deg, #16a34a, #15803d);
+            background: var(--success-gradient);
             color: white;
         }
 
         .btn-warning-custom {
-            background: linear-gradient(135deg, #d97706, #b45309);
+            background: var(--warning-gradient);
             color: white;
         }
 
         .btn-danger-custom {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            background: var(--danger-gradient);
             color: white;
         }
 
         .btn-secondary-custom {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
+            background: var(--secondary-gradient);
             color: white;
         }
 
         .btn-custom:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             color: white;
         }
 
         .btn-sm-custom {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 10px;
         }
 
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .form-container-custom {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .form-group-custom {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group-custom label {
             font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
+            color: #2c3e50;
+            margin-bottom: 10px;
             display: block;
         }
 
         .form-control-custom {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
+            padding: 15px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .form-control-custom:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
         }
 
         .form-buttons-custom {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             justify-content: flex-end;
-            margin-top: 25px;
+            margin-top: 30px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
+            background: var(--primary-gradient);
+            padding: 30px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #2563eb;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .stat-label {
-            color: #6b7280;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
+            opacity: 0.9;
         }
 
         @media (max-width: 768px) {
@@ -245,7 +268,7 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <i class="fas fa-gas-pump me-2"></i>
-                Yoqilg'i Boshqaruvi
+                ⛽ Yoqilg'i Boshqaruvi
             </a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
@@ -263,23 +286,24 @@
         <div class="admin-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h2 mb-2">Admin Panel</h1>
-                    <p class="text-muted mb-0">Tizimni boshqarish va sozlamalar</p>
+                    <h1 class="h2 mb-2">🎛️ Admin Panel</h1>
+                    <p class="mb-0 opacity-75">Tizimni boshqarish va sozlamalar</p>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-3">
                     <a href="{% url 'home' %}" class="btn btn-secondary-custom btn-custom">
                         <i class="fas fa-home"></i> Bosh Sahifa
                     </a>
                     <a href="{% url 'ombor_list' %}" class="btn btn-secondary-custom btn-custom">
-                        <i class="fas fa-home"></i> Ombor
+                        <i class="fas fa-warehouse"></i> Ombor
                     </a>
-                    <a href="{% url 'tashkilotlar_roxyati' %}" class="btn btn-secondary-custom btn-custom">📊 Tashkilotlar</a>
-
+                    <a href="{% url 'tashkilotlar_roxyati' %}" class="btn btn-secondary-custom btn-custom">
+                        <i class="fas fa-building"></i> Tashkilotlar
+                    </a>
                     <a href="{% url 'statistics' %}" class="btn btn-primary-custom btn-custom">
                         <i class="fas fa-chart-bar"></i> Statistika
                     </a>
                     <a href="{% url 'ombor_statistika' %}" class="btn btn-primary-custom btn-custom">
-                        <i class="fas fa-chart-bar"></i> Omborlar Statistikasi
+                        <i class="fas fa-chart-pie"></i> Omborlar Statistikasi
                     </a>
                 </div>
             </div>
@@ -301,40 +325,39 @@
         {% endif %}
 
         <!-- Quick Stats -->
-         
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" style="background: var(--primary-gradient);">
                 <div class="stat-number">{{ tashkilotlar.count }}</div>
-                <div class="stat-label">Tashkilotlar</div>
+                <div class="stat-label">🏢 Tashkilotlar</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="background: var(--success-gradient);">
                 <div class="stat-number">{{ avto_list.count }}</div>
-                <div class="stat-label">Avtomobillar</div>
+                <div class="stat-label">🚗 Avtomobillar</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="background: var(--warning-gradient);">
                 <div class="stat-number">{{ yoqilgilar.count }}</div>
-                <div class="stat-label">Yoqilg'i Turlari</div>
+                <div class="stat-label">⛽ Yoqilg'i Turlari</div>
             </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="admin-card">
             <div class="card-header-custom">
-                <h3><i class="fas fa-bolt me-2"></i>Tezkor Amallar</h3>
+                <h3><i class="fas fa-bolt me-2"></i>⚡ Tezkor Amallar</h3>
             </div>
             <div class="p-4">
                 <div class="d-flex flex-wrap gap-3">
                     <a href="{% url 'add_user' %}" class="btn btn-primary-custom btn-custom">
-                        <i class="fas fa-user-plus"></i> Yangi Ishchi
+                        <i class="fas fa-user-plus"></i> 👤 Yangi Ishchi
                     </a>
                     <button type="button" class="btn btn-success-custom btn-custom" id="show-tashkilot-form">
-                        <i class="fas fa-building"></i> Yangi Tashkilot
+                        <i class="fas fa-building"></i> 🏢 Yangi Tashkilot
                     </button>
                     <button type="button" class="btn btn-success-custom btn-custom" id="show-avto-form">
-                        <i class="fas fa-car"></i> Yangi Avtomobil
+                        <i class="fas fa-car"></i> 🚗 Yangi Avtomobil
                     </button>
                     <button type="button" class="btn btn-success-custom btn-custom" id="show-yoqilgi-form">
-                        <i class="fas fa-gas-pump"></i> Yangi Yoqilg'i
+                        <i class="fas fa-gas-pump"></i> ⛽ Yangi Yoqilg'i
                     </button>
                 </div>
             </div>
@@ -342,26 +365,26 @@
 
         <!-- Add Forms -->
         <div id="tashkilot-form" class="form-container-custom" style="display: none;">
-            <h4 class="mb-4"><i class="fas fa-building me-2"></i>Yangi Tashkilot Qo'shish</h4>
+            <h4 class="mb-4"><i class="fas fa-building me-2"></i>🏢 Yangi Tashkilot Qo'shish</h4>
             <form method="post" action="{% url 'add_tashkilot' %}">
                 {% csrf_token %}
                 <div class="form-group-custom">
                     <label for="tashkilot-nomi">Tashkilot nomi</label>
-                    <input type="text" name="title" id="tashkilot-nomi" class="form-control-custom" required>
+                    <input type="text" name="title" id="tashkilot-nomi" class="form-control-custom" placeholder="Tashkilot nomini kiriting..." required>
                 </div>
                 <div class="form-group-custom">
                     <label for="group-id">Telegram Gruh ID</label>
                     <input type="number" name="group_id" id="group-id" class="form-control-custom" value="4885110792" required>
                 </div>
                 <div class="form-buttons-custom">
-                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
-                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">❌ Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">💾 Saqlash</button>
                 </div>
             </form>
         </div>
 
         <div id="avto-form" class="form-container-custom" style="display: none;">
-            <h4 class="mb-4"><i class="fas fa-car me-2"></i>Yangi Avtomobil Qo'shish</h4>
+            <h4 class="mb-4"><i class="fas fa-car me-2"></i>🚗 Yangi Avtomobil Qo'shish</h4>
             <form method="post" action="{% url 'add_avto' %}">
                 {% csrf_token %}
                 <div class="form-group-custom">
@@ -375,42 +398,42 @@
                 </div>
                 <div class="form-group-custom">
                     <label for="avto-title">Avtomobil nomi</label>
-                    <input type="text" name="title" id="avto-title" class="form-control-custom" required>
+                    <input type="text" name="title" id="avto-title" class="form-control-custom" placeholder="Avtomobil nomini kiriting..." required>
                 </div>
                 <div class="form-group-custom">
                     <label for="avto-number">Avtomobil raqami</label>
-                    <input type="text" name="avto_number" id="avto-number" class="form-control-custom" required>
+                    <input type="text" name="avto_number" id="avto-number" class="form-control-custom" placeholder="Avtomobil raqamini kiriting..." required>
                 </div>
                 <div class="form-buttons-custom">
-                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
-                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">❌ Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">💾 Saqlash</button>
                 </div>
             </form>
         </div>
 
         <div id="yoqilgi-form" class="form-container-custom" style="display: none;">
-            <h4 class="mb-4"><i class="fas fa-gas-pump me-2"></i>Yangi Yoqilg'i Turi Qo'shish</h4>
+            <h4 class="mb-4"><i class="fas fa-gas-pump me-2"></i>⛽ Yangi Yoqilg'i Turi Qo'shish</h4>
             <form method="post" action="{% url 'add_yoqilgi' %}">
                 {% csrf_token %}
                 <div class="form-group-custom">
                     <label for="yoqilgi-title">Yoqilg'i nomi</label>
-                    <input type="text" name="title" id="yoqilgi-title" class="form-control-custom" required>
+                    <input type="text" name="title" id="yoqilgi-title" class="form-control-custom" placeholder="Yoqilg'i nomini kiriting..." required>
                 </div>
                 <div class="form-group-custom">
                     <label for="yoqilgi-price">Yoqilg'i narxi (so'm)</label>
-                    <input type="number" name="price" id="yoqilgi-price" class="form-control-custom" step="0.01" required>
+                    <input type="number" name="price" id="yoqilgi-price" class="form-control-custom" step="0.01" placeholder="Narxni kiriting..." required>
                 </div>
                 <div class="form-buttons-custom">
-                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">Bekor qilish</button>
-                    <button type="submit" class="btn btn-success-custom btn-custom">Saqlash</button>
+                    <button type="button" class="btn btn-secondary-custom btn-custom close-form">❌ Bekor qilish</button>
+                    <button type="submit" class="btn btn-success-custom btn-custom">💾 Saqlash</button>
                 </div>
             </form>
         </div>
 
         <!-- Tashkilotlar -->
-         <div class="admin-card">
+        <div class="admin-card">
             <div class="card-header-custom">
-                <h3><i class="fas fa-building me-2"></i>Ishchilar</h3>
+                <h3><i class="fas fa-users me-2"></i>👥 Ishchilar</h3>
             </div>
             <div class="p-4">
                 {% if users %}
@@ -418,24 +441,17 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>№</th>
-                                <th>username</th>
-                                <th>Telefon raqam</th>
+                                <th>#</th>
+                                <th>👤 Foydalanuvchi nomi</th>
+                                <th>📞 Telefon raqam</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for t in users %}
                             <tr>
-                                <td>
-                                    <strong>{{ forloop.counter }}</strong>
-                                </td>
-                                <td>
-                                    <strong>{{ t.username }}</strong>
-                                </td>
-                                <td>
-                                    <code>{{ t.phone }}</code>
-                                </td>
-                                
+                                <td><strong>{{ forloop.counter }}</strong></td>
+                                <td><strong>{{ t.username }}</strong></td>
+                                <td><code>{{ t.phone }}</code></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -443,15 +459,16 @@
                 </div>
                 {% else %}
                 <div class="text-center py-4">
-                    <i class="fas fa-building fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Hozircha tashkilotlar mavjud emas</p>
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Hozircha ishchilar mavjud emas</p>
                 </div>
                 {% endif %}
             </div>
         </div>
+
         <div class="admin-card">
             <div class="card-header-custom">
-                <h3><i class="fas fa-building me-2"></i>Tashkilotlar</h3>
+                <h3><i class="fas fa-building me-2"></i>🏢 Tashkilotlar</h3>
             </div>
             <div class="p-4">
                 {% if tashkilotlar %}
@@ -460,27 +477,23 @@
                         <thead>
                             <tr>
                                 <th>Nomi</th>
-                                <th>Telegram Gruh ID</th>
-                                <th>Amallar</th>
+                                <th>📱 Telegram Gruh ID</th>
+                                <th>⚡ Amallar</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for t in tashkilotlar %}
                             <tr>
-                                <td>
-                                    <strong>{{ t.title }}</strong>
-                                </td>
-                                <td>
-                                    <code>{{ t.group_id }}</code>
-                                </td>
+                                <td><strong>{{ t.title }}</strong></td>
+                                <td><code>{{ t.group_id }}</code></td>
                                 <td>
                                     <div class="action-buttons">
                                         <a href="{% url 'tashkilot_edit' t.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
-                                            <i class="fas fa-edit"></i> Tahrirlash
+                                            <i class="fas fa-edit"></i> ✏️ Tahrirlash
                                         </a>
                                         <a href="{% url 'tashkilot_delete' t.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
                                            onclick="return confirm('Haqiqatan ham \"{{ t.title }}\" ni o\\'chirmoqchimisiz?')">
-                                            <i class="fas fa-trash"></i> O'chirish
+                                            <i class="fas fa-trash"></i> 🗑️ O'chirish
                                         </a>
                                     </div>
                                 </td>
@@ -501,7 +514,7 @@
         <!-- Avtomobillar -->
         <div class="admin-card">
             <div class="card-header-custom">
-                <h3><i class="fas fa-car me-2"></i>Avtomobillar</h3>
+                <h3><i class="fas fa-car me-2"></i>🚗 Avtomobillar</h3>
             </div>
             <div class="p-4">
                 {% if avtos %}
@@ -509,30 +522,26 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Tashkilot</th>
+                                <th>🏢 Tashkilot</th>
                                 <th>Nomi</th>
-                                <th>Raqami</th>
-                                <th>Amallar</th>
+                                <th>🔢 Raqami</th>
+                                <th>⚡ Amallar</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for a in avtos %}
                             <tr>
                                 <td>{{ a.tashkilot.title }}</td>
-                                <td>
-                                    <strong>{{ a.title }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary">{{ a.avto_number }}</span>
-                                </td>
+                                <td><strong>{{ a.title }}</strong></td>
+                                <td><span class="badge bg-primary">{{ a.avto_number }}</span></td>
                                 <td>
                                     <div class="action-buttons">
                                         <a href="{% url 'avto_edit' a.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
-                                            <i class="fas fa-edit"></i> Tahrirlash
+                                            <i class="fas fa-edit"></i> ✏️ Tahrirlash
                                         </a>
                                         <a href="{% url 'avto_delete' a.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
                                            onclick="return confirm('Haqiqatan ham \"{{ a.title }}\" ni o\\'chirmoqchimisiz?')">
-                                            <i class="fas fa-trash"></i> O'chirish
+                                            <i class="fas fa-trash"></i> 🗑️ O'chirish
                                         </a>
                                     </div>
                                 </td>
@@ -553,7 +562,7 @@
         <!-- Yoqilg'i Turlari -->
         <div class="admin-card">
             <div class="card-header-custom">
-                <h3><i class="fas fa-gas-pump me-2"></i>Yoqilg'i Turlari</h3>
+                <h3><i class="fas fa-gas-pump me-2"></i>⛽ Yoqilg'i Turlari</h3>
             </div>
             <div class="p-4">
                 {% if yoqilgilar %}
@@ -562,27 +571,23 @@
                         <thead>
                             <tr>
                                 <th>Nomi</th>
-                                <th>Narxi</th>
-                                <th>Amallar</th>
+                                <th>💰 Narxi</th>
+                                <th>⚡ Amallar</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for y in yoqilgilar %}
                             <tr>
-                                <td>
-                                    <strong>{{ y.title }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge bg-success">{{ y.price }} so'm</span>
-                                </td>
+                                <td><strong>{{ y.title }}</strong></td>
+                                <td><span class="badge bg-success">{{ y.price }} so'm</span></td>
                                 <td>
                                     <div class="action-buttons">
                                         <a href="{% url 'yoqilgi_turi_edit' y.id %}" class="btn btn-warning-custom btn-custom btn-sm-custom">
-                                            <i class="fas fa-edit"></i> Tahrirlash
+                                            <i class="fas fa-edit"></i> ✏️ Tahrirlash
                                         </a>
                                         <a href="{% url 'yoqilgi_turi_delete' y.id %}" class="btn btn-danger-custom btn-custom btn-sm-custom"
                                            onclick="return confirm('Haqiqatan ham \"{{ y.title }}\" ni o\\'chirmoqchimisiz?')">
-                                            <i class="fas fa-trash"></i> O'chirish
+                                            <i class="fas fa-trash"></i> 🗑️ O'chirish
                                         </a>
                                     </div>
                                 </td>

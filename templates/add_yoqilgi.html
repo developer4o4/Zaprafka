@@ -2,17 +2,111 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Yangi Yoqilg‘i Turi Qo‘shish</title>
+    <title>Yangi Yoqilg'i Turi Qo'shish</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fff;
+            margin-bottom: 20px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #f5576c, #f093fb);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #f5576c;
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Yangi Yoqilg‘i Turi Qo‘shish</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label>Yoqilg‘i nomi:</label>
-        <input type="text" name="title" required>
-        <input type="number" name="price" required>
-        <button type="submit">Saqlash</button>
-    </form>
-    <a href="{% url 'admin_panel' %}">Orqaga</a>
+    <div class="form-container">
+        <h2>⛽ Yangi Yoqilg'i Turi Qo'shish</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>Yoqilg'i nomi:</label>
+            <input type="text" name="title" placeholder="Yoqilg'i nomini kiriting..." required>
+
+            <label>Yoqilg'i narxi (so'm):</label>
+            <input type="number" name="price" placeholder="Narxni kiriting..." required>
+
+            <button type="submit">💾 Saqlash</button>
+        </form>
+        <a href="{% url 'admin_panel' %}" class="back-link">← Orqaga qaytish</a>
+    </div>
 </body>
 </html>

@@ -8,7 +8,6 @@
     <title>Statistika - Yoqilg'i Boshqaruvi</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Umumiy stillar */
         * {
             margin: 0;
             padding: 0;
@@ -17,35 +16,42 @@
         }
 
         body {
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         /* Header stillari */
         header {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            padding: 25px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .header-content h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .user-info {
@@ -57,177 +63,191 @@
         button {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 500;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(42, 82, 152, 0.4);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #28a745, #218838);
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
         }
 
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
         }
 
         /* Dashboard stillari */
         .dashboard {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .dashboard h2 {
-            color: #2a5298;
+            color: #2c3e50;
             margin-bottom: 30px;
-            font-size: 32px;
+            font-size: 36px;
             text-align: center;
             font-weight: 600;
         }
 
         /* Form container stillari */
         .form-container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
-            border: 1px solid #e9ecef;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .form-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #2a5298;
+            color: #2c3e50;
         }
 
         input,
         select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         input:focus,
         select:focus {
             outline: none;
-            border-color: #2a5298;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         /* Statistika stillari */
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .chart-container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e9ecef;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
 
         .chart-title {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             font-weight: 600;
-            color: #2a5298;
-            font-size: 18px;
+            color: #2c3e50;
+            font-size: 20px;
         }
 
         .stats-filters {
             display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 25px;
+            margin-bottom: 35px;
             flex-wrap: wrap;
-            padding: 20px;
-            background: #f8f9ff;
-            border-radius: 12px;
-            border: 1px solid #e8f4ff;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .stats-filters select {
             width: auto;
-            min-width: 220px;
+            min-width: 240px;
             background: white;
         }
 
         .stats-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 45px;
         }
 
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 2.8rem;
             font-weight: bold;
-            margin: 15px 0;
+            margin: 20px 0;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .stat-label {
-            font-size: 14px;
+            font-size: 16px;
             opacity: 0.9;
             font-weight: 500;
         }
@@ -236,29 +256,29 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 25px 0;
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
         th,
         td {
-            padding: 15px;
+            padding: 20px;
             text-align: left;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         th {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         tr:hover {
-            background-color: #f8f9fa;
+            background-color: rgba(102, 126, 234, 0.03);
         }
 
         /* Rasm modal oynasi */
@@ -279,9 +299,9 @@
             margin: 5% auto;
             max-width: 90%;
             max-height: 90%;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
         }
 
         .modal-image {
@@ -292,41 +312,43 @@
 
         .close {
             position: absolute;
-            top: 15px;
-            right: 25px;
+            top: 20px;
+            right: 30px;
             color: white;
-            font-size: 35px;
+            font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
             z-index: 1001;
+            transition: all 0.3s ease;
         }
 
         .close:hover {
             color: #ff6b6b;
+            transform: scale(1.1);
         }
 
         .photo-preview {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             transition: transform 0.3s ease;
-            border: 2px solid #e9ecef;
+            border: 2px solid #e1e8ed;
         }
 
         .photo-preview:hover {
             transform: scale(1.1);
-            border-color: #2a5298;
+            border-color: #667eea;
         }
 
         .no-photo {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background: #f8f9fa;
             border: 2px dashed #dee2e6;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,26 +358,27 @@
         }
 
         .recent-records {
-            margin-top: 40px;
+            margin-top: 45px;
         }
 
         .recent-records h3 {
-            color: #2a5298;
-            margin-bottom: 20px;
-            font-size: 24px;
-            border-bottom: 3px solid #2a5298;
-            padding-bottom: 10px;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 28px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            font-weight: 600;
         }
 
         .excel-export {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 20px 15px;
             }
 
             .stats-container {
@@ -371,12 +394,12 @@
             }
 
             .stats-summary {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
 
             .header-content {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
                 text-align: center;
             }
 
@@ -392,18 +415,18 @@
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             color: #6c757d;
         }
 
         .loading-spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #2a5298;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
         }
 
         @keyframes spin {
@@ -422,7 +445,7 @@
     <!-- Statistika sahifasi -->
     <div id="stats-page">
         <header>
-            <div class="container header-content">
+            <div class="header-content">
                 <h1>📊 Statistika - Yoqilg'i Boshqaruvi</h1>
                 <div class="user-info">
                     <span id="admin-user">👤 {{ request.user.username }}</span>
@@ -434,12 +457,11 @@
 
         <div class="container">
             <div class="dashboard">
-                <h2>Yoqilg'i Sarfi Statistikasi - {{month_name}}</h2>
+                <h2>📈 Yoqilg'i Sarfi Statistikasi - {{month_name}}</h2>
 
-                <!-- Excel export tugmasi -->
-                <!-- Excel export uchun filtrlarni qo'shamiz -->
+                <!-- Excel export -->
                 <div class="excel-export">
-                    <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 20px; align-items: end; flex-wrap: wrap;">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label for="excel-year">📅 Yil:</label>
                             <select id="excel-year" class="form-select">
@@ -493,24 +515,20 @@
                 <!-- Statistik ma'lumotlar -->
                 <div class="stats-summary">
                     <div class="stat-card">
-                        <div class="stat-label">Jami Yoqilg'i</div>
+                        <div class="stat-label">⛽ Jami Yoqilg'i</div>
                         <div class="stat-value" id="total-fuel">0 L</div>
-                        <div class="stat-label">⛽ Umumiy miqdor</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">O'rtacha Kunlik</div>
+                        <div class="stat-label">📅 O'rtacha Kunlik</div>
                         <div class="stat-value" id="avg-daily">0 L</div>
-                        <div class="stat-label">📅 Kunlik o'rtacha</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Eng Ko'p Yoqilg'i</div>
+                        <div class="stat-label">📈 Eng Ko'p Yoqilg'i</div>
                         <div class="stat-value" id="max-fuel">0 L</div>
-                        <div class="stat-label">📈 Maksimal</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Faol Avtomobillar</div>
+                        <div class="stat-label">🚗 Faol Avtomobillar</div>
                         <div class="stat-value" id="active-cars">0</div>
-                        <div class="stat-label">🚗 Avtomobillar soni</div>
                     </div>
                 </div>
 
@@ -544,12 +562,12 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Sana</th>
-                                    <th>Tashkilot</th>
-                                    <th>Avtomobil</th>
-                                    <th>Miqdor (L)</th>
-                                    <th>Foydalanuvchi</th>
-                                    <th>Rasm</th>
+                                    <th>📅 Sana</th>
+                                    <th>🏢 Tashkilot</th>
+                                    <th>🚗 Avtomobil</th>
+                                    <th>📊 Miqdor (L)</th>
+                                    <th>👤 Foydalanuvchi</th>
+                                    <th>🖼️ Rasm</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-records-body">
@@ -580,12 +598,12 @@
                     <table id="detailed-stats-table">
                         <thead>
                             <tr>
-                                <th>Sana</th>
-                                <th>Yoqilg'i Miqdori (L)</th>
-                                <th>Quyishlar Soni</th>
-                                <th>Tashkilotlar</th>
-                                <th>Avtomobillar</th>
-                                <th>Foiz</th>
+                                <th>📅 Sana</th>
+                                <th>⛽ Yoqilg'i Miqdori (L)</th>
+                                <th>📊 Quyishlar Soni</th>
+                                <th>🏢 Tashkilotlar</th>
+                                <th>🚗 Avtomobillar</th>
+                                <th>📈 Foiz</th>
                             </tr>
                         </thead>
                         <tbody id="detailed-stats-body">
@@ -637,12 +655,14 @@
             // Dastlabki ma'lumotlarni yuklash
             updateAllCharts();
         });
+
         function hideLoading() {
             const loadingDiv = document.getElementById('loading-overlay');
             if (loadingDiv) {
                 loadingDiv.style.display = 'none';
             }
         }
+
         // Excel export funksiyasi
         function exportStatisticsToExcel() {
             const year = document.getElementById('excel-year').value;
@@ -666,31 +686,33 @@
                     loadingDiv = document.createElement('div');
                     loadingDiv.id = 'loading-overlay';
                     loadingDiv.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-size: 18px;
-        `;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                        color: white;
+                        font-size: 18px;
+                    `;
                     document.body.appendChild(loadingDiv);
                 }
 
                 loadingDiv.innerHTML = `
-        <div style="text-align: center; background: white; padding: 30px; border-radius: 10px; color: #333;">
-            <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
-            <div>${message}</div>
-        </div>
-    `;
+                    <div style="text-align: center; background: white; padding: 30px; border-radius: 15px; color: #333;">
+                        <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
+                        <div>${message}</div>
+                    </div>
+                `;
                 loadingDiv.style.display = 'flex';
             }
 
+            showLoading('Excel fayl yuklanmoqda...');
+            
             // Faylni yuklab olish
             const link = document.createElement('a');
             link.href = url;
@@ -698,7 +720,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
+            
             // Yuklanishni yashirish
             setTimeout(() => {
                 hideLoading();
@@ -824,8 +846,8 @@
                     datasets: [{
                         label: 'Yoqilg\'i miqdori (L)',
                         data: data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
                         borderWidth: 2,
                         borderRadius: 8
                     }]
@@ -981,8 +1003,9 @@
             if (records.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; color: #666; padding: 40px;">
-                            📭 Hech qanday ma'lumot topilmadi
+                        <td colspan="7" style="text-align: center; color: #666; padding: 50px;">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <h4>📭 Hech qanday ma'lumot topilmadi</h4>
                         </td>
                     </tr>
                 `;
@@ -1020,8 +1043,9 @@
                 if (detailedStats.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; color: #666; padding: 40px;">
-                                📭 Hech qanday ma'lumot topilmadi
+                            <td colspan="6" style="text-align: center; color: #666; padding: 50px;">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <h4>📭 Hech qanday ma'lumot topilmadi</h4>
                             </td>
                         </tr>
                     `;
@@ -1053,10 +1077,10 @@
                             <td>${item.tashkilot_count}</td>
                             <td>${item.avto_count}</td>
                             <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
                                     <span>${percentage}%</span>
-                                    <div style="flex: 1; background: #e9ecef; height: 8px; border-radius: 4px;">
-                                        <div style="width: ${percentage}%; background: #2a5298; height: 100%; border-radius: 4px;"></div>
+                                    <div style="flex: 1; background: #e9ecef; height: 10px; border-radius: 5px;">
+                                        <div style="width: ${percentage}%; background: #667eea; height: 100%; border-radius: 5px;"></div>
                                     </div>
                                 </div>
                             </td>
@@ -1064,37 +1088,6 @@
                     `;
                 }).join('');
             });
-        }
-        function exportStatisticsToExcel() {
-            const year = document.getElementById('excel-year').value;
-            const month = document.getElementById('excel-month').value;
-            
-            let url = `/export-statistics-excel/?`;
-            
-            if (year) {
-                url += `year=${year}`;
-            }
-            if (month) {
-                url += `&month=${month}`;
-            }
-            
-            console.log('Export URL:', url);
-            
-            // Yuklanishni ko'rsatish
-            showLoading('Excel fayl yuklanmoqda...');
-            
-            // Faylni yuklab olish
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = '';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Yuklanishni yashirish
-            setTimeout(() => {
-                hideLoading();
-            }, 2000);
         }
 
         // Statistika yangilash
@@ -1130,19 +1123,12 @@
             }
             
             loadingDiv.innerHTML = `
-                <div style="text-align: center; background: white; padding: 30px; border-radius: 10px; color: #333;">
+                <div style="text-align: center; background: white; padding: 30px; border-radius: 15px; color: #333;">
                     <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
                     <div>${message}</div>
                 </div>
             `;
             loadingDiv.style.display = 'flex';
-        }
-
-        function hideLoading() {
-            const loadingDiv = document.getElementById('loading-overlay');
-            if (loadingDiv) {
-                loadingDiv.style.display = 'none';
-            }
         }
 
         // Modal oynasini sozlash
@@ -1171,12 +1157,6 @@
                 }
             }
         }
-
-        // Sahifa yuklanganda
-        document.addEventListener('DOMContentLoaded', function () {
-            setupModal();
-        });
     </script>
 </body>
-
 </html>

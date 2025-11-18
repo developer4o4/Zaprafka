@@ -2,28 +2,118 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Yangi Avtomobil Qo‘shish</title>
+    <title>Yangi Avtomobil Qo'shish</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Yangi Avtomobil Qo‘shish</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label>Tashkilot:</label>
-        <select name="tashkilot" required>
-            <option value="">Tanlang</option>
-            {% for t in tashkilotlar %}
-                <option value="{{ t.id }}">{{ t.title }}</option>
-            {% endfor %}
-        </select>
+    <div class="form-container">
+        <h2>🚗 Yangi Avtomobil Qo'shish</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label>Tashkilot:</label>
+            <select name="tashkilot" required>
+                <option value="">Tanlang</option>
+                {% for t in tashkilotlar %}
+                    <option value="{{ t.id }}">{{ t.title }}</option>
+                {% endfor %}
+            </select>
 
-        <label>Avtomobil nomi:</label>
-        <input type="text" name="title" required>
+            <label>Avtomobil nomi:</label>
+            <input type="text" name="title" required>
 
-        <label>Avtomobil raqami:</label>
-        <input type="text" name="avto_number" required>
+            <label>Avtomobil raqami:</label>
+            <input type="text" name="avto_number" required>
 
-        <button type="submit">Saqlash</button>
-    </form>
-    <a href="{% url 'admin_panel' %}">Orqaga</a>
+            <button type="submit">💾 Saqlash</button>
+        </form>
+        <a href="{% url 'admin_panel' %}" class="back-link">← Orqaga qaytish</a>
+    </div>
 </body>
 </html>
